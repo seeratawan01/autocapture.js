@@ -50,7 +50,64 @@ export function getEventData(
       data[attribute] = value
     }
   })
+
+  // Add extra data for form events
+  if (target instanceof HTMLFormElement) {
+    data.form = {
+      name: target.name,
+      id: target.id,
+      method: target.method,
+      action: target.action
+    }
+  }
+
+  // Add extra data for mouse events
+  if (event instanceof MouseEvent) {
+    data.mouse = getMouseEventCoordinates(event)
+  }
+
+  // Add extra data for touch events (only the first touch)
+  if (event instanceof Event && event.type.startsWith('touch')) {
+    data.touch = getTouchEventCoordinates(event)
+  }
+
+  // Add meta data
+  data.meta = {
+    timestamp: Date.now(),
+    url: window.location.href,
+    userAgent: navigator.userAgent
+  }
   return data
+}
+
+
+/**
+ * Get Event coordinates relative to the viewport
+ */
+export function getTouchEventCoordinates(event: Event): Record<string, any> {
+  const touch = (event as TouchEvent).touches[0]
+  if (touch) {
+    return {
+      x: touch.clientX,
+      y: touch.clientY
+    }
+  }
+  return {}
+}
+
+/**
+ * Get Event coordinates relative to the viewport
+ */
+export function getMouseEventCoordinates(event: MouseEvent): { x: number; y: number } {
+  const target = getEventTarget(event)
+  if (!target) {
+    return { x: 0, y: 0 }
+  }
+  const rect = target.getBoundingClientRect()
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top
+  }
 }
 
 /**
