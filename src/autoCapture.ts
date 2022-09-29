@@ -47,8 +47,11 @@ export default class AutoCapture {
       element.addEventListener('touchcancel', this.captureEvent.bind(this), true)
     })
 
-    // Capture page view
-    this.captureEvent(new Event('page-view'))
+    // // Capture page view
+    this.capturePageViewEvent()
+
+    // On route change, capture page view again
+    window.addEventListener('popstate', this.capturePageViewEvent.bind(this))
   }
 
   /**
@@ -65,6 +68,10 @@ export default class AutoCapture {
     })
   }
 
+  private capturePageViewEvent() {
+    const eventData = getPageViewData()
+    storeEvent(eventData, this.persistence, this.onEventStored)
+  }
 
   /**
    * A function to capture the user interactions on your site.
@@ -73,13 +80,6 @@ export default class AutoCapture {
    */
   private captureEvent(event: Event): boolean | void {
 
-    // if event is page-view, capture page view
-    if (event.type === 'page-view') {
-      const eventData = getPageViewData()
-      storeEvent(eventData, this.persistence, this.onEventStored)
-      return
-    }
-
     // Skip the event if the target is in the safe list selector
     if (this.safelist.some(selector => (event.target as HTMLElement).matches(selector))) {
       return false
@@ -87,9 +87,6 @@ export default class AutoCapture {
 
     const data = getEventData(event, this.attributes)
 
-    if (this.debug) {
-      console.debug(data)
-    }
 
     storeEvent(data, this.persistence, this.onEventStored)
 
