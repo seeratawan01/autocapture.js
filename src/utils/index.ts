@@ -57,7 +57,9 @@ export function getEventData(
  * Get the event target
  */
 export function getEventTarget(event: Event): Element | null {
+  // @ts-ignore
   if (typeof event.target === 'undefined') {
+    // @ts-ignore
     return (event.srcElement as Element) || null
   } else {
     if ((event.target as Element)?.shadowRoot) {
