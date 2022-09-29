@@ -1,5 +1,6 @@
 import { AutoCaptureProps, EventAttributes } from './types'
-import { getClassName, getDirectText, getEventData } from './utils'
+import { clearStoredEvents, getEventData, getStoredEvents, storeEvent } from './utils'
+import { DEFAULT_ATTRIBUTES } from './constant'
 
 /**
  *  A library to provide an easiest and most comprehensive way to automatically capture the user
@@ -10,40 +11,17 @@ export default class AutoCapture {
   private elements: Array<HTMLElement | Window | Document>
   private attributes: Array<EventAttributes>
   private debug: boolean
-  private autoStart: boolean
-  private autoStop: boolean
-  private autoStopTimeout: number
-  private autoStopTimeoutCallback: () => void
-  private autoStopCallback: () => void
-  private autoStartCallback: () => void
-  private autoCaptureCallback: (event: Event) => boolean | void
-  private autoCaptureErrorCallback: (error: Error) => void
+  private safelist: Array<string>
+  private persistence: 'cookie' | 'localStorage' | 'memory'
 
-  constructor({
-                elements,
-                attributes,
-                debug,
-                autoStart,
-                autoStop,
-                autoStopTimeout,
-                autoStopTimeoutCallback,
-                autoStopCallback,
-                autoStartCallback ,
-                autoCaptureCallback,
-                autoCaptureErrorCallback
-              }: AutoCaptureProps) {
-
+  constructor({ elements, safelist, attributes, debug, persistence }: AutoCaptureProps) {
     this.elements = elements || [document]
-    this.attributes = attributes || ['text', 'className', 'value', 'type']
+    this.safelist = safelist || []
+    this.attributes = attributes || DEFAULT_ATTRIBUTES
     this.debug = debug || false
-    this.autoStart = autoStart || false
-    this.autoStop = autoStop || false
-    this.autoStopTimeout = autoStopTimeout || 2000
-    this.autoStopTimeoutCallback = autoStopTimeoutCallback || (() => ({}))
-    this.autoStopCallback = autoStopCallback || (() => ({}))
-    this.autoStartCallback = autoStartCallback || (() => ({}))
-    this.autoCaptureCallback = autoCaptureCallback || (() => false)
-    this.autoCaptureErrorCallback = autoCaptureErrorCallback  || (() => ({}))
+    this.persistence = persistence || 'memory'
+
+    window.autoCaptureEvents = []
   }
 
   /**
@@ -51,11 +29,15 @@ export default class AutoCapture {
    * installation forward.
    */
   public start(): void {
-    console.log("start capturing user interactions")
+    console.log('start capturing user interactions')
     this.elements.forEach(element => {
       element.addEventListener('click', this.captureEvent.bind(this), true)
       element.addEventListener('change', this.captureEvent.bind(this), true)
       element.addEventListener('submit', this.captureEvent.bind(this), true)
+      element.addEventListener('touchstart', this.captureEvent.bind(this), true)
+      element.addEventListener('touchend', this.captureEvent.bind(this), true)
+      element.addEventListener('touchmove', this.captureEvent.bind(this), true)
+      element.addEventListener('touchcancel', this.captureEvent.bind(this), true)
     })
   }
 
@@ -67,6 +49,10 @@ export default class AutoCapture {
       element.removeEventListener('click', this.captureEvent.bind(this), true)
       element.removeEventListener('change', this.captureEvent.bind(this), true)
       element.removeEventListener('submit', this.captureEvent.bind(this), true)
+      element.removeEventListener('touchstart', this.captureEvent.bind(this), true)
+      element.removeEventListener('touchend', this.captureEvent.bind(this), true)
+      element.removeEventListener('touchmove', this.captureEvent.bind(this), true)
+      element.removeEventListener('touchcancel', this.captureEvent.bind(this), true)
     })
   }
 
@@ -76,19 +62,33 @@ export default class AutoCapture {
    * @private
    */
   private captureEvent(event: Event): boolean | void {
+    // Skip the event if the target is in the safe list selector
+    if (this.safelist.some(selector => (event.target as HTMLElement).matches(selector))) {
+      return false
+    }
 
-
-    // const tagName = target.tagName.toLowerCase()
-    // const type = event.type
-    // const text = getDirectText(target)
-    // const className = getClassName(target)
-    // const value = (target as HTMLInputElement).value
-    //
     const data = getEventData(event, this.attributes)
 
     if (this.debug) {
       console.debug(data)
     }
+
+    storeEvent(data, this.persistence)
+
+    console.log(getStoredEvents(this.persistence))
   }
 
+  /**
+   * A function to get the captured user interactions on your site, from the moment of installation forward.
+   */
+  public getCapturedEvents(): any[] {
+    return getStoredEvents(this.persistence)
+  }
+
+  /**
+   * A function to clear the captured user interactions on your site, from the moment of installation forward.
+   */
+  public clearCapturedEvents(): void {
+    clearStoredEvents(this.persistence)
+  }
 }

@@ -1,4 +1,5 @@
 import { EventAttributes } from '../types'
+import { STORAGE_KEY } from '../constant'
 
 /**
  * Get the className of an element, accounting for edge cases where element.className is an object
@@ -22,13 +23,10 @@ export function getClassName(el: Element): string {
  * @returns {string} the element's direct text content
  */
 export function getDirectText(el: Element): string {
-  const textNodes = Array.from(el.childNodes).filter(
-    (node) => node.nodeType === Node.TEXT_NODE
-  )
-  const text = textNodes.map((node) => node.textContent).join('')
+  const textNodes = Array.from(el.childNodes).filter(node => node.nodeType === Node.TEXT_NODE)
+  const text = textNodes.map(node => node.textContent).join('')
   return scrubText(text)
 }
-
 
 export function scrubText(text: string): string {
   return text.replace(/[^0-9a-zA-Z]/g, '')
@@ -46,7 +44,7 @@ export function getEventData(
   if (!target) {
     return data
   }
-  attributes.forEach((attribute) => {
+  attributes.forEach(attribute => {
     const value = getEventTargetValue(event, attribute)
     if (value) {
       data[attribute] = value
@@ -72,11 +70,7 @@ export function getEventTarget(event: Event): Element | null {
 /**
  * Get the value of the event target according to the given attribute
  */
-export function getEventTargetValue(
-  event: Event,
-  attribute: string
-): string | null {
-
+export function getEventTargetValue(event: Event, attribute: string): string | null {
   const target = getEventTarget(event)
   if (!target) {
     return null
@@ -84,6 +78,7 @@ export function getEventTargetValue(
   if (attribute === 'text') {
     return getDirectText(target)
   }
+
   if (attribute === 'className') {
     return getClassName(target)
   }
@@ -108,5 +103,121 @@ export function getEventTargetValue(
   if (attribute === 'placeholder') {
     return target.getAttribute('placeholder')
   }
+  if (attribute === 'src') {
+    return (target as HTMLImageElement).src
+  }
+  if (attribute === 'title') {
+    return target.getAttribute('title')
+  }
+  if (attribute === 'alt') {
+    return target.getAttribute('alt')
+  }
+  if (attribute === 'role') {
+    return target.getAttribute('role')
+  }
+  if (attribute.startsWith('aria-')) {
+    return target.getAttribute(attribute)
+  }
+
   return target.getAttribute(attribute)
+}
+
+/**
+ * Method to store the event data in the cookies | local storage | memory
+ */
+export function storeEvent(
+  eventData: Record<string, any>,
+  persistence: 'cookie' | 'localStorage' | 'memory'
+): void {
+  const data = JSON.stringify(eventData)
+  if (persistence === 'cookie') {
+    let existingData = getCookie(STORAGE_KEY)
+    if (existingData) {
+      let existingDataList: any[] = JSON.parse(existingData)
+      existingDataList.push(data)
+      setCookie(STORAGE_KEY, JSON.stringify(existingDataList))
+    } else {
+      setCookie(STORAGE_KEY, JSON.stringify([data]))
+    }
+  }
+  if (persistence === 'localStorage') {
+    let existingData = localStorage.getItem(STORAGE_KEY)
+    if (existingData) {
+      let existingDataList: any[] = JSON.parse(existingData)
+      existingDataList.push(data)
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(existingDataList))
+    } else {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([data]))
+    }
+  }
+  if (persistence === 'memory') {
+    if (window.autoCaptureEvents) {
+      window.autoCaptureEvents.push(data)
+    } else {
+      window.autoCaptureEvents = [data]
+    }
+  }
+}
+
+/**
+ * Method to get the event data from the cookies | local storage | memory
+ */
+export function getStoredEvents(persistence: 'cookie' | 'localStorage' | 'memory'): any[] {
+  if (persistence === 'cookie') {
+    let existingData = getCookie(STORAGE_KEY)
+    if (existingData) {
+      return JSON.parse(existingData)
+    }
+  }
+  if (persistence === 'localStorage') {
+    let existingData = localStorage.getItem(STORAGE_KEY)
+    if (existingData) {
+      return JSON.parse(existingData)
+    }
+  }
+  if (persistence === 'memory') {
+    return window.autoCaptureEvents.map((event: string) => JSON.parse(event))
+  }
+  return []
+}
+
+/**
+ * Method to clear the event data from the cookies | local storage | memory
+ */
+export function clearStoredEvents(persistence: 'cookie' | 'localStorage' | 'memory'): void {
+  if (persistence === 'cookie') {
+    setCookie(STORAGE_KEY, '')
+  }
+  if (persistence === 'localStorage') {
+    localStorage.removeItem(STORAGE_KEY)
+  }
+  if (persistence === 'memory') {
+    window.autoCaptureEvents = []
+  }
+}
+
+/**
+ * Method to set the cookie
+ */
+export function setCookie(keyName: string, value: string): void {
+  document.cookie = `${keyName}=${value}; path=/`
+}
+
+/**
+ * Method to get the cookie
+ */
+export function getCookie(keyName: string) {
+  const name = keyName + '='
+  const decodedCookie = decodeURIComponent(document.cookie)
+  const ca = decodedCookie.split(';')
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i]
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1)
+    }
+    if (c.indexOf(name) === 0) {
+      return c.substring(name.length, c.length)
+    }
+  }
+  return ''
 }
