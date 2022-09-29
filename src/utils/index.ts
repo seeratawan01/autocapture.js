@@ -1,5 +1,5 @@
 import { EventAttributes } from '../types'
-import { STORAGE_KEY } from '../constant'
+import { STORAGE_KEY, VISITOR_ID_KEY } from '../constant'
 
 /**
  * Get the className of an element, accounting for edge cases where element.className is an object
@@ -30,6 +30,26 @@ export function getDirectText(el: Element): string {
 
 export function scrubText(text: string): string {
   return text.replace(/[^0-9a-zA-Z]/g, '')
+}
+
+/**
+ * Get the data from the captured page-view event according to given attributes and structure it for the API
+ */
+export function getPageViewData(): Record<string, any> {
+  const data: Record<string, any> = {
+    type: 'page-view',
+    timestamp: new Date().getTime(),
+    page: window.location.href,
+    referrer: document.referrer
+  }
+
+  // Add meta data
+  data.meta = getMetaData()
+
+  // Add extra visitor related data
+  data.visitor = getUserData()
+
+  return data
 }
 
 /**
@@ -72,14 +92,69 @@ export function getEventData(
   }
 
   // Add meta data
-  data.meta = {
-    timestamp: Date.now(),
-    url: window.location.href,
-    userAgent: navigator.userAgent
+  data.meta = getMetaData()
+
+  // Add extra data for keyboard events
+  if (event instanceof KeyboardEvent) {
+    data.keyboard = {
+      key: event.key,
+      code: event.code,
+      location: event.location,
+      repeat: event.repeat
+    }
   }
+
+  // Add extra data for error events
+  if (event instanceof ErrorEvent) {
+    data.error = {
+      message: event.message,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+      error: event.error
+    }
+  }
+
+  // Add extra visitor related data
+  data.visitor = getUserData()
+
   return data
 }
 
+/**
+ * Get User data from the captured event
+ */
+export function getUserData(): Record<string, any> {
+  return {
+    id: getVisitorId(),
+    isFirstVisit: isFirstVisit()
+  }
+}
+
+/**
+ * Get Meta data from the captured event
+ */
+export function getMetaData(): Record<string, any> {
+  return {
+    scrollDepth: getScrollDepth(),
+    timestamp: Date.now(),
+    url: window.location.href,
+    userAgent: navigator.userAgent,
+    referrer: document.referrer,
+    screen: {
+      width: window.screen.width,
+      height: window.screen.height
+    },
+    window: {
+      width: window.innerWidth,
+      height: window.innerHeight
+    },
+    devicePixelRatio: window.devicePixelRatio,
+    isMobile: isMobile(),
+    isTouch: isTouchDevice(),
+    isBot: isBot()
+  }
+}
 
 /**
  * Get Event coordinates relative to the viewport
@@ -186,7 +261,8 @@ export function getEventTargetValue(event: Event, attribute: string): string | n
  */
 export function storeEvent(
   eventData: Record<string, any>,
-  persistence: 'cookie' | 'localStorage' | 'memory'
+  persistence: 'cookie' | 'localStorage' | 'memory',
+  callback: (eventData: Record<string, any>) => void
 ): void {
   const data = JSON.stringify(eventData)
   if (persistence === 'cookie') {
@@ -216,6 +292,8 @@ export function storeEvent(
       window.autoCaptureEvents = [data]
     }
   }
+
+  callback(eventData)
 }
 
 /**
@@ -259,7 +337,7 @@ export function clearStoredEvents(persistence: 'cookie' | 'localStorage' | 'memo
  * Method to set the cookie
  */
 export function setCookie(keyName: string, value: string): void {
-  document.cookie = `${keyName}=${value}; path=/`
+  document.cookie = `${keyName}=${value}; path=/; SameSite=None; Secure`
 }
 
 /**
@@ -279,4 +357,67 @@ export function getCookie(keyName: string) {
     }
   }
   return ''
+}
+
+
+/**
+ * Method to calculate the scroll depth
+ */
+export function getScrollDepth(): number {
+  const doc = document.documentElement
+  const top = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+  const height = doc.scrollHeight - doc.clientHeight
+  return Math.round((top / height) * 100)
+}
+
+
+/**
+ * Method to check if is mobile device
+ */
+export function isMobile(): boolean {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+}
+
+/**
+ * Method to check if is bot
+ */
+export function isBot(): boolean {
+  return /bot|google|baidu|bing|msn|duckduckbot|teoma|slurp|yandex/i.test(navigator.userAgent)
+}
+
+/**
+ * Method to check if is touch device
+ */
+export function isTouchDevice(): boolean {
+  return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.maxTouchPoints > 0
+}
+
+
+/**
+ * Method to get visitor id
+ */
+export function getVisitorId(): string {
+  let visitorId = getCookie(VISITOR_ID_KEY)
+  if (!visitorId) {
+    visitorId = uuidv4()
+    setCookie(VISITOR_ID_KEY, visitorId)
+  }
+  return visitorId
+}
+
+export function uuidv4(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    // tslint:disable-next-line:one-variable-per-declaration
+    const r = (Math.random() * 16) | 0,
+      // tslint:disable-next-line:triple-equals
+      v = c == 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
+
+/**
+ * Method to check if user's first visit
+ */
+export function isFirstVisit(): boolean {
+  return !getCookie(VISITOR_ID_KEY)
 }

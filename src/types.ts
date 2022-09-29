@@ -25,6 +25,11 @@ export type AutoCaptureProps = {
    * A string to set the persistence method. Defaults to `memory`.
    */
   persistence?: 'cookie' | 'localStorage' | 'memory'
+
+  /**
+   * A Callback function fires on captured event stored.
+   */
+  onEventStored?: (eventData: Record<string, any>) => void
 }
 
 export type EventAttributes =

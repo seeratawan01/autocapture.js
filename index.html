@@ -33,8 +33,11 @@
 
   const instance = new AutoCapture({
     debug: true,
-    safelist: ['select, option[value="volvo"]', 'option[value="saab"]'],
+    safelist: ['option[value="volvo"]', 'option[value="saab"]'],
     persistence: 'memory',
+    onEventStored: (event) => {
+      console.log('Event stored', event);
+    },
   })
 
   instance.start()

@@ -1,5 +1,11 @@
 import { AutoCaptureProps, EventAttributes } from './types'
-import { clearStoredEvents, getEventData, getStoredEvents, storeEvent } from './utils'
+import {
+  clearStoredEvents,
+  getEventData,
+  getPageViewData,
+  getStoredEvents,
+  storeEvent
+} from './utils'
 import { DEFAULT_ATTRIBUTES } from './constant'
 
 /**
@@ -13,13 +19,15 @@ export default class AutoCapture {
   private debug: boolean
   private safelist: Array<string>
   private persistence: 'cookie' | 'localStorage' | 'memory'
+  private onEventStored: (eventData: Record<string, any>) => void
 
-  constructor({ elements, safelist, attributes, debug, persistence }: AutoCaptureProps) {
+  constructor({ elements, safelist, attributes, debug, persistence, onEventStored }: AutoCaptureProps) {
     this.elements = elements || [document]
     this.safelist = safelist || []
     this.attributes = attributes || DEFAULT_ATTRIBUTES
     this.debug = debug || false
     this.persistence = persistence || 'memory'
+    this.onEventStored = onEventStored || ((eventData: Record<string, any>) => ({}))
 
     window.autoCaptureEvents = []
   }
@@ -38,6 +46,9 @@ export default class AutoCapture {
       element.addEventListener('touchmove', this.captureEvent.bind(this), true)
       element.addEventListener('touchcancel', this.captureEvent.bind(this), true)
     })
+
+    // Capture page view
+    this.captureEvent(new Event('page-view'))
   }
 
   /**
@@ -54,12 +65,21 @@ export default class AutoCapture {
     })
   }
 
+
   /**
-   * A function to capture the user interactions on your site, from the moment of installation forward.
+   * A function to capture the user interactions on your site.
    * @param event
    * @private
    */
   private captureEvent(event: Event): boolean | void {
+
+    // if event is page-view, capture page view
+    if (event.type === 'page-view') {
+      const eventData = getPageViewData()
+      storeEvent(eventData, this.persistence, this.onEventStored)
+      return
+    }
+
     // Skip the event if the target is in the safe list selector
     if (this.safelist.some(selector => (event.target as HTMLElement).matches(selector))) {
       return false
@@ -71,9 +91,8 @@ export default class AutoCapture {
       console.debug(data)
     }
 
-    storeEvent(data, this.persistence)
+    storeEvent(data, this.persistence, this.onEventStored)
 
-    console.log(getStoredEvents(this.persistence))
   }
 
   /**
@@ -88,5 +107,12 @@ export default class AutoCapture {
    */
   public clearCapturedEvents(): void {
     clearStoredEvents(this.persistence)
+  }
+
+  /**
+   * A function to get the captured user's page views on your site.
+   */
+  public getPageViews(): any[] {
+    return getStoredEvents(this.persistence).filter(event => event.type === 'page-view')
   }
 }
