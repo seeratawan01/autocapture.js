@@ -14,7 +14,7 @@
     "outDir": "dist/lib",
     "typeRoots": [
       "node_modules/@types",
-      "./src/global.d.ts"
+      "./src/types/global.d.ts"
     ]
   },
   "include": [

@@ -47,11 +47,11 @@ export default class AutoCapture {
       element.addEventListener('touchcancel', this.captureEvent.bind(this), true)
     })
 
-    // // Capture page view
-    this.capturePageViewEvent()
-
     // On route change, capture page view again
     window.addEventListener('popstate', this.capturePageViewEvent.bind(this))
+
+    // On page load, capture page view again
+    window.addEventListener('load', this.capturePageViewEvent.bind(this))
   }
 
   /**

@@ -60,14 +60,17 @@ export function getEventData(
   attributes: Array<EventAttributes>
 ): Record<string, any> {
   const target = getEventTarget(event)
-  const data: Record<string, any> = {}
+  const data: Record<string, any> = {
+    event: event.type,
+  }
   if (!target) {
     return data
   }
+  data.attributes = {}
   attributes.forEach(attribute => {
     const value = getEventTargetValue(event, attribute)
     if (value) {
-      data[attribute] = value
+      data.attributes[attribute] = value
     }
   })
 
@@ -126,8 +129,7 @@ export function getEventData(
  */
 export function getUserData(): Record<string, any> {
   return {
-    id: getVisitorId(),
-    isFirstVisit: isFirstVisit()
+    id: getVisitorId()
   }
 }
 
@@ -138,6 +140,7 @@ export function getMetaData(): Record<string, any> {
   return {
     scrollDepth: getScrollDepth(),
     timestamp: Date.now(),
+    timezone: new Date().getTimezoneOffset(),
     url: window.location.href,
     userAgent: navigator.userAgent,
     referrer: document.referrer,
@@ -152,7 +155,7 @@ export function getMetaData(): Record<string, any> {
     devicePixelRatio: window.devicePixelRatio,
     isMobile: isMobile(),
     isTouch: isTouchDevice(),
-    isBot: isBot()
+    isBot: isBot(),
   }
 }
 
@@ -370,7 +373,6 @@ export function getScrollDepth(): number {
   return Math.round((top / height) * 100)
 }
 
-
 /**
  * Method to check if is mobile device
  */
@@ -392,7 +394,6 @@ export function isTouchDevice(): boolean {
   return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.maxTouchPoints > 0
 }
 
-
 /**
  * Method to get visitor id
  */
@@ -413,11 +414,4 @@ export function uuidv4(): string {
       v = c == 'x' ? r : (r & 0x3) | 0x8
     return v.toString(16)
   })
-}
-
-/**
- * Method to check if user's first visit
- */
-export function isFirstVisit(): boolean {
-  return !getCookie(VISITOR_ID_KEY)
 }
