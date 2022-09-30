@@ -1,4 +1,4 @@
-import { AutoCaptureProps, EventAttributes } from './types'
+import { AutoCaptureProps, EventAttributes, Plugins } from './types'
 import {
   clearStoredEvents,
   getEventData,
@@ -8,7 +8,7 @@ import {
   storeEvent
 } from './utils'
 import { DEFAULT_ATTRIBUTES, DEFAULT_ELEMENTS } from './constant'
-
+import ScrollMap from './plugins/scrollMap'
 /**
  *  A library to provide an easiest and most comprehensive way to automatically capture the user
  *  interactions on your site, from the moment of installation forward. A single snippet grabs
@@ -23,14 +23,16 @@ export default class AutoCapture {
   private safelist: Array<string>
   private persistence: 'cookie' | 'localStorage' | 'memory'
   private onEventStored: (eventData: Record<string, any>) => void
+  private plugins: Plugins[] = []
+  private pluginInstance: any[] = []
 
-  constructor({ elements, safelist, attributes, persistence, onEventStored }: AutoCaptureProps) {
+  constructor({ elements, safelist, attributes, persistence, onEventStored, plugins }: AutoCaptureProps) {
     this.elements = elements || DEFAULT_ELEMENTS
     this.safelist = safelist || []
     this.attributes = attributes || DEFAULT_ATTRIBUTES
     this.persistence = persistence || 'memory'
     this.onEventStored = onEventStored || ((eventData: Record<string, any>) => ({}))
-
+    this.plugins = plugins || []
     window.autoCaptureEvents = []
   }
 
@@ -53,6 +55,16 @@ export default class AutoCapture {
 
     // On page load, capture page view again
     window.addEventListener('load', this.capturePageViewEvent.bind(this))
+
+    // Initialize plugins
+    this.plugins.forEach(plugin => {
+      if (plugin === 'scrollMap') {
+        this.pluginInstance.push(new ScrollMap({
+          persistence: this.persistence,
+          onEventStored: this.onEventStored
+        }))
+      }
+    })
   }
 
   /**

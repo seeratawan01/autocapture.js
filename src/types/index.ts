@@ -25,6 +25,11 @@ export type AutoCaptureProps = {
    * A Callback function fires on captured event stored.
    */
   onEventStored?: (eventData: Record<string, any>) => void
+
+  /**
+   * A list of plugins to use.
+   */
+  plugins?: Plugins[]
 }
 
 export type EventAttributes =
@@ -42,3 +47,5 @@ export type EventAttributes =
   | 'alt'
   | 'role'
   | string
+
+export type Plugins = 'scrollMap'

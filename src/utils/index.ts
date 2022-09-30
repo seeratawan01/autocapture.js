@@ -98,17 +98,7 @@ export function getEventData(
   // Add meta data
   data.meta = getMetaData()
 
-  // Add extra data for keyboard events
-  if (event instanceof KeyboardEvent) {
-    data.keyboard = {
-      key: event.key,
-      code: event.code,
-      location: event.location,
-      repeat: event.repeat
-    }
-  }
-
-  // Add extra data for error events
+  // Add extra data for error events (not tested)
   if (event instanceof ErrorEvent) {
     data.error = {
       message: event.message,
@@ -291,9 +281,9 @@ export function storeEvent(
   }
   if (persistence === 'memory') {
     if (window.autoCaptureEvents) {
-      window.autoCaptureEvents.push(data)
+      window.autoCaptureEvents.push(JSON.parse(data))
     } else {
-      window.autoCaptureEvents = [data]
+      window.autoCaptureEvents = [JSON.parse(data)]
     }
   }
 
@@ -317,7 +307,7 @@ export function getStoredEvents(persistence: 'cookie' | 'localStorage' | 'memory
     }
   }
   if (persistence === 'memory') {
-    return window.autoCaptureEvents.map((event: string) => JSON.parse(event))
+    return window.autoCaptureEvents || []
   }
   return []
 }
