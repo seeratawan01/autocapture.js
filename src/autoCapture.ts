@@ -4,9 +4,10 @@ import {
   getEventData,
   getPageViewData,
   getStoredEvents,
+  shouldCaptureDomEvent,
   storeEvent
 } from './utils'
-import { DEFAULT_ATTRIBUTES } from './constant'
+import { DEFAULT_ATTRIBUTES, DEFAULT_ELEMENTS } from './constant'
 
 /**
  *  A library to provide an easiest and most comprehensive way to automatically capture the user
@@ -14,18 +15,19 @@ import { DEFAULT_ATTRIBUTES } from './constant'
  *  every click, swipe, tap, page-view, and fill — forever.
  */
 export default class AutoCapture {
-  private elements: Array<HTMLElement | Window | Document>
+  /**
+   * A list of elements to capture events from. Defaults to ['a', 'button', 'form', 'input', 'select', 'textarea', 'label'].
+   */
+  private elements: string[]
   private attributes: Array<EventAttributes>
-  private debug: boolean
   private safelist: Array<string>
   private persistence: 'cookie' | 'localStorage' | 'memory'
   private onEventStored: (eventData: Record<string, any>) => void
 
-  constructor({ elements, safelist, attributes, debug, persistence, onEventStored }: AutoCaptureProps) {
-    this.elements = elements || [document]
+  constructor({ elements, safelist, attributes, persistence, onEventStored }: AutoCaptureProps) {
+    this.elements = elements || DEFAULT_ELEMENTS
     this.safelist = safelist || []
     this.attributes = attributes || DEFAULT_ATTRIBUTES
-    this.debug = debug || false
     this.persistence = persistence || 'memory'
     this.onEventStored = onEventStored || ((eventData: Record<string, any>) => ({}))
 
@@ -38,14 +40,13 @@ export default class AutoCapture {
    */
   public start(): void {
     console.log('start capturing user interactions')
-    this.elements.forEach(element => {
-      element.addEventListener('click', this.captureEvent.bind(this), true)
-      element.addEventListener('change', this.captureEvent.bind(this), true)
-      element.addEventListener('submit', this.captureEvent.bind(this), true)
-      element.addEventListener('touchstart', this.captureEvent.bind(this), true)
-      element.addEventListener('touchmove', this.captureEvent.bind(this), true)
-      element.addEventListener('touchcancel', this.captureEvent.bind(this), true)
-    })
+
+    document.addEventListener('click', this.captureEvent.bind(this), true)
+    document.addEventListener('change', this.captureEvent.bind(this), true)
+    document.addEventListener('submit', this.captureEvent.bind(this), true)
+    document.addEventListener('touchstart', this.captureEvent.bind(this), true)
+    document.addEventListener('touchmove', this.captureEvent.bind(this), true)
+    document.addEventListener('touchcancel', this.captureEvent.bind(this), true)
 
     // On route change, capture page view again
     window.addEventListener('popstate', this.capturePageViewEvent.bind(this))
@@ -58,20 +59,25 @@ export default class AutoCapture {
    * A function to stop capturing the user interactions on your site, from the moment of installation forward.
    */
   public stop(): void {
-    this.elements.forEach(element => {
-      element.removeEventListener('click', this.captureEvent.bind(this), true)
-      element.removeEventListener('change', this.captureEvent.bind(this), true)
-      element.removeEventListener('submit', this.captureEvent.bind(this), true)
-      element.removeEventListener('touchstart', this.captureEvent.bind(this), true)
-      element.removeEventListener('touchmove', this.captureEvent.bind(this), true)
-      element.removeEventListener('touchcancel', this.captureEvent.bind(this), true)
-    })
+    document.removeEventListener('click', this.captureEvent.bind(this), true)
+    document.removeEventListener('change', this.captureEvent.bind(this), true)
+    document.removeEventListener('submit', this.captureEvent.bind(this), true)
+    document.removeEventListener('touchstart', this.captureEvent.bind(this), true)
+    document.removeEventListener('touchmove', this.captureEvent.bind(this), true)
+    document.removeEventListener('touchcancel', this.captureEvent.bind(this), true)
   }
 
+
+  /**
+   * A function to capture the page view on your site.
+   * @param event
+   * @private
+   */
   private capturePageViewEvent() {
     const eventData = getPageViewData()
     storeEvent(eventData, this.persistence, this.onEventStored)
   }
+
 
   /**
    * A function to capture the user interactions on your site.
@@ -79,6 +85,11 @@ export default class AutoCapture {
    * @private
    */
   private captureEvent(event: Event): boolean | void {
+
+    // Skip the event if the target is not in the elements list
+    if (!shouldCaptureDomEvent(this.elements, event)) {
+      return false
+    }
 
     // Skip the event if the target is in the safe list selector
     if (this.safelist.some(selector => (event.target as HTMLElement).matches(selector))) {

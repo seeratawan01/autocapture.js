@@ -18,3 +18,6 @@ export const DEFAULT_ATTRIBUTES: EventAttributes[] = [
   'alt',
   'role'
 ]
+
+
+export const DEFAULT_ELEMENTS = ['a', 'button', 'form', 'input', 'select', 'textarea', 'label']

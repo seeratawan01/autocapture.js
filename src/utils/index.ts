@@ -59,6 +59,7 @@ export function getEventData(
   event: Event,
   attributes: Array<EventAttributes>
 ): Record<string, any> {
+
   const target = getEventTarget(event)
   const data: Record<string, any> = {
     event: event.type,
@@ -414,4 +415,39 @@ export function uuidv4(): string {
       v = c == 'x' ? r : (r & 0x3) | 0x8
     return v.toString(16)
   })
+}
+
+
+/**
+ * Check whether a DOM event should be "captured" or if it may contain sentitive data
+ * using a variety of heuristics.
+ * @param elements A list of html tags name to check
+ * @param {Event} event - event to check
+ * @returns {boolean} whether the event should be captured
+ */
+export function shouldCaptureDomEvent(elements: string[], event: Event): boolean {
+  const target = event.target as HTMLElement
+  const tagName = target.tagName.toLowerCase()
+  if (elements.indexOf(tagName) === -1) {
+    return false
+  }
+
+  const type = event.type
+  if (type === 'submit') {
+    return true
+  }
+
+  if (type === 'click' || type === 'mousedown' || type === 'mouseup') {
+    return true
+  }
+
+  if (type === 'input' || type === 'change') {
+    const inputType = target.getAttribute('type')
+    if (inputType === 'password' || inputType === 'email') {
+      return false
+    }
+    return true
+  }
+
+  return false
 }
