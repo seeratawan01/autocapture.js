@@ -55,6 +55,6 @@ export type EventAttributes =
   | 'role'
   | string
 
-export type Capturable = 'scroll' | 'click' | 'change' | 'submit' | 'touch' | 'page-view'
+export type Capturable = 'scroll' | 'click' | 'change' | 'submit' | 'touch' | 'page-view' | 'input'
 
 export type Persistence = 'memory' | 'localStorage' | 'cookie' | 'none'

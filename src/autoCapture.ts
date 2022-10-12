@@ -9,6 +9,7 @@ import {
 } from './utils'
 import { DEFAULT_ATTRIBUTES, DEFAULT_CAPTURE, DEFAULT_ELEMENTS } from './constant'
 import ScrollMap from './extra/scrollMap'
+
 /**
  *  A library to provide an easiest and most comprehensive way to automatically capture the user
  *  interactions on your site, from the moment of installation forward. A single snippet grabs
@@ -29,7 +30,14 @@ export default class AutoCapture {
   private captureEventHandler: OmitThisParameter<(event: Event) => (boolean | void)>
   private capturePageViewEventHandler: OmitThisParameter<() => void>
 
-  constructor({ elements, safelist, attributes, persistence, onEventCapture, capture }: AutoCaptureProps) {
+  constructor({
+                elements,
+                safelist,
+                attributes,
+                persistence,
+                onEventCapture,
+                capture
+              }: AutoCaptureProps) {
 
     // Default Values
     this.elements = elements || DEFAULT_ELEMENTS
@@ -66,6 +74,9 @@ export default class AutoCapture {
       // On page load, capture page view again
       window.addEventListener('load', this.capturePageViewEventHandler)
     }
+
+    // Capture input event
+    this.capturable.includes('input') && document.addEventListener('input', this.captureEventHandler, true)
 
 
     // Capture click event

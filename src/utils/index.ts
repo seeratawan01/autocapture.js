@@ -95,6 +95,11 @@ export function getEventData(
     data.touch = getTouchEventCoordinates(event)
   }
 
+  // Add extra data for input events
+  if (event instanceof Event && event.type.startsWith('input')) {
+    data.input = getInputEventValue(event)
+  }
+
   // Add meta data
   data.meta = getMetaData()
 
@@ -113,6 +118,16 @@ export function getEventData(
   data.visitor = getUserData()
 
   return data
+}
+
+/**
+ * Get the input event value
+ */
+export function getInputEventValue(event: Event): Record<string, any> {
+  const target = getEventTarget(event)
+  return {
+    value: (target as HTMLInputElement).value
+  }
 }
 
 /**
