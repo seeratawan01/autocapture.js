@@ -8,6 +8,8 @@ click, touch, page-view, and fill — forever.
 
 - **User Behavior Analysis** - Understand how users interact with your site, and how they use your
   site to achieve their goals.
+- **Track User Journeys** - Track the user journeys from the moment they land on your site, to the
+  moment they leave.
 - **Custom Analytics Tool** - Build your own analytics tools and libraries using AutoCapture.js to
   track user behavior, and use the data to improve your site.
 - **Build Your Own Heatmap** - Build your own heatmap to understand how users interact with your
@@ -19,19 +21,6 @@ click, touch, page-view, and fill — forever.
 - **Build Your Own Scroll Analytics** - Build your own scroll analytics to understand how users
   scroll on your site.
 
-## Roadmap
-
-- [x] Capture clicks
-- [x] Capture scrolls
-- [x] Capture form submits
-- [x] Capture input fills
-- [x] Capture page views
-- [x] Capture swipes (touch)
-- [ ] Capture mouse movements
-- [ ] Capture mouse drags
-- [ ] Capture mouse double clicks
-- [ ] Capture mouse right clicks
-- [ ] Capture idle/active time
 
 ## Installation
 
@@ -120,6 +109,24 @@ site, from the moment of installation forward.
 | getCapturedEvents | Get all the captured events. |
 | getPageViews | Get all the captured page views. |
 
+## Roadmap
+
+- [x] Capture clicks
+- [x] Capture scrolls
+- [x] Capture form submits
+- [x] Capture input fills
+- [x] Capture page views
+- [x] Capture swipes (touch)
+- [ ] Capture mouse movements
+- [ ] Capture mouse drags
+- [ ] Capture mouse double clicks
+- [ ] Capture mouse right clicks
+- [ ] Capture idle/active time
+
+
 ## Credits
 
 Made with :heart: by [@seeratawan01](https://github.com/seeratawan01).
+
+## License
+MIT License - see the [LICENSE](LICENSE) file for details.
