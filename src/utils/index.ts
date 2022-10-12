@@ -431,11 +431,15 @@ export function shouldCaptureDomEvent(elements: string[], event: Event): boolean
     return true
   }
 
+  if (type === 'touchstart' || type === 'touchmove' || type === 'touchend') {
+    return true
+  }
+
   if (type === 'input' || type === 'change') {
-    const inputType = target.getAttribute('type')
-    if (inputType === 'password' || inputType === 'email') {
-      return false
-    }
+    // const inputType = target.getAttribute('type')
+    // if (inputType === 'password' || inputType === 'email') {
+    //   return false
+    // }
     return true
   }
 
