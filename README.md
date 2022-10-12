@@ -1,7 +1,7 @@
 # AutoCapture.js
 
-A library to provide an easiest and most comprehensive way to automatically capture the user
-interactions on your site, from the moment of installation forward. A single snippet grabs every
+A simple javascript library to provide an easiest and most comprehensive way to automatically capture the user
+interactions on the website, from the moment of installation forward. A single snippet grabs every
 click, touch, page-view, and fill — forever.
 
 ## Use Cases
