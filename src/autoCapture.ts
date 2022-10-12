@@ -1,4 +1,4 @@
-import { AutoCaptureProps, EventAttributes, Plugins } from './types'
+import { AutoCaptureProps, Capturable, EventAttributes } from './types'
 import {
   clearStoredEvents,
   getEventData,
@@ -8,7 +8,7 @@ import {
   storeEvent
 } from './utils'
 import { DEFAULT_ATTRIBUTES, DEFAULT_ELEMENTS } from './constant'
-import ScrollMap from './plugins/scrollMap'
+import ScrollMap from './extra/scrollMap'
 /**
  *  A library to provide an easiest and most comprehensive way to automatically capture the user
  *  interactions on your site, from the moment of installation forward. A single snippet grabs
@@ -22,17 +22,17 @@ export default class AutoCapture {
   private attributes: Array<EventAttributes>
   private safelist: Array<string>
   private persistence: 'cookie' | 'localStorage' | 'memory'
-  private onEventStored: (eventData: Record<string, any>) => void
-  private plugins: Plugins[] = []
+  private onEventCapture: (eventData: Record<string, any>) => void
+  private capturable: Capturable[]
   private pluginInstance: any[] = []
 
-  constructor({ elements, safelist, attributes, persistence, onEventStored, plugins }: AutoCaptureProps) {
+  constructor({ elements, safelist, attributes, persistence, onEventCapture, capture }: AutoCaptureProps) {
     this.elements = elements || DEFAULT_ELEMENTS
     this.safelist = safelist || []
     this.attributes = attributes || DEFAULT_ATTRIBUTES
     this.persistence = persistence || 'memory'
-    this.onEventStored = onEventStored || ((eventData: Record<string, any>) => ({}))
-    this.plugins = plugins || []
+    this.onEventCapture = onEventCapture || ((eventData: Record<string, any>) => ({}))
+    this.capturable = capture || ['click', 'change', 'submit']
     window.autoCaptureEvents = []
   }
 
@@ -43,28 +43,41 @@ export default class AutoCapture {
   public start(): void {
     console.log('start capturing user interactions')
 
-    document.addEventListener('click', this.captureEvent.bind(this), true)
-    document.addEventListener('change', this.captureEvent.bind(this), true)
-    document.addEventListener('submit', this.captureEvent.bind(this), true)
-    document.addEventListener('touchstart', this.captureEvent.bind(this), true)
-    document.addEventListener('touchmove', this.captureEvent.bind(this), true)
-    document.addEventListener('touchcancel', this.captureEvent.bind(this), true)
+    // Capture page view event
+    if (this.capturable.includes('page-view')) {
+      // On route change, capture page view again
+      window.addEventListener('popstate', this.capturePageViewEvent.bind(this))
 
-    // On route change, capture page view again
-    window.addEventListener('popstate', this.capturePageViewEvent.bind(this))
+      // On page load, capture page view again
+      window.addEventListener('load', this.capturePageViewEvent.bind(this))
+    }
 
-    // On page load, capture page view again
-    window.addEventListener('load', this.capturePageViewEvent.bind(this))
 
-    // Initialize plugins
-    this.plugins.forEach(plugin => {
-      if (plugin === 'scrollMap') {
-        this.pluginInstance.push(new ScrollMap({
-          persistence: this.persistence,
-          onEventStored: this.onEventStored
-        }))
-      }
-    })
+    // Capture click event
+    this.capturable.includes('click') && document.addEventListener('click', this.captureEvent.bind(this), true)
+
+    // Capture change event
+    this.capturable.includes('change') && document.addEventListener('change', this.captureEvent.bind(this), true)
+
+    // Capture submit event
+    this.capturable.includes('submit') && document.addEventListener('submit', this.captureEvent.bind(this), true)
+
+    // Capture touch events
+    if (this.capturable.includes('touch')) {
+      document.addEventListener('touchstart', this.captureEvent.bind(this), true)
+      document.addEventListener('touchmove', this.captureEvent.bind(this), true)
+      document.addEventListener('touchcancel', this.captureEvent.bind(this), true)
+    }
+
+    // Capture scroll event
+    if (this.capturable.includes('scroll')) {
+      let scrollMap = new ScrollMap({
+        persistence: this.persistence,
+        onEventCapture: this.onEventCapture
+      })
+
+    }
+
   }
 
   /**
@@ -77,6 +90,8 @@ export default class AutoCapture {
     document.removeEventListener('touchstart', this.captureEvent.bind(this), true)
     document.removeEventListener('touchmove', this.captureEvent.bind(this), true)
     document.removeEventListener('touchcancel', this.captureEvent.bind(this), true)
+    window.removeEventListener('popstate', this.capturePageViewEvent.bind(this))
+    window.removeEventListener('load', this.capturePageViewEvent.bind(this))
   }
 
 
@@ -87,7 +102,7 @@ export default class AutoCapture {
    */
   private capturePageViewEvent() {
     const eventData = getPageViewData()
-    storeEvent(eventData, this.persistence, this.onEventStored)
+    storeEvent(eventData, this.persistence, this.onEventCapture)
   }
 
 
@@ -111,7 +126,7 @@ export default class AutoCapture {
     const data = getEventData(event, this.attributes)
 
 
-    storeEvent(data, this.persistence, this.onEventStored)
+    storeEvent(data, this.persistence, this.onEventCapture)
 
   }
 
@@ -123,14 +138,14 @@ export default class AutoCapture {
   }
 
   /**
-   * A function to clear the captured user interactions on your site, from the moment of installation forward.
+   * A function to clear the captured user interactions on your site.
    */
   public clearCapturedEvents(): void {
     clearStoredEvents(this.persistence)
   }
 
   /**
-   * A function to get the captured user's page views on your site.
+   * A function to get only the captured user's page views on your site.
    */
   public getPageViews(): any[] {
     return getStoredEvents(this.persistence).filter(event => event.type === 'page-view')

@@ -139,6 +139,13 @@
     <div class='fakeimg' style='height:60px;'>Image</div>
   </div>
   <div class='main'>
+    <form onsubmit='false'>
+      <label for="fname">First name:</label>
+      <input type="text" id="fname" name="fname"><br><br>
+      <label for="lname">Last name:</label>
+      <input type="text" id="lname" name="lname"><br><br>
+      <input type="submit" value="Submit">
+    </form>
     <h2>TITLE HEADING</h2>
     <h5>Title description, Dec 7, 2017</h5>
     <div class='fakeimg' style='height:200px;'>Image</div>
@@ -164,15 +171,18 @@
 <script src='./dist/autoCapture.umd.min.js'></script>
 <script>
 
-  console.log('AutoCapture', AutoCapture)
-
-
   const instance = new AutoCapture({
     safelist: ['option[value="volvo"]', 'option[value="saab"]'],
     persistence: 'memory',
-    plugins: ['scrollMap', 'clickMap', 'formMap', 'inputMap', 'selectMap'],
-    onEventStored: (event) => {
+    capture: ['scroll', 'click', 'input', 'change', 'page-view'],
+    onEventCapture: (event) => {
       console.log('Event stored', event)
+
+      // Send event to server
+      // ...
+
+      // Remove event from storage
+      // ...
     }
   })
 

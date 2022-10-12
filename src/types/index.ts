@@ -7,29 +7,35 @@ export type AutoCaptureProps = {
   elements?: string[]
 
   /**
-   * A list of attributes to capture from the event target. Defaults to `['text', 'className', 'value', 'type']`.
+   * A list of attributes to capture from the event target. Defaults to `['text', 'className', 'value', 'type', 'tagName', 'href', 'src', 'id', 'name', 'placeholder', 'title', 'alt', 'role']`.
+   * @example ['tagName', 'className', 'value', 'type']
    */
   attributes?: Array<EventAttributes>
 
   /**
    * A list of selectors to ignore to avoid capturing any sensitive data. Defaults to `[]`.
+   * @example ['input[type="password"]'] to ignore all password inputs.
    */
   safelist?: Array<string>
 
   /**
    * A string to set the persistence method. Defaults to `memory`.
+   * - `memory`: The events are stored in memory and are lost when the page is refreshed.
+   * - `localStorage`: The events are stored in the browser's local storage and are available after the page is refreshed.
+   * - `cookie`: The events are stored in the browser's cookie and are available after the page is refreshed.
    */
   persistence?: 'cookie' | 'localStorage' | 'memory'
 
   /**
    * A Callback function fires on captured event stored.
    */
-  onEventStored?: (eventData: Record<string, any>) => void
+  onEventCapture?: (eventData: Record<string, any>) => void
 
   /**
-   * A list of plugins to use.
+   * A list of events to capture. Defaults to `['click', 'change', 'submit']`.
+   * @example ['click', 'change', 'submit', 'page-view', 'touch', 'scroll']
    */
-  plugins?: Plugins[]
+  capture?: Array<Capturable>
 }
 
 export type EventAttributes =
@@ -48,4 +54,4 @@ export type EventAttributes =
   | 'role'
   | string
 
-export type Plugins = 'scrollMap'
+export type Capturable = 'scroll' | 'click' | 'change' | 'submit' | 'touch' | 'page-view'

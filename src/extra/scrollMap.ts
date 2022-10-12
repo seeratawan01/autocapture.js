@@ -8,18 +8,18 @@ export default class ScrollMap {
 
   private scrollPercentage: number
   private persistence: 'cookie' | 'localStorage' | 'memory'
-  private onEventStored: (eventData: Record<string, any>) => void
+  private onEventCapture: (eventData: Record<string, any>) => void
 
   /**
    * Scroll map constructor function.
    */
   constructor({
                 persistence,
-                onEventStored
+                onEventCapture
               }: AutoCaptureProps) {
     this.scrollPercentage = 0.0
     this.persistence = persistence || 'memory'
-    this.onEventStored = onEventStored || ((eventData: Record<string, any>) => ({}))
+    this.onEventCapture = onEventCapture || ((eventData: Record<string, any>) => ({}))
 
     // Init scroll map events capturing
     this.init()
@@ -79,6 +79,6 @@ export default class ScrollMap {
     }
 
 
-    storeEvent(data, this.persistence, this.onEventStored)
+    storeEvent(data, this.persistence, this.onEventCapture)
   }
 }
