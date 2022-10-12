@@ -1,4 +1,4 @@
-import { EventAttributes } from '../types'
+import { EventAttributes, Persistence } from '../types'
 import { STORAGE_KEY, VISITOR_ID_KEY } from '../constant'
 
 /**
@@ -255,7 +255,7 @@ export function getEventTargetValue(event: Event, attribute: string): string | n
  */
 export function storeEvent(
   eventData: Record<string, any>,
-  persistence: 'cookie' | 'localStorage' | 'memory',
+  persistence: Persistence,
   callback: (eventData: Record<string, any>) => void
 ): void {
   const data = JSON.stringify(eventData)
@@ -293,7 +293,7 @@ export function storeEvent(
 /**
  * Method to get the event data from the cookies | local storage | memory
  */
-export function getStoredEvents(persistence: 'cookie' | 'localStorage' | 'memory'): any[] {
+export function getStoredEvents(persistence: Persistence): any[] {
   if (persistence === 'cookie') {
     let existingData = getCookie(STORAGE_KEY)
     if (existingData) {
@@ -315,7 +315,7 @@ export function getStoredEvents(persistence: 'cookie' | 'localStorage' | 'memory
 /**
  * Method to clear the event data from the cookies | local storage | memory
  */
-export function clearStoredEvents(persistence: 'cookie' | 'localStorage' | 'memory'): void {
+export function clearStoredEvents(persistence: Persistence): void {
   if (persistence === 'cookie') {
     setCookie(STORAGE_KEY, '')
   }

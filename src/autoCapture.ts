@@ -1,4 +1,4 @@
-import { AutoCaptureProps, Capturable, EventAttributes } from './types'
+import { AutoCaptureProps, Capturable, EventAttributes, Persistence } from './types'
 import {
   clearStoredEvents,
   getEventData,
@@ -7,7 +7,7 @@ import {
   shouldCaptureDomEvent,
   storeEvent
 } from './utils'
-import { DEFAULT_ATTRIBUTES, DEFAULT_ELEMENTS } from './constant'
+import { DEFAULT_ATTRIBUTES, DEFAULT_CAPTURE, DEFAULT_ELEMENTS } from './constant'
 import ScrollMap from './extra/scrollMap'
 /**
  *  A library to provide an easiest and most comprehensive way to automatically capture the user
@@ -21,19 +21,34 @@ export default class AutoCapture {
   private elements: string[]
   private attributes: Array<EventAttributes>
   private safelist: Array<string>
-  private persistence: 'cookie' | 'localStorage' | 'memory'
+  private persistence: Persistence
   private onEventCapture: (eventData: Record<string, any>) => void
   private capturable: Capturable[]
-  private pluginInstance: any[] = []
+  private scrollMap: ScrollMap | null = null
+  private eventCapturingStopped: boolean = false
+  private captureEventHandler: OmitThisParameter<(event: Event) => (boolean | void)>
+  private capturePageViewEventHandler: OmitThisParameter<() => void>
 
   constructor({ elements, safelist, attributes, persistence, onEventCapture, capture }: AutoCaptureProps) {
+
+    // Default Values
     this.elements = elements || DEFAULT_ELEMENTS
     this.safelist = safelist || []
     this.attributes = attributes || DEFAULT_ATTRIBUTES
     this.persistence = persistence || 'memory'
+    this.capturable = capture || DEFAULT_CAPTURE
+
+    // On event capture callback
     this.onEventCapture = onEventCapture || ((eventData: Record<string, any>) => ({}))
-    this.capturable = capture || ['click', 'change', 'submit']
+
+    // Global event storage in-memory
     window.autoCaptureEvents = []
+
+    // save the event handler, so it can be used in multiple places
+    this.captureEventHandler = this.captureEvent.bind(this)
+
+    // save the page view event handler, so it can be used in multiple places
+    this.capturePageViewEventHandler = this.capturePageViewEvent.bind(this)
   }
 
   /**
@@ -46,52 +61,55 @@ export default class AutoCapture {
     // Capture page view event
     if (this.capturable.includes('page-view')) {
       // On route change, capture page view again
-      window.addEventListener('popstate', this.capturePageViewEvent.bind(this))
+      window.addEventListener('popstate', this.capturePageViewEventHandler)
 
       // On page load, capture page view again
-      window.addEventListener('load', this.capturePageViewEvent.bind(this))
+      window.addEventListener('load', this.capturePageViewEventHandler)
     }
 
 
     // Capture click event
-    this.capturable.includes('click') && document.addEventListener('click', this.captureEvent.bind(this), true)
+    this.capturable.includes('click') && document.addEventListener('click', this.captureEventHandler, true)
 
     // Capture change event
-    this.capturable.includes('change') && document.addEventListener('change', this.captureEvent.bind(this), true)
+    this.capturable.includes('change') && document.addEventListener('change', this.captureEventHandler, true)
 
     // Capture submit event
-    this.capturable.includes('submit') && document.addEventListener('submit', this.captureEvent.bind(this), true)
+    this.capturable.includes('submit') && document.addEventListener('submit', this.captureEventHandler, true)
 
     // Capture touch events
     if (this.capturable.includes('touch')) {
-      document.addEventListener('touchstart', this.captureEvent.bind(this), true)
-      document.addEventListener('touchmove', this.captureEvent.bind(this), true)
-      document.addEventListener('touchcancel', this.captureEvent.bind(this), true)
+      document.addEventListener('touchstart', this.captureEventHandler, true)
+      document.addEventListener('touchmove', this.captureEventHandler, true)
+      document.addEventListener('touchcancel', this.captureEventHandler, true)
     }
 
     // Capture scroll event
     if (this.capturable.includes('scroll')) {
-      let scrollMap = new ScrollMap({
+      this.scrollMap = new ScrollMap({
         persistence: this.persistence,
         onEventCapture: this.onEventCapture
       })
 
+      this.scrollMap.start()
     }
 
   }
 
   /**
-   * A function to stop capturing the user interactions on your site, from the moment of installation forward.
+   * A function to stop capturing the user interactions on your site.
    */
   public stop(): void {
-    document.removeEventListener('click', this.captureEvent.bind(this), true)
-    document.removeEventListener('change', this.captureEvent.bind(this), true)
-    document.removeEventListener('submit', this.captureEvent.bind(this), true)
-    document.removeEventListener('touchstart', this.captureEvent.bind(this), true)
-    document.removeEventListener('touchmove', this.captureEvent.bind(this), true)
-    document.removeEventListener('touchcancel', this.captureEvent.bind(this), true)
-    window.removeEventListener('popstate', this.capturePageViewEvent.bind(this))
-    window.removeEventListener('load', this.capturePageViewEvent.bind(this))
+    document.removeEventListener('click', this.captureEventHandler, true)
+    document.removeEventListener('change', this.captureEventHandler, true)
+    document.removeEventListener('submit', this.captureEventHandler, true)
+    document.removeEventListener('touchstart', this.captureEventHandler, true)
+    document.removeEventListener('touchmove', this.captureEventHandler, true)
+    document.removeEventListener('touchcancel', this.captureEventHandler, true)
+    window.removeEventListener('popstate', this.capturePageViewEventHandler)
+    window.removeEventListener('load', this.capturePageViewEventHandler)
+
+    this.scrollMap && this.scrollMap.stop()
   }
 
 
@@ -131,17 +149,17 @@ export default class AutoCapture {
   }
 
   /**
-   * A function to get the captured user interactions on your site, from the moment of installation forward.
+   * A function to clear the captured user interactions on your site.
    */
-  public getCapturedEvents(): any[] {
-    return getStoredEvents(this.persistence)
+  public clear(): void {
+    clearStoredEvents(this.persistence)
   }
 
   /**
-   * A function to clear the captured user interactions on your site.
+   * A function to get the captured user interactions on your site.
    */
-  public clearCapturedEvents(): void {
-    clearStoredEvents(this.persistence)
+  public getCapturedEvents(): any[] {
+    return getStoredEvents(this.persistence)
   }
 
   /**

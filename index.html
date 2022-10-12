@@ -139,6 +139,11 @@
     <div class='fakeimg' style='height:60px;'>Image</div>
   </div>
   <div class='main'>
+
+    <button id='start-btn'>Start</button>
+    <button id='stop-btn'>Stop</button>
+    <button id='clear-btn'>Clear</button>
+
     <form onsubmit='false'>
       <label for="fname">First name:</label>
       <input type="text" id="fname" name="fname"><br><br>
@@ -187,6 +192,19 @@
   })
 
   instance.start()
+
+
+  document.getElementById('start-btn').addEventListener('click', () => {
+    instance.start()
+  })
+
+  document.getElementById('stop-btn').addEventListener('click', () => {
+    instance.stop()
+  })
+
+  document.getElementById('clear-btn').addEventListener('click', () => {
+    instance.clear()
+  })
 
 </script>
 </body>

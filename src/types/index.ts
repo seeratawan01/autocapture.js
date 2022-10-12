@@ -23,8 +23,9 @@ export type AutoCaptureProps = {
    * - `memory`: The events are stored in memory and are lost when the page is refreshed.
    * - `localStorage`: The events are stored in the browser's local storage and are available after the page is refreshed.
    * - `cookie`: The events are stored in the browser's cookie and are available after the page is refreshed.
+   * - `none`: The events are not stored anywhere but are available in the callback function.
    */
-  persistence?: 'cookie' | 'localStorage' | 'memory'
+  persistence?: Persistence
 
   /**
    * A Callback function fires on captured event stored.
@@ -55,3 +56,5 @@ export type EventAttributes =
   | string
 
 export type Capturable = 'scroll' | 'click' | 'change' | 'submit' | 'touch' | 'page-view'
+
+export type Persistence = 'memory' | 'localStorage' | 'cookie' | 'none'

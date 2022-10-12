@@ -2,13 +2,14 @@
  * Scroll maps show you the exact percentage of people who scroll down to any point on the page: the redder the area, the more visitors saw it.
  */
 import { getEventData, storeEvent } from '../utils'
-import { AutoCaptureProps } from '../types'
+import { AutoCaptureProps, Persistence } from '../types'
 
 export default class ScrollMap {
 
   private scrollPercentage: number
-  private persistence: 'cookie' | 'localStorage' | 'memory'
+  private persistence: Persistence
   private onEventCapture: (eventData: Record<string, any>) => void
+  private captureScrollEventHandler: OmitThisParameter<(event: Event) => void>
 
   /**
    * Scroll map constructor function.
@@ -21,23 +22,31 @@ export default class ScrollMap {
     this.persistence = persistence || 'memory'
     this.onEventCapture = onEventCapture || ((eventData: Record<string, any>) => ({}))
 
-    // Init scroll map events capturing
-    this.init()
+    // saving the scroll event handler to be able to remove it later
+    this.captureScrollEventHandler = this.captureScrollEvent.bind(this)
   }
+
 
   /**
    * A function to start capturing the scroll events on your site.
    */
-  public init(): void {
+  public start(): void {
     console.log('start capturing scroll events')
     this.bindScrollEvent()
+  }
+
+  /**
+   * A function to stop capturing the scroll events on your site.
+   */
+  public stop(): void {
+    window.removeEventListener('scroll', this.captureScrollEventHandler)
   }
 
   /**
    * Bind scroll event to the window.
    */
   private bindScrollEvent(): void {
-    window.addEventListener('scroll', this.captureScrollEvent.bind(this))
+    window.addEventListener('scroll', this.captureScrollEventHandler)
   }
 
   /**
@@ -66,7 +75,6 @@ export default class ScrollMap {
    * A function to send the scroll percentage to the server.
    */
   private sendScrollPercentage(event: Event): void {
-    console.log('scroll percentage sent to the server')
 
     const data = {
       ...getEventData(event, []),
