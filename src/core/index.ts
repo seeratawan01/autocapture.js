@@ -225,7 +225,7 @@ export function getEventTargetValue(event: Event, attribute: string): string | n
     return (target as HTMLInputElement).value
   }
   if (attribute === 'type') {
-    return event.type
+    return target.getAttribute('type')
   }
   if (attribute === 'tagName') {
     return target.tagName.toLowerCase()
@@ -438,7 +438,7 @@ export function shouldCaptureDomEvent(elements: string[], event: Event): boolean
     return true
   }
 
-  if (type === 'click' || type === 'mousedown' || type === 'mouseup') {
+  if (type === 'click' || type === 'mousedown' || type === 'mouseup' || type === 'dblclick' || type === 'contextmenu') {
     return true
   }
 

@@ -118,9 +118,9 @@ site, from the moment of installation forward.
 - [x] Capture page views
 - [x] Capture swipes (touch)
 - [x] Capture mouse movements
+- [x] Capture mouse double clicks
+- [x] Capture mouse right clicks
 - [ ] Capture mouse drags
-- [ ] Capture mouse double clicks
-- [ ] Capture mouse right clicks
 - [ ] Capture idle/active time
 
 

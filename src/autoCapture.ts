@@ -10,7 +10,7 @@ import {
 } from './core'
 import { DEFAULT_ATTRIBUTES, DEFAULT_CAPTURE, DEFAULT_ELEMENTS } from './constant'
 import ScrollMap from './extensions/scrollMap'
-import MouseMovement from './extensions/MouceMovement'
+import MouseMovement from './extensions/mouceMovement'
 
 
 /**
@@ -81,9 +81,14 @@ export default class AutoCapture extends RootCapture{
     // Capture input event
     this.capturable.includes('input') && document.addEventListener('input', this.captureEventHandler, true)
 
-
     // Capture click event
     this.capturable.includes('click') && document.addEventListener('click', this.captureEventHandler, true)
+
+    // Capture double click event
+    this.capturable.includes('double-click') && document.addEventListener('dblclick', this.captureEventHandler, true)
+
+    // Capture right click event
+    this.capturable.includes('right-click') && document.addEventListener('contextmenu', this.captureEventHandler, true)
 
     // Capture change event
     this.capturable.includes('change') && document.addEventListener('change', this.captureEventHandler, true)
