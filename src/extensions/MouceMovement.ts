@@ -42,3 +42,5 @@ export default class MouseMovement extends RootCapture {
 
 
 }
+
+//https://incolumitas.com/2020/12/24/recording-mouse-movements-with-javascript/
