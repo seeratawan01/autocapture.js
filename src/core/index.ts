@@ -48,7 +48,7 @@ export function getPageViewData(): Record<string, any> {
   data.meta = getMetaData()
 
   // Add extensions visitor related data
-  data.visitor = getUserData()
+  data.session = getSessionData()
 
   return data
 }
@@ -115,8 +115,8 @@ export function getEventData(
     }
   }
 
-  // Add extensions visitor related data
-  data.visitor = getUserData()
+  // Add extensions session related data
+  data.session = getSessionData()
 
   return data
 }
@@ -132,9 +132,9 @@ export function getInputEventValue(event: Event): Record<string, any> {
 }
 
 /**
- * Get User data from the captured event
+ * Get Session related data from the captured event
  */
-export function getUserData(): Record<string, any> {
+export function getSessionData(): Record<string, any> {
   return {
     id: getVisitorId()
   }
@@ -184,14 +184,9 @@ export function getTouchEventCoordinates(event: Event): Record<string, any> {
  * Get Event coordinates relative to the viewport
  */
 export function getMouseEventCoordinates(event: MouseEvent): { x: number; y: number } {
-  const target = getEventTarget(event)
-  if (!target) {
-    return { x: 0, y: 0 }
-  }
-  const rect = target.getBoundingClientRect()
   return {
-    x: event.clientX - rect.left,
-    y: event.clientY - rect.top
+    x: event.clientX,
+    y: event.clientY
   }
 }
 

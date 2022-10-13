@@ -52,7 +52,7 @@ away.
 
 ```javascript
  const instance = new AutoCapture({
-  safelist: [['input[type="password"]']],
+  safelist: ['input[type="password"]'],
   persistence: 'memory',
   capture: ['scroll', 'click', 'input', 'change', 'page-view'],
   onEventCapture: (event) => {
@@ -81,7 +81,7 @@ site, from the moment of installation forward.
   - `cookie` - Events are stored in the browser's cookie and are persisted across sessions.
   - `none` - Events are not stored anywhere.
 - **Capture** - Capture is the list of events you want to capture. You can choose between `scroll`
-  , `click`, `input`, `change`, `page-view`, `touch`. `scroll`, `submit` are the default values.
+  , `click`, `input`, `change`, `page-view`, `touch`, `scroll`, `submit`, `mouse-movement` are the default values.
 - **onEventCapture** - onEventCapture is a callback function that will be called every time an event
   is captured. You can use this callback to send the captured events to your server.
   - You can use this callback to send the captured events to your server.
@@ -90,14 +90,14 @@ site, from the moment of installation forward.
 
 ## Complete Options List
 
-| Option | Type | Default                                                         | Description                                                                                                                                                            |
-| --- | --- |-----------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| safelist | Array | []                                                              | Safelist is a list of CSS selectors that you want to ignore. For example, you can ignore all the password inputs by adding `input[type="password"]` to the safelist.   |
-| persistence | String | 'memory'                                                        | Persistence is the way you want to store the captured events. You can choose between `memory`, `localStorage`, `cookie` and `none`. `memory` is the default value.     |
-| capture | Array | ['click', 'change', 'submit']                                   | Capture is the list of events you want to capture. You can choose between `scroll`, `click`, `input`, `change`, `page-view`, `touch`, `submit` are the default values. |
-| onEventCapture | Function | (capturedEvent: any) => {}                                      | onEventCapture is a callback function that will be called every time an event is captured. You can use this callback to send the captured events to your server.       |
-| elements | Array | ['a', 'button', 'form', 'input', 'select', 'textarea', 'label'] | A list of elements to capture events from.                                                                                                                             |
-| attributes | Array | ['text', 'className', 'value', 'type', 'tagName', 'href', 'src', 'id', 'name', 'placeholder', 'title', 'alt', 'role']                                                                | A list of attributes to capture from the elements.                                                                                                                     |
+| Option | Type | Default                                                         | Description                                                                                                                                                              |
+| --- | --- |-----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| safelist | Array | []                                                              | Safelist is a list of CSS selectors that you want to ignore. For example, you can ignore all the password inputs by adding `input[type="password"]` to the safelist.     |
+| persistence | String | 'memory'                                                        | Persistence is the way you want to store the captured events. You can choose between `memory`, `localStorage`, `cookie` and `none`. `memory` is the default value.       |
+| capture | Array | ['click', 'change', 'submit']                                   | Capture is the list of events you want to capture. You can choose between `scroll`, `click`, `input`, `change`, `page-view`, `touch`, `submit`, `mouse-movement` are the default values. |
+| onEventCapture | Function | (capturedEvent: any) => {}                                      | onEventCapture is a callback function that will be called every time an event is captured. You can use this callback to send the captured events to your server.         |
+| elements | Array | ['a', 'button', 'form', 'input', 'select', 'textarea', 'label'] | A list of elements to capture events from.                                                                                                                               |
+| attributes | Array | ['text', 'className', 'value', 'type', 'tagName', 'href', 'src', 'id', 'name', 'placeholder', 'title', 'alt', 'role']                                                                | A list of attributes to capture from the elements.                                                                                                                       |
 
 ## Available Public Methods
 
@@ -117,7 +117,7 @@ site, from the moment of installation forward.
 - [x] Capture input fills
 - [x] Capture page views
 - [x] Capture swipes (touch)
-- [ ] Capture mouse movements
+- [x] Capture mouse movements
 - [ ] Capture mouse drags
 - [ ] Capture mouse double clicks
 - [ ] Capture mouse right clicks

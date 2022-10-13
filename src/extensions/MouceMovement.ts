@@ -1,7 +1,7 @@
 /**
  * Recording visitor's mouse movements
  */
-import { RootCapture, storeEvent } from '../core'
+import { getEventData, getMouseEventCoordinates, RootCapture, storeEvent } from '../core'
 import { AutoCaptureProps } from '../types'
 
 export default class MouseMovement extends RootCapture {
@@ -26,21 +26,15 @@ export default class MouseMovement extends RootCapture {
   }
 
   protected captureEvent(event: Event): void {
-    const eventData = this.getMouseMovementData(event)
+    const eventData = {
+      ...getEventData(event, []),
+      mouse: getMouseEventCoordinates(event as MouseEvent)
+    }
     this.onEventCapture(eventData)
     storeEvent(eventData, this.persistence, this.onEventCapture)
-  }
-
-  private getMouseMovementData(event: Event): Record<string, any> {
-    const { clientX, clientY } = event as MouseEvent
-    return {
-      type: 'mouse_movement',
-      clientX,
-      clientY,
-    }
   }
 
 
 }
 
-//https://incolumitas.com/2020/12/24/recording-mouse-movements-with-javascript/
+// https://incolumitas.com/2020/12/24/recording-mouse-movements-with-javascript/

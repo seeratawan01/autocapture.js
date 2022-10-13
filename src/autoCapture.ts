@@ -10,6 +10,7 @@ import {
 } from './core'
 import { DEFAULT_ATTRIBUTES, DEFAULT_CAPTURE, DEFAULT_ELEMENTS } from './constant'
 import ScrollMap from './extensions/scrollMap'
+import MouseMovement from './extensions/MouceMovement'
 
 
 /**
@@ -26,9 +27,9 @@ export default class AutoCapture extends RootCapture{
   private safelist: Array<string>
   private capturable: Capturable[]
   private scrollMap: ScrollMap | null = null
-  private eventCapturingStopped: boolean = false
   private captureEventHandler: OmitThisParameter<(event: Event) => (boolean | void)>
   private capturePageViewEventHandler: OmitThisParameter<() => void>
+  private mouseMovement: MouseMovement | null = null
 
   constructor({
                 elements,
@@ -105,6 +106,17 @@ export default class AutoCapture extends RootCapture{
       })
 
       this.scrollMap.start()
+    }
+
+    // Capture mouse movement event
+    if (this.capturable.includes('mouse-movement')) {
+
+      this.mouseMovement = new MouseMovement({
+        persistence: this.persistence,
+        onEventCapture: this.onEventCapture
+      })
+
+      this.mouseMovement.start()
     }
 
   }
