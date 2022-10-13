@@ -1,14 +1,13 @@
 /**
  * Scroll maps show you the exact percentage of people who scroll down to any point on the page: the redder the area, the more visitors saw it.
  */
-import { getEventData, storeEvent } from '../utils'
+import { getEventData, storeEvent, RootCapture } from '../core'
 import { AutoCaptureProps, Persistence } from '../types'
 
-export default class ScrollMap {
+
+export default class ScrollMap extends RootCapture{
 
   private scrollPercentage: number
-  private persistence: Persistence
-  private onEventCapture: (eventData: Record<string, any>) => void
   private captureScrollEventHandler: OmitThisParameter<(event: Event) => void>
 
   /**
@@ -18,12 +17,14 @@ export default class ScrollMap {
                 persistence,
                 onEventCapture
               }: AutoCaptureProps) {
+    super({
+      persistence,
+      onEventCapture
+    })
     this.scrollPercentage = 0.0
-    this.persistence = persistence || 'memory'
-    this.onEventCapture = onEventCapture || ((eventData: Record<string, any>) => ({}))
 
     // saving the scroll event handler to be able to remove it later
-    this.captureScrollEventHandler = this.captureScrollEvent.bind(this)
+    this.captureScrollEventHandler = this.captureEvent.bind(this)
   }
 
 
@@ -52,7 +53,7 @@ export default class ScrollMap {
   /**
    * A function to capture the scroll events on your site.
    */
-  private captureScrollEvent(event: Event): void {
+  protected captureEvent(event: Event): void {
     const scrollPercentage = this.getScrollPercentage()
     if (scrollPercentage > this.scrollPercentage) {
       this.scrollPercentage = scrollPercentage

@@ -1,29 +1,29 @@
-import { AutoCaptureProps, Capturable, EventAttributes, Persistence } from './types'
+import { AutoCaptureProps, Capturable, EventAttributes } from './types'
 import {
   clearStoredEvents,
   getEventData,
   getPageViewData,
   getStoredEvents,
   shouldCaptureDomEvent,
-  storeEvent
-} from './utils'
+  storeEvent,
+  RootCapture
+} from './core'
 import { DEFAULT_ATTRIBUTES, DEFAULT_CAPTURE, DEFAULT_ELEMENTS } from './constant'
-import ScrollMap from './extra/scrollMap'
+import ScrollMap from './extensions/scrollMap'
+
 
 /**
  *  A library to provide an easiest and most comprehensive way to automatically capture the user
  *  interactions on your site, from the moment of installation forward. A single snippet grabs
  *  every click, swipe, tap, page-view, and fill — forever.
  */
-export default class AutoCapture {
+export default class AutoCapture extends RootCapture{
   /**
    * A list of elements to capture events from. Defaults to ['a', 'button', 'form', 'input', 'select', 'textarea', 'label'].
    */
   private elements: string[]
   private attributes: Array<EventAttributes>
   private safelist: Array<string>
-  private persistence: Persistence
-  private onEventCapture: (eventData: Record<string, any>) => void
   private capturable: Capturable[]
   private scrollMap: ScrollMap | null = null
   private eventCapturingStopped: boolean = false
@@ -38,16 +38,18 @@ export default class AutoCapture {
                 onEventCapture,
                 capture
               }: AutoCaptureProps) {
+    super({
+      persistence,
+      onEventCapture
+    })
 
     // Default Values
     this.elements = elements || DEFAULT_ELEMENTS
     this.safelist = safelist || []
     this.attributes = attributes || DEFAULT_ATTRIBUTES
-    this.persistence = persistence || 'memory'
     this.capturable = capture || DEFAULT_CAPTURE
 
-    // On event capture callback
-    this.onEventCapture = onEventCapture || ((eventData: Record<string, any>) => ({}))
+
 
     // Global event storage in-memory
     window.autoCaptureEvents = []
@@ -138,9 +140,9 @@ export default class AutoCapture {
   /**
    * A function to capture the user interactions on your site.
    * @param event
-   * @private
+   * @protected
    */
-  private captureEvent(event: Event): boolean | void {
+  protected captureEvent(event: Event): boolean | void {
 
     // Skip the event if the target is not in the elements list
     if (!shouldCaptureDomEvent(this.elements, event)) {

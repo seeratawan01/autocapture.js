@@ -1,5 +1,6 @@
 import { EventAttributes, Persistence } from '../types'
 import { STORAGE_KEY, VISITOR_ID_KEY } from '../constant'
+import { RootCapture } from './RootCapture'
 
 /**
  * Get the className of an element, accounting for edge cases where element.className is an object
@@ -46,7 +47,7 @@ export function getPageViewData(): Record<string, any> {
   // Add meta data
   data.meta = getMetaData()
 
-  // Add extra visitor related data
+  // Add extensions visitor related data
   data.visitor = getUserData()
 
   return data
@@ -75,7 +76,7 @@ export function getEventData(
     }
   })
 
-  // Add extra data for form events
+  // Add extensions data for form events
   if (target instanceof HTMLFormElement) {
     data.form = {
       name: target.name,
@@ -85,17 +86,17 @@ export function getEventData(
     }
   }
 
-  // Add extra data for mouse events
+  // Add extensions data for mouse events
   if (event instanceof MouseEvent) {
     data.mouse = getMouseEventCoordinates(event)
   }
 
-  // Add extra data for touch events (only the first touch)
+  // Add extensions data for touch events (only the first touch)
   if (event instanceof Event && event.type.startsWith('touch')) {
     data.touch = getTouchEventCoordinates(event)
   }
 
-  // Add extra data for input events
+  // Add extensions data for input events
   if (event instanceof Event && event.type.startsWith('input')) {
     data.input = getInputEventValue(event)
   }
@@ -103,7 +104,7 @@ export function getEventData(
   // Add meta data
   data.meta = getMetaData()
 
-  // Add extra data for error events (not tested)
+  // Add extensions data for error events (not tested)
   if (event instanceof ErrorEvent) {
     data.error = {
       message: event.message,
@@ -114,7 +115,7 @@ export function getEventData(
     }
   }
 
-  // Add extra visitor related data
+  // Add extensions visitor related data
   data.visitor = getUserData()
 
   return data
@@ -459,4 +460,9 @@ export function shouldCaptureDomEvent(elements: string[], event: Event): boolean
   }
 
   return false
+}
+
+
+export {
+  RootCapture
 }
