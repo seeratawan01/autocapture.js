@@ -1,6 +1,7 @@
 import { EventAttributes, Persistence } from '../types'
 import { STORAGE_KEY, VISITOR_ID_KEY } from '../constant'
 import { RootCapture } from './RootCapture'
+import Serializer from '../extensions/serializer'
 
 /**
  * Get the className of an element, accounting for edge cases where element.className is an object
@@ -63,7 +64,7 @@ export function getEventData(
 
   const target = getEventTarget(event)
   const data: Record<string, any> = {
-    event: event.type,
+    event: event.type
   }
   if (!target) {
     return data
@@ -162,7 +163,7 @@ export function getMetaData(): Record<string, any> {
     devicePixelRatio: window.devicePixelRatio,
     isMobile: isMobile(),
     isTouch: isTouchDevice(),
-    isBot: isBot(),
+    isBot: isBot()
   }
 }
 
@@ -455,6 +456,13 @@ export function shouldCaptureDomEvent(elements: string[], event: Event): boolean
   }
 
   return false
+}
+
+/**
+ * Take snapshot of the DOM using serializer
+ */
+export function takeSnapshot(): string {
+  return Serializer.serialize(document)
 }
 
 
