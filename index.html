@@ -178,7 +178,7 @@
 
   const instance = new AutoCapture({
     safelist: ['option[value="volvo"]', 'option[value="saab"]'],
-    persistence: 'memory',
+    persistence: 'cookie',
     capture: ['scroll', 'click', 'input', 'change', 'page-view', 'double-click', 'right-click'],
     onEventCapture: (event) => {
 

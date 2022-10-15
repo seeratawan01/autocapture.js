@@ -31,7 +31,7 @@ export default class MouseMovement extends RootCapture {
       mouse: getMouseEventCoordinates(event as MouseEvent)
     }
     this.onEventCapture(eventData)
-    storeEvent(eventData, this.persistence, this.onEventCapture)
+    storeEvent(eventData, this.onEventCapture)
   }
 
 

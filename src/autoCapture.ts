@@ -6,7 +6,6 @@ import {
   getStoredEvents,
   RootCapture,
   shouldCaptureDomEvent,
-  Store,
   storeEvent
 } from './core'
 import { DEFAULT_ATTRIBUTES, DEFAULT_CAPTURE, DEFAULT_ELEMENTS, DEFAULT_SAFELIST } from './constant'
@@ -51,9 +50,6 @@ export default class AutoCapture extends RootCapture {
     this.attributes = attributes || DEFAULT_ATTRIBUTES
     this.capturable = capture || DEFAULT_CAPTURE
 
-
-    // Global event storage in-memory
-    // window.autoCaptureEvents = []
 
     // save the event handler, so it can be used in multiple places
     this.captureEventHandler = this.captureEvent.bind(this)
@@ -150,7 +146,7 @@ export default class AutoCapture extends RootCapture {
    */
   private capturePageViewEvent() {
     const eventData = getPageViewData()
-    storeEvent(eventData, this.persistence, this.onEventCapture)
+    storeEvent(eventData, this.onEventCapture)
   }
 
 
@@ -174,7 +170,7 @@ export default class AutoCapture extends RootCapture {
     const data = getEventData(event, this.attributes)
 
 
-    storeEvent(data, this.persistence, this.onEventCapture)
+    storeEvent(data, this.onEventCapture)
 
   }
 
@@ -182,20 +178,20 @@ export default class AutoCapture extends RootCapture {
    * A function to clear the captured user interactions on your site.
    */
   public clear(): void {
-    clearStoredEvents(this.persistence)
+    clearStoredEvents()
   }
 
   /**
    * A function to get the captured user interactions on your site.
    */
   public getCapturedEvents(): any[] {
-    return getStoredEvents(this.persistence)
+    return getStoredEvents()
   }
 
   /**
    * A function to get only the captured user's page views on your site.
    */
   public getPageViews(): any[] {
-    return getStoredEvents(this.persistence).filter(event => event.type === 'page-view')
+    return getStoredEvents().filter(event => event.type === 'page-view')
   }
 }

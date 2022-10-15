@@ -88,6 +88,6 @@ export default class ScrollMap extends RootCapture{
     }
 
 
-    storeEvent(data, this.persistence, this.onEventCapture)
+    storeEvent(data, this.onEventCapture)
   }
 }

@@ -3,6 +3,7 @@ import { STORAGE_KEY, VISITOR_ID_KEY } from '../constant'
 import RootCapture from './rootCapture'
 import Store from './store'
 
+// In-memory storage for managing internal states
 const store = Store.getInstance()
 
 /**
@@ -269,13 +270,14 @@ export function getEventTargetValue(event: Event, attribute: string): string | n
  */
 export function storeEvent(
   eventData: Record<string, any>,
-  persistence: Persistence,
   callback: (eventData: Record<string, any>) => void
 ): void {
+  let persistence: Persistence = store.get('persistence')
   const data = JSON.stringify(eventData)
   if (persistence === 'cookie') {
     let existingData = getCookie(STORAGE_KEY)
     if (existingData) {
+      console.log(existingData)
       let existingDataList: any[] = JSON.parse(existingData)
       existingDataList.push(data)
       setCookie(STORAGE_KEY, JSON.stringify(existingDataList))
@@ -310,7 +312,9 @@ export function storeEvent(
 /**
  * Method to get the event data from the cookies | local storage | memory
  */
-export function getStoredEvents(persistence: Persistence): any[] {
+export function getStoredEvents(): any[] {
+  let persistence: Persistence = store.get('persistence')
+
   if (persistence === 'cookie') {
     let existingData = getCookie(STORAGE_KEY)
     if (existingData) {
@@ -332,7 +336,9 @@ export function getStoredEvents(persistence: Persistence): any[] {
 /**
  * Method to clear the event data from the cookies | local storage | memory
  */
-export function clearStoredEvents(persistence: Persistence): void {
+export function clearStoredEvents(): void {
+  let persistence: Persistence = store.get('persistence')
+
   if (persistence === 'cookie') {
     setCookie(STORAGE_KEY, '')
   }
@@ -347,27 +353,17 @@ export function clearStoredEvents(persistence: Persistence): void {
 /**
  * Method to set the cookie
  */
-export function setCookie(keyName: string, value: string): void {
+export function setCookie(keyName: string, value: string | string[]): void {
   document.cookie = `${keyName}=${value}; path=/; SameSite=None; Secure`
 }
 
 /**
- * Method to get the cookie
+ * Method to get the cookie, decode and parse it
  */
 export function getCookie(keyName: string) {
-  const name = keyName + '='
-  const decodedCookie = decodeURIComponent(document.cookie)
-  const ca = decodedCookie.split(';')
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i]
-    while (c.charAt(0) === ' ') {
-      c = c.substring(1)
-    }
-    if (c.indexOf(name) === 0) {
-      return c.substring(name.length, c.length)
-    }
-  }
-  return ''
+  function escape(s:string) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
+  const match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(keyName) + '=([^;]*)'));
+  return match ? match[1] : null;
 }
 
 
@@ -404,13 +400,31 @@ export function isTouchDevice(): boolean {
 
 /**
  * Method to get visitor id
+ *
  */
-export function getVisitorId(): string {
-  let visitorId = getCookie(VISITOR_ID_KEY)
-  if (!visitorId) {
-    visitorId = uuidv4()
-    setCookie(VISITOR_ID_KEY, visitorId)
+export function getVisitorId(): string | null {
+  let persistence: Persistence = store.get('persistence')
+  let visitorId: string | null = ''
+  if (persistence === 'cookie') {
+    visitorId = getCookie(VISITOR_ID_KEY)
+    if (!visitorId) {
+      visitorId = uuidv4()
+      setCookie(VISITOR_ID_KEY, visitorId)
+    }
+  } else if (persistence === 'localStorage') {
+    visitorId = localStorage.getItem(VISITOR_ID_KEY)
+    if (!visitorId) {
+      visitorId = uuidv4()
+      localStorage.setItem(VISITOR_ID_KEY, visitorId)
+    }
+  } else if (persistence === 'memory') {
+    visitorId = store.get(VISITOR_ID_KEY)
+    if (!visitorId) {
+      visitorId = uuidv4()
+      store.set(VISITOR_ID_KEY, visitorId)
+    }
   }
+
   return visitorId
 }
 
