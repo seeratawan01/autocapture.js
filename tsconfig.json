@@ -13,8 +13,7 @@
     "declarationDir": "dist/types",
     "outDir": "dist/lib",
     "typeRoots": [
-      "node_modules/@types",
-      "./src/types/global.d.ts"
+      "node_modules/@types"
     ]
   },
   "include": [

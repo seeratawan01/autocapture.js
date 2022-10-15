@@ -181,7 +181,8 @@
     persistence: 'memory',
     capture: ['scroll', 'click', 'input', 'change', 'page-view', 'double-click', 'right-click'],
     onEventCapture: (event) => {
-      console.log('Event stored', instance.takeSnapshot())
+
+      console.log(instance.getCapturedEvents());
 
       // Send event to server
       // ...

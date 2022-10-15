@@ -22,3 +22,7 @@ export const DEFAULT_ATTRIBUTES: EventAttributes[] = [
 export const DEFAULT_CAPTURE: Capturable[] = ['click', 'change', 'submit']
 
 export const DEFAULT_ELEMENTS = ['a', 'button', 'form', 'input', 'select', 'textarea', 'label']
+
+export const DEFAULT_PERSISTENCE = 'memory'
+
+export const DEFAULT_SAFELIST = []

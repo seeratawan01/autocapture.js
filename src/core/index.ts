@@ -1,6 +1,9 @@
 import { EventAttributes, Persistence } from '../types'
 import { STORAGE_KEY, VISITOR_ID_KEY } from '../constant'
-import { RootCapture } from './RootCapture'
+import RootCapture from './rootCapture'
+import Store from './store'
+
+const store = Store.getInstance()
 
 /**
  * Get the className of an element, accounting for edge cases where element.className is an object
@@ -291,10 +294,13 @@ export function storeEvent(
     }
   }
   if (persistence === 'memory') {
-    if (window.autoCaptureEvents) {
-      window.autoCaptureEvents.push(JSON.parse(data))
+    // store in memory
+    if (store.has(STORAGE_KEY)) {
+      let existingDataList: any[] = store.get(STORAGE_KEY)
+      existingDataList.push(eventData)
+      store.set(STORAGE_KEY, existingDataList)
     } else {
-      window.autoCaptureEvents = [JSON.parse(data)]
+      store.set(STORAGE_KEY, [eventData])
     }
   }
 
@@ -318,7 +324,7 @@ export function getStoredEvents(persistence: Persistence): any[] {
     }
   }
   if (persistence === 'memory') {
-    return window.autoCaptureEvents || []
+    return store.get(STORAGE_KEY) || []
   }
   return []
 }
@@ -334,7 +340,7 @@ export function clearStoredEvents(persistence: Persistence): void {
     localStorage.removeItem(STORAGE_KEY)
   }
   if (persistence === 'memory') {
-    window.autoCaptureEvents = []
+    store.set(STORAGE_KEY, [])
   }
 }
 
@@ -459,5 +465,6 @@ export function shouldCaptureDomEvent(elements: string[], event: Event): boolean
 
 
 export {
-  RootCapture
+  RootCapture,
+  Store
 }

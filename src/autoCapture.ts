@@ -4,11 +4,12 @@ import {
   getEventData,
   getPageViewData,
   getStoredEvents,
+  RootCapture,
   shouldCaptureDomEvent,
-  storeEvent,
-  RootCapture
+  Store,
+  storeEvent
 } from './core'
-import { DEFAULT_ATTRIBUTES, DEFAULT_CAPTURE, DEFAULT_ELEMENTS } from './constant'
+import { DEFAULT_ATTRIBUTES, DEFAULT_CAPTURE, DEFAULT_ELEMENTS, DEFAULT_SAFELIST } from './constant'
 import ScrollMap from './extensions/scrollMap'
 import MouseMovement from './extensions/mouceMovement'
 
@@ -18,7 +19,7 @@ import MouseMovement from './extensions/mouceMovement'
  *  interactions on your site, from the moment of installation forward. A single snippet grabs
  *  every click, swipe, tap, page-view, and fill — forever.
  */
-export default class AutoCapture extends RootCapture{
+export default class AutoCapture extends RootCapture {
   /**
    * A list of elements to capture events from. Defaults to ['a', 'button', 'form', 'input', 'select', 'textarea', 'label'].
    */
@@ -46,14 +47,13 @@ export default class AutoCapture extends RootCapture{
 
     // Default Values
     this.elements = elements || DEFAULT_ELEMENTS
-    this.safelist = safelist || []
+    this.safelist = safelist || DEFAULT_SAFELIST
     this.attributes = attributes || DEFAULT_ATTRIBUTES
     this.capturable = capture || DEFAULT_CAPTURE
 
 
-
     // Global event storage in-memory
-    window.autoCaptureEvents = []
+    // window.autoCaptureEvents = []
 
     // save the event handler, so it can be used in multiple places
     this.captureEventHandler = this.captureEvent.bind(this)
