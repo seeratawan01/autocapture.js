@@ -6,7 +6,7 @@ import {
   getStoredEvents,
   shouldCaptureDomEvent,
   storeEvent,
-  RootCapture, takeSnapshot
+  RootCapture
 } from './core'
 import { DEFAULT_ATTRIBUTES, DEFAULT_CAPTURE, DEFAULT_ELEMENTS } from './constant'
 import ScrollMap from './extensions/scrollMap'
@@ -197,12 +197,5 @@ export default class AutoCapture extends RootCapture{
    */
   public getPageViews(): any[] {
     return getStoredEvents(this.persistence).filter(event => event.type === 'page-view')
-  }
-
-  /**
-   * A function to take snapshot of the captured user interactions on your site.
-   */
-  public takeSnapshot(): string {
-    return takeSnapshot()
   }
 }

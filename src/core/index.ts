@@ -1,7 +1,6 @@
 import { EventAttributes, Persistence } from '../types'
 import { STORAGE_KEY, VISITOR_ID_KEY } from '../constant'
 import { RootCapture } from './RootCapture'
-import Serializer from '../extensions/serializer'
 
 /**
  * Get the className of an element, accounting for edge cases where element.className is an object
@@ -456,13 +455,6 @@ export function shouldCaptureDomEvent(elements: string[], event: Event): boolean
   }
 
   return false
-}
-
-/**
- * Take snapshot of the DOM using serializer
- */
-export function takeSnapshot(): string {
-  return Serializer.serialize(document)
 }
 
 
