@@ -12,14 +12,14 @@ click, touch, page-view, and fill — forever.
   moment they leave.
 - **Custom Analytics Tool** - Build your own analytics tools and libraries using AutoCapture.js to
   track user behavior, and use the data to improve your site.
-- **Build Your Own Heatmap** - Build your own heatmap to understand how users interact with your
-  site.
-- **Build Your Own Form Analytics** - Build your own form analytics to understand how users use your
-  forms to achieve their goals.
-- **Build Your Own Click Analytics** - Build your own click analytics to understand how users
-  interact with your site.
-- **Build Your Own Scroll Analytics** - Build your own scroll analytics to understand how users
-  scroll on your site.
+  - **Build Your Own Heatmap** - Build your own heatmap to understand how users interact with your
+    site.
+  - **Build Your Own Form Analytics** - Build your own form analytics to understand how users use your
+    forms to achieve their goals.
+  - **Build Your Own Click Analytics** - Build your own click analytics to understand how users
+    interact with your site.
+  - **Build Your Own Scroll Analytics** - Build your own scroll analytics to understand how users
+    scroll on your site.
 
 
 ## Installation
