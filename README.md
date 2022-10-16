@@ -165,12 +165,10 @@ site, from the moment of installation forward.
     "scrollPosition": 68,
     "windowSize": 772
   },
-  
   //This will be present only if the events are of type input or change
   "input": {
     "value": "Hello World"
   },
-  
   //This will be present only if the events are of type submit
   "form": {
     "action": "https://app.autocapture.dev/",
@@ -178,8 +176,7 @@ site, from the moment of installation forward.
     "name": "",
     "id": ""
   },
-  
-//This will be present only if the events are of type touch
+  //This will be present only if the events are of type touch
   "touch": {
     "x": 0,
     "y": 0
