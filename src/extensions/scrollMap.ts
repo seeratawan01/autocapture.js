@@ -8,6 +8,7 @@ import { AutoCaptureProps, Persistence } from '../types'
 export default class ScrollMap extends RootCapture{
 
   private captureScrollEventHandler: OmitThisParameter<(event: Event) => void>
+  private lastScrollTop = 0
 
   /**
    * Scroll map constructor function.
@@ -52,20 +53,17 @@ export default class ScrollMap extends RootCapture{
    * A function to capture the scroll events on your site.
    */
   protected captureEvent(event: Event): void {
-    // getting the scroll axis
-    let axis = 'y'
-    if (event instanceof WheelEvent) {
-      axis = event.deltaY > 0 ? 'y' : 'x'
-    }
+    // getting the scroll direction
+    let direction = this.getScrollDirection()
 
     const data = {
       ...getEventData(event, []),
       scroll: {
-        scrollPercentage: this.getScrollPercentage(axis),
+        scrollPercentage: this.getScrollPercentage(direction),
         scrollPosition: window.scrollY,
         windowSize: window.innerHeight,
         bodyHeight: document.body.offsetHeight,
-        axis
+        direction
       }
     }
 
@@ -74,15 +72,28 @@ export default class ScrollMap extends RootCapture{
   }
 
   /**
-   * A function to get the scroll percentage.
+   * A function to get the scroll percentage based on the scroll direction.
    */
-  private getScrollPercentage(axis: string): number {
+  private getScrollPercentage(direction: string): number {
+    if (direction === 'y') {
+      return Math.floor(window.scrollY / (document.body.offsetHeight - window.innerHeight) * 100)
+    }
+    return Math.floor((window.scrollX / (document.body.offsetWidth - window.innerWidth)) * 100)
+  }
 
-    const scrollPosition = axis === 'y' ? window.scrollY : window.scrollX
-    const windowSize = axis === 'y' ? window.innerHeight : window.innerWidth
-    const bodyHeight = axis === 'y' ? document.body.offsetHeight : document.body.offsetWidth
-    return Math.round((scrollPosition / (bodyHeight - windowSize)) * 100)
-
+  /**
+   * A function to get the scroll direction.
+   */
+  private getScrollDirection(): string {
+    const scrollTop = window.scrollY
+    let direction = 'y'
+    if (scrollTop > this.lastScrollTop) {
+      direction = 'y'
+    } else {
+      direction = 'x'
+    }
+    this.lastScrollTop = scrollTop
+    return direction
   }
 
 }
