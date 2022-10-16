@@ -7,7 +7,6 @@ import { AutoCaptureProps, Persistence } from '../types'
 
 export default class ScrollMap extends RootCapture{
 
-  private scrollPercentage: number
   private captureScrollEventHandler: OmitThisParameter<(event: Event) => void>
 
   /**
@@ -21,7 +20,6 @@ export default class ScrollMap extends RootCapture{
       persistence,
       onEventCapture
     })
-    this.scrollPercentage = 0.0
 
     // saving the scroll event handler to be able to remove it later
     this.captureScrollEventHandler = this.captureEvent.bind(this)
@@ -54,40 +52,37 @@ export default class ScrollMap extends RootCapture{
    * A function to capture the scroll events on your site.
    */
   protected captureEvent(event: Event): void {
-    const scrollPercentage = this.getScrollPercentage()
-    if (scrollPercentage > this.scrollPercentage) {
-      this.scrollPercentage = scrollPercentage
-      this.sendScrollPercentage(event)
+    // getting the scroll axis
+    let axis = 'y'
+    if (event instanceof WheelEvent) {
+      axis = event.deltaY > 0 ? 'y' : 'x'
     }
-  }
-
-  /**
-   * A function to get the scroll percentage.
-   */
-  private getScrollPercentage(): number {
-    const scrollPosition = window.scrollY
-    const windowSize = window.innerHeight
-    const bodyHeight = document.body.offsetHeight
-
-    return Math.round((scrollPosition / (bodyHeight - windowSize)) * 100)
-  }
-
-  /**
-   * A function to send the scroll percentage to the server.
-   */
-  private sendScrollPercentage(event: Event): void {
 
     const data = {
       ...getEventData(event, []),
       scroll: {
-        scrollPercentage: this.scrollPercentage,
+        scrollPercentage: this.getScrollPercentage(axis),
         scrollPosition: window.scrollY,
         windowSize: window.innerHeight,
-        bodyHeight: document.body.offsetHeight
+        bodyHeight: document.body.offsetHeight,
+        axis
       }
     }
 
 
     storeEvent(data, this.onEventCapture)
   }
+
+  /**
+   * A function to get the scroll percentage.
+   */
+  private getScrollPercentage(axis: string): number {
+
+    const scrollPosition = axis === 'y' ? window.scrollY : window.scrollX
+    const windowSize = axis === 'y' ? window.innerHeight : window.innerWidth
+    const bodyHeight = axis === 'y' ? document.body.offsetHeight : document.body.offsetWidth
+    return Math.round((scrollPosition / (bodyHeight - windowSize)) * 100)
+
+  }
+
 }
