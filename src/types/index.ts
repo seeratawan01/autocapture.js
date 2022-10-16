@@ -57,6 +57,6 @@ export type EventAttributes =
 
 export type Capturable = 'scroll' | 'click' | 'double-click' | 'right-click' | 'change' | 'submit' | 'touch' | 'page-view' | 'input' | 'mouse-movement'
 
-export type Persistence = 'memory' | 'localStorage' | 'cookie' | 'none'
+export type Persistence = 'memory' | 'localStorage' | 'sessionStorage' | 'none'
 
 

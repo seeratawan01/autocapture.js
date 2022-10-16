@@ -74,11 +74,12 @@ site, from the moment of installation forward.
 - **Safelist** - Safelist is a list of CSS selectors that you want to ignore. For example, you can
   ignore all the password inputs by adding `input[type="password"]` to the safelist.
 - **Persistence** - Persistence is the way you want to store the captured events. You can choose
-  between `memory`, `localStorage`, `cookie` and `none`. `memory` is the default value.
+  between `memory`, `localStorage`, `sessionStorage` and `none`. `memory` is the default value.
   - `memory` - Events are stored in memory and are lost when the page is refreshed.
   - `localStorage` - Events are stored in the browser's local storage and are persisted across
     sessions.
-  - `cookie` - Events are stored in the browser's cookie and are persisted across sessions.
+  - `sessionStorage` - Events are stored in the browser's session storage and are lost when the
+    browser is closed.
   - `none` - Events are not stored anywhere.
 - **Capture** - Capture is the list of events you want to capture. You can choose between `scroll`
   , `click`, `input`, `change`, `page-view`, `touch`, `scroll`, `submit`, `mouse-movement` are the default values.
@@ -93,7 +94,7 @@ site, from the moment of installation forward.
 | Option | Type | Default                                                         | Description                                                                                                                                                              |
 | --- | --- |-----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | safelist | Array | []                                                              | Safelist is a list of CSS selectors that you want to ignore. For example, you can ignore all the password inputs by adding `input[type="password"]` to the safelist.     |
-| persistence | String | 'memory'                                                        | Persistence is the way you want to store the captured events. You can choose between `memory`, `localStorage`, `cookie` and `none`. `memory` is the default value.       |
+| persistence | String | 'memory'                                                        | Persistence is the way you want to store the captured events. You can choose between `memory`, `localStorage`, `sessionStorage` and `none`. `memory` is the default value.       |
 | capture | Array | ['click', 'change', 'submit']                                   | Capture is the list of events you want to capture. You can choose between `scroll`, `click`, `input`, `change`, `page-view`, `touch`, `submit`, `mouse-movement` are the default values. |
 | onEventCapture | Function | (capturedEvent: any) => {}                                      | onEventCapture is a callback function that will be called every time an event is captured. You can use this callback to send the captured events to your server.         |
 | elements | Array | ['a', 'button', 'form', 'input', 'select', 'textarea', 'label'] | A list of elements to capture events from.                                                                                                                               |

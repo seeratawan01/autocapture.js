@@ -2,7 +2,7 @@ import { EventAttributes, Persistence } from '../types'
 import { STORAGE_KEY, VISITOR_ID_KEY } from '../constant'
 import RootCapture from './rootCapture'
 import Store from './store'
-
+import JSON from './json'
 // In-memory storage for managing internal states
 const store = Store.getInstance()
 
@@ -273,26 +273,24 @@ export function storeEvent(
   callback: (eventData: Record<string, any>) => void
 ): void {
   let persistence: Persistence = store.get('persistence')
-  const data = JSON.stringify(eventData)
-  if (persistence === 'cookie') {
-    let existingData = getCookie(STORAGE_KEY)
+  if (persistence === 'sessionStorage') {
+    let existingData = sessionStorage.getItem(STORAGE_KEY)
     if (existingData) {
-      console.log(existingData)
       let existingDataList: any[] = JSON.parse(existingData)
-      existingDataList.push(data)
-      setCookie(STORAGE_KEY, JSON.stringify(existingDataList))
+      existingDataList.push(eventData)
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(existingDataList))
     } else {
-      setCookie(STORAGE_KEY, JSON.stringify([data]))
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify([eventData]))
     }
   }
   if (persistence === 'localStorage') {
     let existingData = localStorage.getItem(STORAGE_KEY)
     if (existingData) {
       let existingDataList: any[] = JSON.parse(existingData)
-      existingDataList.push(data)
+      existingDataList.push(eventData)
       localStorage.setItem(STORAGE_KEY, JSON.stringify(existingDataList))
     } else {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([data]))
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([eventData]))
     }
   }
   if (persistence === 'memory') {
@@ -315,8 +313,8 @@ export function storeEvent(
 export function getStoredEvents(): any[] {
   let persistence: Persistence = store.get('persistence')
 
-  if (persistence === 'cookie') {
-    let existingData = getCookie(STORAGE_KEY)
+  if (persistence === 'sessionStorage') {
+    let existingData = sessionStorage.getItem(STORAGE_KEY)
     if (existingData) {
       return JSON.parse(existingData)
     }
@@ -339,8 +337,8 @@ export function getStoredEvents(): any[] {
 export function clearStoredEvents(): void {
   let persistence: Persistence = store.get('persistence')
 
-  if (persistence === 'cookie') {
-    setCookie(STORAGE_KEY, '')
+  if (persistence === 'sessionStorage') {
+    sessionStorage.removeItem(STORAGE_KEY)
   }
   if (persistence === 'localStorage') {
     localStorage.removeItem(STORAGE_KEY)
@@ -405,11 +403,11 @@ export function isTouchDevice(): boolean {
 export function getVisitorId(): string | null {
   let persistence: Persistence = store.get('persistence')
   let visitorId: string | null = ''
-  if (persistence === 'cookie') {
-    visitorId = getCookie(VISITOR_ID_KEY)
+  if (persistence === 'sessionStorage') {
+    visitorId = sessionStorage.getItem('visitorId')
     if (!visitorId) {
       visitorId = uuidv4()
-      setCookie(VISITOR_ID_KEY, visitorId)
+      sessionStorage.setItem('visitorId', visitorId)
     }
   } else if (persistence === 'localStorage') {
     visitorId = localStorage.getItem(VISITOR_ID_KEY)
@@ -417,7 +415,8 @@ export function getVisitorId(): string | null {
       visitorId = uuidv4()
       localStorage.setItem(VISITOR_ID_KEY, visitorId)
     }
-  } else if (persistence === 'memory') {
+  }
+  else if (persistence === 'memory') {
     visitorId = store.get(VISITOR_ID_KEY)
     if (!visitorId) {
       visitorId = uuidv4()
