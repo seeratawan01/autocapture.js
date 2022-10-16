@@ -72,15 +72,15 @@ export function getEventData(
   if (!target) {
     return data
   }
-  data.attributes = {}
+  data.target = {}
   attributes.forEach(attribute => {
     const value = getEventTargetValue(event, attribute)
     if (value) {
-      data.attributes[attribute] = value
+      data.target[attribute] = value
     }
   })
 
-  // Add extensions data for form events
+  // Add data for form events
   if (target instanceof HTMLFormElement) {
     data.form = {
       name: target.name,
@@ -90,18 +90,23 @@ export function getEventData(
     }
   }
 
-  // Add extensions data for mouse events
+  // Add data for mouse events
   if (event instanceof MouseEvent) {
     data.mouse = getMouseEventCoordinates(event)
   }
 
-  // Add extensions data for touch events (only the first touch)
+  // Add data for touch events (only the first touch)
   if (event instanceof Event && event.type.startsWith('touch')) {
     data.touch = getTouchEventCoordinates(event)
   }
 
-  // Add extensions data for input events
+  // Add data for input events
   if (event instanceof Event && event.type.startsWith('input')) {
+    data.input = getInputEventValue(event)
+  }
+
+  // Add data for input change events
+  if (event instanceof Event && event.type.startsWith('change')) {
     data.input = getInputEventValue(event)
   }
 
