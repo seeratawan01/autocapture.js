@@ -1,6 +1,4 @@
-export type EventHandler = (event: Event) => boolean | void
-
-export type AutoCaptureProps = {
+export type BaseOptions = {
   /**
    * A list of elements to capture events from. Defaults to ['a', 'button', 'form', 'input', 'select', 'textarea', 'label'].
    */
@@ -58,5 +56,3 @@ export type EventAttributes =
 export type Capturable = 'scroll' | 'click' | 'double-click' | 'right-click' | 'change' | 'submit' | 'touch' | 'page-view' | 'input' | 'mouse-movement'
 
 export type Persistence = 'memory' | 'localStorage' | 'sessionStorage' | 'none'
-
-
