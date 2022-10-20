@@ -3,6 +3,7 @@ import { Attributes, Capture, PersistenceType } from './options'
 export type BaseOptions = {
   /**
    * A list of elements to capture events from. Defaults to ['a', 'button', 'form', 'input', 'select', 'textarea', 'label'].
+   * @example ['a', 'button', 'form', 'input']
    */
   elements?: string[]
 
@@ -29,6 +30,28 @@ export type BaseOptions = {
 
   /**
    * A Callback function fires on captured event stored.
+   * @param eventData
+   * @example
+   * ```js
+   * onEventCapture: (eventData) => {
+   *  console.log(eventData)
+   *  // {
+   *  //   event: 'click',
+   *  //   target: {
+   *  //     selector: 'button',
+   *  //     attributes: {
+   *  //       text: 'Click Me',
+   *  //       className: 'btn btn-primary',
+   *  //       type: 'button',
+   *  //       tagName: 'BUTTON',
+   *  //       ...,
+   *  //    },
+   *  //   }
+   *  //   timestamp: 1620920000000,
+   *  //   session_id: '123123123',
+   *  //   ...,
+   *  // }
+   *  // ```
    */
   onEventCapture?: (eventData: Record<string, any>) => void
 
@@ -51,5 +74,7 @@ export type BaseOptions = {
    * @example { 'user_id': '123456789', 'user_name': 'John Doe', 'user_email': ' }
    */
   payload?: Record<string, any>
+
+
 
 }

@@ -176,7 +176,7 @@ export function prepareEventPayload(event: Event, options: {
   const target = getEventTarget(event)
 
   const data: any = {
-    type: type || event.type,
+    event: type || event.type,
     timestamp: new Date().toISOString(),
     meta: getEventMetadata(),
     session: getSessionDetails(sessionId)
@@ -187,10 +187,10 @@ export function prepareEventPayload(event: Event, options: {
   }
 
   if (type !== 'page-view') {
-    const tagName = target.tagName.toLowerCase()
+    const selector = target.tagName.toLowerCase()
 
     data.target = {
-      tagName,
+      selector,
       attributes: {}
     }
 
