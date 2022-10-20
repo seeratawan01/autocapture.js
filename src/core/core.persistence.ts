@@ -1,15 +1,13 @@
-import { Store } from './index'
+import { Store, JSON } from '.'
 import { PersistenceType } from '../types'
 import { DEFAULT_OPTIONS } from '../constant'
-import { JSON } from './index'
 
 /**
  * Module to persist capture events in the browser's local storage, session storage or memory.
  * @class Persistence
  * @example
- * // To persist the captured events in the browser's local storage:
- * const persistence = new Persistence('localStorage')
- *
+ * // To persist the captured events in the browser's memory:
+ * const persistence = Persistence.getInstance('memory')
  * persistence.set('key', 'value')
  * persistence.get('key')
  * persistence.remove('key')
@@ -39,12 +37,12 @@ export default class Persistence implements Storage{
    * @returns {Persistence} The instance of this class.
    */
   public static getInstance(persistence: PersistenceType = DEFAULT_OPTIONS.PERSISTENCE): Storage {
+
     if (!Persistence.instance) {
-      if (persistence === 'none') {
-        return null
-      }
+      console.log('new persistence instance', persistence)
       Persistence.instance = new Persistence(persistence)
     }
+
     return Persistence.instance.storage
   }
 
@@ -53,6 +51,8 @@ export default class Persistence implements Storage{
       this.storage = window[persistence]
     } else if (persistence === 'memory') {
       this.storage = Store.getInstance()
+    } else if (persistence === 'none') {
+      this.storage = null
     } else {
       throw new Error('Invalid persistence type')
     }

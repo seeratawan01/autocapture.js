@@ -9,7 +9,17 @@ export default abstract class Base {
    * The persistence object to use for persistence.
    * @protected
    */
-  protected persistence: Persistence | null = null
+  protected persistence: Storage = null
+
+  /**
+   * Custom payload to be added to the captured event.
+   */
+  protected payload: Record<string, any>
+
+  /**
+   * Custom session id.
+   */
+  protected sessionId: string = ''
 
   /**
    * On event capture callback.
@@ -17,11 +27,16 @@ export default abstract class Base {
    */
   protected onEventCapture: (eventData: Record<string, any>) => void
 
-  protected constructor({ persistence, onEventCapture }: BaseOptions) {
+  protected constructor({ persistence, payload, sessionId, onEventCapture }: BaseOptions) {
 
     // Set the persistence object if persistence is not set to none.
     this.persistence = Persistence.getInstance(persistence || DEFAULT_OPTIONS.PERSISTENCE)
 
+    // Set the custom payload.
+    this.payload = payload
+
+    // Set the session id.
+    this.sessionId = sessionId
 
     // On event capture callback
     this.onEventCapture = onEventCapture || ((_: Record<string, any>) => ({}))
@@ -48,7 +63,7 @@ export default abstract class Base {
   protected abstract captureEvent(event: Event): boolean | void
 
   /**
-   * Clear all the captured events.
+   * Clear all the captured events or specific.
    * @param eventKey - The event to clear.
    * @protected
    */
@@ -64,16 +79,11 @@ export default abstract class Base {
 
   /**
    * Get all the captured events.
-   * @param event - The event to get.
    * @protected
    */
-  protected getAll(eventKey?: string): Record<string, any> {
+  protected getAll(): Record<string, any> {
     if (this.persistence) {
-      if (eventKey) {
-        return this.persistence.getItem(eventKey) || {}
-      } else {
-        return this.persistence.getAll()
-      }
+      return this.persistence.getAll()
     }
     return {}
   }

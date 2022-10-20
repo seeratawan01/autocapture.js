@@ -4,8 +4,9 @@
  * These functions are not exported as part of the library and are only used internally.
  */
 
-import { DEFAULT_OPTIONS, VISITOR_ID_KEY } from '../constant'
+import { DEFAULT_OPTIONS } from '../constant'
 import { Persistence } from '../core'
+import { Attributes } from '../types'
 
 /**
  * Get the className of an element, accounting for edge cases where element.className is an object
@@ -121,13 +122,11 @@ export function getEventMetadata(): Record<string, any> {
 
 /**
  * Get the session details from the browser, session details includes the visitor id
+ * @param sessionId - provided session id
  * @returns {Record<string, any>} the session details
  */
-export function getSessionDetails(): Record<string, any> {
-  const visitorId = getSessionId()
-  return {
-    visitorId
-  }
+export function getSessionDetails(sessionId: string): string {
+  return sessionId ? sessionId : getSessionId()
 }
 
 /**
@@ -137,16 +136,18 @@ export function getSessionId(): string {
   // Get Storage instance
   const storage = Persistence.getInstance()
 
-  console.log('getSessionId', storage.getItem(VISITOR_ID_KEY))
-
+  // if no storage is available means persistence is disabled
+  if (!storage) {
+    return getUniqueId();
+  }
 
   // Get the session id from the storage
-  const visitorId = storage.getItem(VISITOR_ID_KEY)
+  const visitorId = storage.getItem(DEFAULT_OPTIONS.VISITOR_ID_KEY)
 
   // If the session id is not present in the storage, generate a new one and store it in the storage
   if (!visitorId) {
     const newVisitorId = getUniqueId()
-    storage.setItem(VISITOR_ID_KEY, newVisitorId)
+    storage.setItem(DEFAULT_OPTIONS.VISITOR_ID_KEY, newVisitorId)
     return newVisitorId
   }
 
@@ -157,10 +158,20 @@ export function getSessionId(): string {
 /**
  * Get the data from the captured event according to given attributes and structure it for the API
  * @param {Event} event - event to use
- * @param attributes Event attributes to capture (attrubute may depends according to the interaction type)
+ * @param options - options to use
+ * @param options.attributes - attributes to use
+ * @param options.sessionId - use custom session id if provided
+ * @param options.customPayload - attach custom payload if provided
  * @returns {Object} event data
  */
-export function prepareEventPayload(event: Event, attributes: string[] = DEFAULT_OPTIONS.ATTRIBUTES): any {
+export function prepareEventPayload(event: Event, options : {
+  attributes?: Attributes[],
+  sessionId?: string,
+  payload?: Record<string, any>
+}): any {
+
+  const { attributes, sessionId, payload } = options
+
   const target = getEventTarget(event)
   const tagName = target.tagName.toLowerCase()
 
@@ -172,7 +183,11 @@ export function prepareEventPayload(event: Event, attributes: string[] = DEFAULT
       attributes: {},
     },
     meta: getEventMetadata(),
-    session: getSessionDetails(),
+    session: getSessionDetails(sessionId),
+  }
+
+  if (payload) {
+    data.payload = payload
   }
 
   // Add the target's attributes to the payload

@@ -12,6 +12,7 @@
  * store.setAll({key: 'value'})
  * store.has('key')
  * store.size()
+ * ...
  */
 export default class Store implements Storage {
   private static instance: Store

@@ -178,6 +178,9 @@
 	const autoCapture = new AutoCapture({
 		safelist: [],
 		persistence: 'memory',
+		payload: {
+			user_id: '123',
+		}
 	})
 
 	autoCapture.start();

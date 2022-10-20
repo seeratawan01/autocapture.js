@@ -11,24 +11,24 @@ export default class DOMEvent {
   /**
    * The event name.
    */
-  name: keyof WindowEventMap
+  private name: keyof WindowEventMap
 
   /**
    * The event handler.
    * @param event of type Event or any of its subclasses.
    */
-  handler: (event: Event) => void
+  private handler: (event: Event) => void
 
   /**
    * The event options.
    */
 
-  options?: boolean | AddEventListenerOptions
+  private options?: boolean | AddEventListenerOptions
 
   /**
    * Target element to bind an event.
    */
-  target: HTMLElement | Document | Window = document
+  private target: HTMLElement | Document | Window = document
 
   /**
    * List of all bound event listeners.

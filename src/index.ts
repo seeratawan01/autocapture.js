@@ -22,7 +22,7 @@ export class AutoCapture extends Base {
    * @param options.attributes - A list of attributes to capture from the event target. Defaults to `['text', 'className', 'value', 'type', 'tagName', 'href', 'src', 'id', 'name', 'placeholder', 'title', 'alt', 'role']`.
    * @param options.safelist - A list of selectors to ignore to avoid capturing any sensitive data. Defaults to `[]`.
    * @param options.capture - A list of events to capture. Defaults to `['click', 'change', 'submit']`.
-   * @param options.onEventCapture - A Callback function fires on captured event stored.
+   * @param options.X - A Callback function fires on captured event stored.
    * @param options.persistence - A string to set the persistence method. Defaults to `memory`.
    * @public
    * @constructor
@@ -112,7 +112,11 @@ export class AutoCapture extends Base {
     }
 
     // Extracting the data from the event attributes
-    const payload = prepareEventPayload(event, this.attributes)
+    const payload = prepareEventPayload(event, {
+      attributes: this.attributes,
+      sessionId: this.sessionId,
+      payload: this.payload,
+    })
 
     console.log(payload)
   }

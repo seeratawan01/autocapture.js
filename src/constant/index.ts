@@ -1,11 +1,6 @@
 
 import {Attributes, PersistenceType, Capture} from '../types'
 
-// Internal Constants for the library
-export const STORAGE_KEY = 'AUTOCAPTURE_EVENT_DATA'
-export const VISITOR_ID_KEY = 'AUTOCAPTURE_VISITOR_ID'
-
-
 // Default values
 export const DEFAULT_OPTIONS: {
   ATTRIBUTES: Attributes[],
@@ -13,6 +8,8 @@ export const DEFAULT_OPTIONS: {
   ELEMENTS: string[],
   PERSISTENCE: PersistenceType,
   SAFELIST: string[],
+  STORAGE_KEY: string,
+  VISITOR_ID_KEY: string,
 } = {
   ELEMENTS: ['a', 'button', 'form', 'input', 'select', 'textarea', 'label'],
   ATTRIBUTES: [
@@ -33,4 +30,6 @@ export const DEFAULT_OPTIONS: {
   SAFELIST: [],
   CAPTURE: ['click', 'change', 'submit'],
   PERSISTENCE: 'memory',
+  STORAGE_KEY: 'AUTOCAPTURE_EVENT_DATA',
+  VISITOR_ID_KEY: 'AUTOCAPTURE_VISITOR_ID'
 }
