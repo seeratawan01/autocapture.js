@@ -1,12 +1,10 @@
 import { Store } from './index'
-
+import { PersistenceType } from '../types'
+import { DEFAULT_OPTIONS } from '../constant'
+import { JSON } from './index'
 
 /**
- * Module to persist data in the browser's local storage, session storage or memory.
- * This module is used to persist the captured events.
- * Local storage - The events are stored in the browser's local storage and are available after the page is refreshed.
- * Session storage - The events are stored in the browser's session storage and are available after the page is refreshed.
- * Memory - The events are stored in memory and are lost when the page is refreshed And this module use Store module to store the events in memory.
+ * Module to persist capture events in the browser's local storage, session storage or memory.
  * @class Persistence
  * @example
  * // To persist the captured events in the browser's local storage:
@@ -22,17 +20,41 @@ import { Store } from './index'
  * persistence.size()
  * ...
  */
-export class Persistence implements Storage{
+export default class Persistence implements Storage{
+
+  /**
+   * The storage object.
+   * @private
+   */
+  private static instance: Persistence = null
+
   /**
    * The storage object to use for persistence.
    */
   storage: Storage
 
-  constructor(persistence: string) {
+  /**
+   * Returns the instance of this class.
+   * @param persistence - The type of persistence to use.
+   * @returns {Persistence} The instance of this class.
+   */
+  public static getInstance(persistence: PersistenceType = DEFAULT_OPTIONS.PERSISTENCE): Storage {
+    if (!Persistence.instance) {
+      if (persistence === 'none') {
+        return null
+      }
+      Persistence.instance = new Persistence(persistence)
+    }
+    return Persistence.instance.storage
+  }
+
+  private constructor(persistence: PersistenceType) {
     if (persistence === 'localStorage' || persistence === 'sessionStorage') {
       this.storage = window[persistence]
-    } else {
+    } else if (persistence === 'memory') {
       this.storage = Store.getInstance()
+    } else {
+      throw new Error('Invalid persistence type')
     }
   }
 
@@ -114,11 +136,5 @@ export class Persistence implements Storage{
     return this.storage.key(index)
   }
 
-  /**
-   * Get the storage object.
-   */
-  getStorage(): Storage {
-    return this.storage
-  }
 
 }

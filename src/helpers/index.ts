@@ -4,6 +4,9 @@
  * These functions are not exported as part of the library and are only used internally.
  */
 
+import { DEFAULT_OPTIONS, VISITOR_ID_KEY } from '../constant'
+import { Persistence } from '../core'
+
 /**
  * Get the className of an element, accounting for edge cases where element.className is an object
  * @param {Element} el - element to get the className of
@@ -73,4 +76,180 @@ export function shouldCaptureEvent(elements: string[], event: Event): boolean {
 
 
   return false
+}
+
+/**
+ * Get the event target, accounting for edge cases where event.target is an object
+ * @param {Event} event - event to get the target of
+ * @returns {Element} the event's target
+ */
+export function getEventTarget(event: Event): Element | HTMLElement {
+  if ((event.target as any) instanceof SVGSVGElement) {
+    return (event.target as any)?.correspondingUseElement
+  }
+  return event.target as Element
+}
+
+/**
+ * Get the event metadata from user's browser, metadata includes the client specific information
+ * @returns {Record<string, any>} the event's metadata
+ */
+export function getEventMetadata(): Record<string, any> {
+
+  return {
+    timestamp: Date.now(),
+    timezone: new Date().getTimezoneOffset(),
+    url: window.location.href,
+    userAgent: navigator.userAgent,
+    referrer: document.referrer,
+    screen: {
+      width: window.screen.width,
+      height: window.screen.height
+    },
+    window: {
+      width: window.innerWidth,
+      height: window.innerHeight
+    },
+    devicePixelRatio: window.devicePixelRatio,
+    language: navigator.language,
+    platform: navigator.platform,
+    isMobile: isMobileDevice(),
+    isTouch: isTouchDevice(),
+    isBot: isBot(),
+  }
+}
+
+/**
+ * Get the session details from the browser, session details includes the visitor id
+ * @returns {Record<string, any>} the session details
+ */
+export function getSessionDetails(): Record<string, any> {
+  const visitorId = getSessionId()
+  return {
+    visitorId
+  }
+}
+
+/**
+ * Get the session id from the storage
+ */
+export function getSessionId(): string {
+  // Get Storage instance
+  const storage = Persistence.getInstance()
+
+  console.log('getSessionId', storage.getItem(VISITOR_ID_KEY))
+
+
+  // Get the session id from the storage
+  const visitorId = storage.getItem(VISITOR_ID_KEY)
+
+  // If the session id is not present in the storage, generate a new one and store it in the storage
+  if (!visitorId) {
+    const newVisitorId = getUniqueId()
+    storage.setItem(VISITOR_ID_KEY, newVisitorId)
+    return newVisitorId
+  }
+
+  return visitorId
+}
+
+
+/**
+ * Get the data from the captured event according to given attributes and structure it for the API
+ * @param {Event} event - event to use
+ * @param attributes Event attributes to capture (attrubute may depends according to the interaction type)
+ * @returns {Object} event data
+ */
+export function prepareEventPayload(event: Event, attributes: string[] = DEFAULT_OPTIONS.ATTRIBUTES): any {
+  const target = getEventTarget(event)
+  const tagName = target.tagName.toLowerCase()
+
+  const data: any = {
+    type: event.type,
+    timestamp: new Date().toISOString(),
+    target: {
+      tagName,
+      attributes: {},
+    },
+    meta: getEventMetadata(),
+    session: getSessionDetails(),
+  }
+
+  // Add the target's attributes to the payload
+  attributes.forEach((attribute: string) => {
+    let value = getAttributeValue(target, attribute)
+    if (value) {
+      data.target.attributes[attribute] = value
+    }
+  })
+
+  return data
+}
+
+/**
+ * Get the value from given attribute
+ * @param {HTMLElement} target - target element
+ * @param {string} attribute - attribute name
+ * @returns {string} attribute value
+ */
+export function getAttributeValue(target: HTMLElement | Element, attribute: string): string {
+  switch (attribute) {
+    case 'text':
+      return getText(target)
+    case 'className':
+      return getClassName(target)
+    case 'value':
+      return (target as HTMLInputElement).value
+    case 'type':
+      return (target as HTMLInputElement).type
+    case 'tagName':
+      return target.tagName.toLowerCase()
+    case 'href':
+      return (target as HTMLAnchorElement).href
+    case 'src':
+      return (target as HTMLImageElement).src
+    case 'id':
+      return target.id
+    case 'name':
+      return (target as HTMLInputElement).name
+    case 'placeholder':
+      return (target as HTMLInputElement).placeholder
+    case 'title':
+      return (target as HTMLElement).title
+    case 'alt':
+      return (target as HTMLImageElement).alt
+    case 'role':
+      return target.getAttribute('role')
+  }
+
+  // All others attribute
+  if (target.hasAttribute(attribute)) {
+    return  target.getAttribute(attribute)
+  }
+
+  return ''
+}
+
+
+/**
+ * Method to check if is mobile device
+ * @returns {boolean} true if is mobile device
+ */
+export function isMobileDevice(): boolean {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+}
+
+/**
+ * Method to check if is touch device
+ * @returns {boolean} true if is touch device
+ */
+export function isTouchDevice(): boolean {
+  return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.maxTouchPoints > 0
+}
+
+/**
+ * Method to check if is bot
+ */
+export function isBot(): boolean {
+  return /bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent)
 }

@@ -1,8 +1,9 @@
-import { BaseOptions, Capturable, Persistence, EventAttributes } from './event'
+import { BaseOptions } from './base'
+import { PersistenceType, Capture, Attributes } from './options'
 
 export {
   BaseOptions,
-  Capturable,
-  Persistence,
-  EventAttributes
+  Capture,
+  Attributes,
+  PersistenceType
 }

@@ -1,6 +1,11 @@
 /**
- * Custom JSON helper to stringify and parse JSON
- * Custom JSON helper to stringify and parse JSON to tackle general cases in future
+ * Module provides custom JSON parsing and stringifying functionality.
+ * @class JSON
+ * @example
+ * // To parse a JSON string:
+ * JSON.parse('{"key": "value"}')
+ * // To stringify a JSON object:
+ * JSON.stringify({key: 'value'})
  */
 export default class Json {
   /**

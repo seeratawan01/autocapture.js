@@ -1,0 +1,73 @@
+/**
+ * Module to provide event handling functionality for all DOM Events.
+ * With the help of this module, we can capture any event emitted by the browser.
+ * @class DOMEvent
+ * @example
+ * // To capture the click event:
+ * const event = new DOMEvent('click')
+ * event.capture()
+ */
+export default class DOMEvent {
+  /**
+   * The event name.
+   */
+  name: keyof WindowEventMap
+
+  /**
+   * The event handler.
+   * @param event of type Event or any of its subclasses.
+   */
+  handler: (event: Event) => void
+
+  /**
+   * The event options.
+   */
+
+  options?: boolean | AddEventListenerOptions
+
+  /**
+   * Target element to bind an event.
+   */
+  target: HTMLElement | Document | Window = document
+
+  /**
+   * List of all bound event listeners.
+   */
+  static instances: DOMEvent[] = []
+
+
+  /**
+   * The event constructor.
+   */
+  constructor(name: keyof WindowEventMap, handler: (event: Event) => void, options: boolean | AddEventListenerOptions = {}, target?: HTMLElement | Document | Window) {
+    this.name = name
+    this.handler = handler
+    this.options = options
+    if (target) this.target = target
+
+    if (!DOMEvent.instances.includes(this)) {
+      DOMEvent.instances.push(this)
+    }
+  }
+
+  /**
+   * Call the event handler to capture an event.
+   * @public
+   * @return DOMEvent
+   */
+  public bind(): DOMEvent {
+    this.target.addEventListener(this.name, this.handler, this.options)
+    return this;
+  }
+
+  /**
+   * Stop capturing an event.
+   * @public
+   * @return DOMEvent
+   */
+  unbind() {
+    this.target.removeEventListener(this.name, this.handler, this.options)
+    return this
+  }
+
+}

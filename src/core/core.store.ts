@@ -1,6 +1,6 @@
 /**
- * Module to provide Store functionality.
- * API to store the data in memory are made similar to the API of the browser's local storage and session storage.
+ * Module to provide memory storage functionality.
+ * API exposed by the memory storage are made similar to the API of the browser's local storage and session storage to make it easy to switch other persistence methods.
  * @class Store
  * @example
  * const store = Store.getInstance()
