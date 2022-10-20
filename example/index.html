@@ -178,9 +178,13 @@
 	const autoCapture = new AutoCapture({
 		safelist: [],
 		persistence: 'memory',
+		capture: ['click', 'input', 'change', 'submit', 'page-view'],
 		payload: {
 			user_id: '123',
-		}
+		},
+		onEventCapture: (event) => {
+			console.log("onEventCapture", autoCapture.getCapturedEvents());
+		},
 	})
 
 	autoCapture.start();

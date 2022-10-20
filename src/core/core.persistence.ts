@@ -1,4 +1,4 @@
-import { Store, JSON } from '.'
+import Store from './core.store'
 import { PersistenceType } from '../types'
 import { DEFAULT_OPTIONS } from '../constant'
 
@@ -68,15 +68,15 @@ export default class Persistence implements Storage{
   /**
    * Set a key-value pair in the storage.
    */
-  setItem(key: string, value: any): void {
-    this.storage.setItem(key, JSON.stringify(value))
+  setItem(key: string, value: string): void {
+    this.storage.setItem(key, value)
   }
 
   /**
    * Get a value from the storage.
    */
   getItem(key: string): any {
-    return JSON.parse(this.storage.getItem(key))
+    return this.storage.getItem(key)
   }
 
   /**

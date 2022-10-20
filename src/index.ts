@@ -3,11 +3,11 @@
  *  interactions on your site, from the moment of installation forward. A single snippet grabs
  *  every click, swipe, tap, page-view, and fill — forever.
  */
-import { Base, DOMEvent } from './core'
+import { Base, DOMEvent, JSON } from './core'
 
 import { BaseOptions, Capture, Attributes } from '../types'
 import { DEFAULT_OPTIONS } from './constant'
-import { shouldCaptureEvent, prepareEventPayload } from './helpers'
+import { shouldCaptureEvent, prepareEventPayload, storePayload } from './helpers'
 
 export class AutoCapture extends Base {
   private elements: string[]
@@ -92,19 +92,25 @@ export class AutoCapture extends Base {
    * Unbind the event listeners.
    */
   unbind(): void {
-    if (DOMEvent.instances.length) {
-      DOMEvent.instances.forEach((instance) => instance.unbind())
-    }
+    DOMEvent.purge()
   }
 
   /**
-   * The callback function that fires on captured Element.
+   * The function to capture the event.
    */
   protected captureEvent(event: Event): void {
+
+    // Check if the event is for page view
+    if (event.type === 'popstate' || event.type === 'load') {
+      this.capturePageView(event)
+      return;
+    }
+
     // Skip the event if the target is not in the elements list
     if (!shouldCaptureEvent(this.elements, event)) {
       return;
     }
+
 
     // Skip the event if the target is in the safe list selector
     if (this.safelist.some(selector => (event.target as HTMLElement).matches(selector))) {
@@ -116,9 +122,50 @@ export class AutoCapture extends Base {
       attributes: this.attributes,
       sessionId: this.sessionId,
       payload: this.payload,
+      type: event.type,
     })
 
-    console.log(payload)
+    if (storePayload(payload)) {
+      this.onEventCapture(payload)
+    }
   }
+
+  /**
+   * The function to capture the page view event.
+   */
+  private capturePageView(event: Event): void {
+    // Extracting the data from the event attributes
+    const payload = prepareEventPayload(event, {
+      attributes: this.attributes,
+      sessionId: this.sessionId,
+      payload: this.payload,
+      type: 'page-view',
+    })
+
+    // const payload = {
+    //   type: 'page-view',
+    //   sessionId: this.sessionId,
+    //   payload: this.payload,
+    //   data: {
+    //     url: window.location.href,
+    //     title: document.title,
+    //     referrer: document.referrer,
+    //   },
+    // }
+    if (storePayload(payload)) {
+      this.onEventCapture(payload)
+    }
+  }
+
+  /**
+   * The function to get all the captured events from storage.
+   * @public
+   * @returns {JSON[]} - An array of JSON objects.
+   */
+  public getCapturedEvents(): any[]  {
+    let events  = this.persistence?.getItem(DEFAULT_OPTIONS.STORAGE_KEY)
+    return events ? JSON.parse(events) : []
+  }
+
 }
 

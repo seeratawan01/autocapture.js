@@ -70,4 +70,15 @@ export default class DOMEvent {
     return this
   }
 
+  /**
+   * Purge all the event listeners.
+   * @public
+   * @static
+   * @return void
+   */
+  public static purge() {
+    DOMEvent.instances.forEach((instance) => instance.unbind())
+    DOMEvent.instances = []
+  }
+
 }

@@ -116,7 +116,7 @@ export function getEventMetadata(): Record<string, any> {
     platform: navigator.platform,
     isMobile: isMobileDevice(),
     isTouch: isTouchDevice(),
-    isBot: isBot(),
+    isBot: isBot()
   }
 }
 
@@ -138,7 +138,7 @@ export function getSessionId(): string {
 
   // if no storage is available means persistence is disabled
   if (!storage) {
-    return getUniqueId();
+    return getUniqueId()
   }
 
   // Get the session id from the storage
@@ -164,39 +164,44 @@ export function getSessionId(): string {
  * @param options.customPayload - attach custom payload if provided
  * @returns {Object} event data
  */
-export function prepareEventPayload(event: Event, options : {
+export function prepareEventPayload(event: Event, options: {
   attributes?: Attributes[],
   sessionId?: string,
-  payload?: Record<string, any>
+  payload?: Record<string, any>,
+  type?: string
 }): any {
 
-  const { attributes, sessionId, payload } = options
+  const { attributes, sessionId, payload, type } = options
 
   const target = getEventTarget(event)
-  const tagName = target.tagName.toLowerCase()
 
   const data: any = {
-    type: event.type,
+    type: type || event.type,
     timestamp: new Date().toISOString(),
-    target: {
-      tagName,
-      attributes: {},
-    },
     meta: getEventMetadata(),
-    session: getSessionDetails(sessionId),
+    session: getSessionDetails(sessionId)
   }
 
   if (payload) {
     data.payload = payload
   }
 
-  // Add the target's attributes to the payload
-  attributes.forEach((attribute: string) => {
-    let value = getAttributeValue(target, attribute)
-    if (value) {
-      data.target.attributes[attribute] = value
+  if (type !== 'page-view') {
+    const tagName = target.tagName.toLowerCase()
+
+    data.target = {
+      tagName,
+      attributes: {}
     }
-  })
+
+    // Add the target's attributes to the payload
+    attributes.forEach((attribute: string) => {
+      let value = getAttributeValue(target, attribute)
+      if (value) {
+        data.target.attributes[attribute] = value
+      }
+    })
+  }
 
   return data
 }
@@ -239,7 +244,7 @@ export function getAttributeValue(target: HTMLElement | Element, attribute: stri
 
   // All others attribute
   if (target.hasAttribute(attribute)) {
-    return  target.getAttribute(attribute)
+    return target.getAttribute(attribute)
   }
 
   return ''
@@ -267,4 +272,34 @@ export function isTouchDevice(): boolean {
  */
 export function isBot(): boolean {
   return /bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent)
+}
+
+/**
+ * Method to store the captured payload in the storage
+ * @param {Object} payload - payload to store
+ * @returns {boolean} true if the payload is stored successfully
+ */
+export function storePayload(payload: any): boolean {
+  // Get Storage instance
+  const storage = Persistence.getInstance()
+
+  // if no storage is available means persistence is disabled
+  if (!storage) {
+    return false
+  }
+
+  // Get the stored payloads
+  const storedPayloads = storage.getItem(DEFAULT_OPTIONS.STORAGE_KEY)
+
+  // console.log('storedPayloads', storedPayloads)
+
+  // If there are no payloads stored, store the current payload
+  if (!storedPayloads) {
+    storage.setItem(DEFAULT_OPTIONS.STORAGE_KEY, JSON.stringify([payload]))
+    return true
+  }
+
+  // If there are payloads stored, append the current payload to the stored payloads
+  storage.setItem(DEFAULT_OPTIONS.STORAGE_KEY, JSON.stringify([...JSON.parse(storedPayloads), payload]))
+  return true
 }
