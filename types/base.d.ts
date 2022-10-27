@@ -75,6 +75,15 @@ export type BaseOptions = {
    */
   payload?: Record<string, any>
 
+  /**
+   * Specify the maximum number of events to store in the memory, local storage, or session storage and when the limit is reached, the oldest event will be removed.
+   */
+  maxEvents?: number
+
+  /**
+   * Specify if you want to mask the text content of the elements.
+   */
+  maskTextContent?: boolean
 
 
 }

@@ -123,9 +123,10 @@ export class AutoCapture extends Base {
       sessionId: this.sessionId,
       payload: this.payload,
       type: event.type,
+      maskTextContent: this.maskTextContent,
     })
 
-    if (storePayload(payload)) {
+    if (storePayload(payload, this.maxEvents)) {
       this.onEventCapture(payload)
     }
   }
@@ -140,19 +141,10 @@ export class AutoCapture extends Base {
       sessionId: this.sessionId,
       payload: this.payload,
       type: 'page-view',
+      maskTextContent: this.maskTextContent,
     })
 
-    // const payload = {
-    //   type: 'page-view',
-    //   sessionId: this.sessionId,
-    //   payload: this.payload,
-    //   data: {
-    //     url: window.location.href,
-    //     title: document.title,
-    //     referrer: document.referrer,
-    //   },
-    // }
-    if (storePayload(payload)) {
+    if (storePayload(payload, this.maxEvents)) {
       this.onEventCapture(payload)
     }
   }

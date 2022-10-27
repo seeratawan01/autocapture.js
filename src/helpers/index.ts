@@ -26,7 +26,12 @@ export function getClassName(el: Element): string {
  * @param {Element} el - element to get the text of
  * @returns {string} the element's direct text content
  */
-export function getText(el: Element): string {
+export function getText(el: Element, masked: boolean): string {
+
+  if (masked) {
+    return '********'
+  }
+
   if ((el.textContent as any) instanceof SVGAnimatedString) {
     return (el.textContent as any)?.baseVal || ''
   }
@@ -98,6 +103,7 @@ export function getEventTarget(event: Event): Element | HTMLElement {
 export function getEventMetadata(): Record<string, any> {
 
   return {
+    title: document.title,
     timestamp: Date.now(),
     timezone: new Date().getTimezoneOffset(),
     url: window.location.href,
@@ -169,9 +175,10 @@ export function prepareEventPayload(event: Event, options: {
   sessionId?: string,
   payload?: Record<string, any>,
   type?: string
+  maskTextContent?: boolean
 }): any {
 
-  const { attributes, sessionId, payload, type } = options
+  const { attributes, sessionId, payload, type, maskTextContent } = options
 
   const target = getEventTarget(event)
 
@@ -196,7 +203,7 @@ export function prepareEventPayload(event: Event, options: {
 
     // Add the target's attributes to the payload
     attributes.forEach((attribute: string) => {
-      let value = getAttributeValue(target, attribute)
+      let value = getAttributeValue(target, attribute, maskTextContent)
       if (value) {
         data.target.attributes[attribute] = value
       }
@@ -212,13 +219,16 @@ export function prepareEventPayload(event: Event, options: {
  * @param {string} attribute - attribute name
  * @returns {string} attribute value
  */
-export function getAttributeValue(target: HTMLElement | Element, attribute: string): string {
+export function getAttributeValue(target: HTMLElement | Element, attribute: string, masked: boolean): string {
   switch (attribute) {
     case 'text':
-      return getText(target)
+      return getText(target, masked)
     case 'className':
       return getClassName(target)
     case 'value':
+      if (masked) {
+        return (target as HTMLInputElement).value.length > 0 ? '*****' : ''
+      }
       return (target as HTMLInputElement).value
     case 'type':
       return (target as HTMLInputElement).type
@@ -279,7 +289,7 @@ export function isBot(): boolean {
  * @param {Object} payload - payload to store
  * @returns {boolean} true if the payload is stored successfully
  */
-export function storePayload(payload: any): boolean {
+export function storePayload(payload: any, maxEvents: number): boolean {
   // Get Storage instance
   const storage = Persistence.getInstance()
 
@@ -288,10 +298,14 @@ export function storePayload(payload: any): boolean {
     return false
   }
 
+  // Check if the storage is full
+  if (storage.length >= maxEvents) {
+    // Remove the first item from the storage
+    storage.removeItem(storage.key(0))
+  }
+
   // Get the stored payloads
   const storedPayloads = storage.getItem(DEFAULT_OPTIONS.STORAGE_KEY)
-
-  // console.log('storedPayloads', storedPayloads)
 
   // If there are no payloads stored, store the current payload
   if (!storedPayloads) {

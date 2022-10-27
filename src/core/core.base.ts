@@ -13,13 +13,27 @@ export default abstract class Base {
 
   /**
    * Custom payload to be added to the captured event.
+   * @protected
    */
   protected payload: Record<string, any>
 
   /**
    * Custom session id.
+   * @protected
    */
-  protected sessionId: string = ''
+  protected sessionId: string
+
+  /**
+   * Specify the maximum number of events to store in the memory, local storage, or session storage and when the limit is reached, the oldest event will be removed.
+   * @protected
+   */
+  maxEvents: number
+
+  /**
+   * Specify if you want to mask the text content of the elements.
+   * @protected
+   */
+  maskTextContent: boolean
 
   /**
    * On event capture callback.
@@ -27,16 +41,22 @@ export default abstract class Base {
    */
   protected onEventCapture: (eventData: Record<string, any>) => void
 
-  protected constructor({ persistence, payload, sessionId, onEventCapture }: BaseOptions) {
+  protected constructor({ persistence, payload, sessionId, onEventCapture, maxEvents, maskTextContent }: BaseOptions) {
 
     // Set the persistence object if persistence is not set to none.
     this.persistence = Persistence.getInstance(persistence || DEFAULT_OPTIONS.PERSISTENCE)
 
     // Set the custom payload.
-    this.payload = payload
+    this.payload = payload || {}
 
     // Set the session id.
-    this.sessionId = sessionId
+    this.sessionId = sessionId || ''
+
+    // Set the max events.
+    this.maxEvents = maxEvents || DEFAULT_OPTIONS.MAX_EVENTS
+
+    // Set the mask text content.
+    this.maskTextContent = maskTextContent || DEFAULT_OPTIONS.MASK_TEXT_CONTENT
 
     // On event capture callback
     this.onEventCapture = onEventCapture || ((_: Record<string, any>) => ({}))

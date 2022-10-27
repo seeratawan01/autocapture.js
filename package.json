@@ -8,7 +8,7 @@
   "unpkg": "./dist/autocapture.umd.js",
   "main": "./dist/autocapture.js",
   "scripts": {
-    "autobuild": "rollup -c -w",
+    "dev": "rollup -c -w",
     "build": "tsc --noEmit && rollup -c",
     "build:docs": "typedoc --out docs --entryPoints src/index.ts --theme default",
     "lint-js": "eslint \"src/**/*.{js,ts}\" \"test/**/*.js\" \"docs/**/*.js\"",

@@ -10,6 +10,8 @@ export const DEFAULT_OPTIONS: {
   SAFELIST: string[],
   STORAGE_KEY: string,
   VISITOR_ID_KEY: string,
+  MAX_EVENTS: number,
+  MASK_TEXT_CONTENT: boolean
 } = {
   ELEMENTS: ['a', 'button', 'form', 'input', 'select', 'textarea', 'label'],
   ATTRIBUTES: [
@@ -31,5 +33,7 @@ export const DEFAULT_OPTIONS: {
   CAPTURE: ['click', 'change', 'submit'],
   PERSISTENCE: 'memory',
   STORAGE_KEY: 'AUTOCAPTURE_EVENT_DATA',
-  VISITOR_ID_KEY: 'AUTOCAPTURE_VISITOR_ID'
+  VISITOR_ID_KEY: 'AUTOCAPTURE_VISITOR_ID',
+  MAX_EVENTS: 500,
+  MASK_TEXT_CONTENT: false,
 }
