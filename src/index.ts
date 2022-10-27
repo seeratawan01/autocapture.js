@@ -1,14 +1,25 @@
+import { Base, DOMEvent, JSON, PluginRegistry } from './core'
+import { Attributes, BaseOptions, Capture, Plugin } from '../types'
+import { DEFAULT_OPTIONS } from './constant'
+import { prepareEventPayload, shouldCaptureEvent, storePayload } from './helpers'
+
 /**
  *  A library to provide an easiest and most comprehensive way to automatically capture the user
  *  interactions on your site, from the moment of installation forward. A single snippet grabs
  *  every click, swipe, tap, page-view, and fill — forever.
+ *
+ *  @class Core
+ *  @extends Base
+ *  @example
+ *  // To use the library:
+ *  import AutoCapture from 'autoCapture'
+ *  const autoCapture = new AutoCapture({
+ *    // options
+ *    // ...
+ *  })
+ *  autoCapture.start()
+ *
  */
-import { Base, DOMEvent, JSON } from './core'
-
-import { BaseOptions, Capture, Attributes } from '../types'
-import { DEFAULT_OPTIONS } from './constant'
-import { shouldCaptureEvent, prepareEventPayload, storePayload } from './helpers'
-
 export class AutoCapture extends Base {
   private elements: string[]
   private attributes: Array<Attributes>
@@ -56,9 +67,8 @@ export class AutoCapture extends Base {
   start(): void {
     // Capture events
     this.bind()
-
-    // Send current path
   }
+
   /**
    * Stop capturing events.
    */
@@ -103,18 +113,18 @@ export class AutoCapture extends Base {
     // Check if the event is for page view
     if (event.type === 'popstate' || event.type === 'load') {
       this.capturePageView(event)
-      return;
+      return
     }
 
     // Skip the event if the target is not in the elements list
     if (!shouldCaptureEvent(this.elements, event)) {
-      return;
+      return
     }
 
 
     // Skip the event if the target is in the safe list selector
     if (this.safelist.some(selector => (event.target as HTMLElement).matches(selector))) {
-      return;
+      return
     }
 
     // Extracting the data from the event attributes
@@ -123,7 +133,7 @@ export class AutoCapture extends Base {
       sessionId: this.sessionId,
       payload: this.payload,
       type: event.type,
-      maskTextContent: this.maskTextContent,
+      maskTextContent: this.maskTextContent
     })
 
     if (storePayload(payload, this.maxEvents)) {
@@ -141,7 +151,7 @@ export class AutoCapture extends Base {
       sessionId: this.sessionId,
       payload: this.payload,
       type: 'page-view',
-      maskTextContent: this.maskTextContent,
+      maskTextContent: this.maskTextContent
     })
 
     if (storePayload(payload, this.maxEvents)) {
@@ -154,10 +164,21 @@ export class AutoCapture extends Base {
    * @public
    * @returns {JSON[]} - An array of JSON objects.
    */
-  public getCapturedEvents(): any[]  {
-    let events  = this.persistence?.getItem(DEFAULT_OPTIONS.STORAGE_KEY)
+  public getCapturedEvents(): any[] {
+    let events = this.persistence?.getItem(DEFAULT_OPTIONS.STORAGE_KEY)
     return events ? JSON.parse(events) : []
   }
 
+  /**
+   * Register the plugin to use it in the AutoCapture instance.
+   * @param plugin - The plugin to register.
+   * @static
+   * @public
+   */
+  public static use(plugin: Plugin): void {
+    PluginRegistry.register(plugin)
+  }
 }
 
+// exporting the built-in plugins for the user to use them and tree-shaking
+export * from './plugins'

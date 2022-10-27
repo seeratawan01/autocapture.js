@@ -84,6 +84,4 @@ export type BaseOptions = {
    * Specify if you want to mask the text content of the elements.
    */
   maskTextContent?: boolean
-
-
 }

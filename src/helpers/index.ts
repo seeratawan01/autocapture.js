@@ -298,7 +298,7 @@ export function storePayload(payload: any, maxEvents: number): boolean {
     return false
   }
 
-  // Check if the storage is full
+  // Check if the storage limit is full
   if (storage.length >= maxEvents) {
     // Remove the first item from the storage
     storage.removeItem(storage.key(0))

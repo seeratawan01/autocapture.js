@@ -1,7 +1,9 @@
 import { BaseOptions } from './base'
-import { PersistenceType, Capture, Attributes } from './options'
+import { Attributes, Capture, PersistenceType } from './options'
+import { Plugin } from './plugin'
 
 export {
+  Plugin,
   BaseOptions,
   Capture,
   Attributes,

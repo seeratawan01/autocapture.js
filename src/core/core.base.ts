@@ -39,7 +39,7 @@ export default abstract class Base {
    * On event capture callback.
    * @protected
    */
-  protected onEventCapture: (eventData: Record<string, any>) => void
+  public onEventCapture: (eventData: Record<string, any>) => void
 
   protected constructor({ persistence, payload, sessionId, onEventCapture, maxEvents, maskTextContent }: BaseOptions) {
 
