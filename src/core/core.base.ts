@@ -24,12 +24,6 @@ export default abstract class Base {
   protected sessionId: string
 
   /**
-   * Specify the maximum number of events to store in the memory, local storage, or session storage and when the limit is reached, the oldest event will be removed.
-   * @protected
-   */
-  maxEvents: number
-
-  /**
    * Specify if you want to mask the text content of the elements.
    * @protected
    */
@@ -44,7 +38,7 @@ export default abstract class Base {
   protected constructor({ persistence, payload, sessionId, onEventCapture, maxEvents, maskTextContent }: BaseOptions) {
 
     // Set the persistence object if persistence is not set to none.
-    this.persistence = Persistence.getInstance(persistence || DEFAULT_OPTIONS.PERSISTENCE)
+    this.persistence = Persistence.getInstance(persistence || DEFAULT_OPTIONS.PERSISTENCE, maxEvents || DEFAULT_OPTIONS.MAX_EVENTS)
 
     // Set the custom payload.
     this.payload = payload || {}
@@ -52,8 +46,6 @@ export default abstract class Base {
     // Set the session id.
     this.sessionId = sessionId || ''
 
-    // Set the max events.
-    this.maxEvents = maxEvents || DEFAULT_OPTIONS.MAX_EVENTS
 
     // Set the mask text content.
     this.maskTextContent = maskTextContent || DEFAULT_OPTIONS.MASK_TEXT_CONTENT

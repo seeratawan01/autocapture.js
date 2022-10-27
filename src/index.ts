@@ -26,6 +26,7 @@ export class AutoCapture extends Base {
   private safelist: Array<string>
   private capturable: Capture[]
 
+
   /**
    * Constructor for the AutoCapture class.
    * @param options - The options to use for the AutoCapture instance.
@@ -65,15 +66,24 @@ export class AutoCapture extends Base {
    * @public
    */
   start(): void {
-    // Capture events
+    // Bind the event listener
     this.bind()
+
+    // Start all the plugins
+    PluginRegistry.getAll().forEach(plugin => plugin.start({
+      onEventCapture: this.onEventCapture,
+    }))
   }
 
   /**
    * Stop capturing events.
    */
   stop(): void {
+    // Unbind the event listener
     this.unbind()
+
+    // Stop all the plugins
+    PluginRegistry.getAll().forEach(plugin => plugin.stop())
   }
 
   /**
@@ -136,7 +146,7 @@ export class AutoCapture extends Base {
       maskTextContent: this.maskTextContent
     })
 
-    if (storePayload(payload, this.maxEvents)) {
+    if (storePayload(payload)) {
       this.onEventCapture(payload)
     }
   }
@@ -154,7 +164,7 @@ export class AutoCapture extends Base {
       maskTextContent: this.maskTextContent
     })
 
-    if (storePayload(payload, this.maxEvents)) {
+    if (storePayload(payload)) {
       this.onEventCapture(payload)
     }
   }
@@ -180,5 +190,8 @@ export class AutoCapture extends Base {
   }
 }
 
-// exporting the built-in plugins for the user to use them and tree-shaking
+// exporting the built-in plugins for the user to use them
 export * from './plugins'
+
+// exporting the useful helper functions
+export {shouldCaptureEvent, prepareEventPayload, storePayload}

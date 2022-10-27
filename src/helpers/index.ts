@@ -289,19 +289,13 @@ export function isBot(): boolean {
  * @param {Object} payload - payload to store
  * @returns {boolean} true if the payload is stored successfully
  */
-export function storePayload(payload: any, maxEvents: number): boolean {
+export function storePayload(payload: any): boolean {
   // Get Storage instance
   const storage = Persistence.getInstance()
 
   // if no storage is available means persistence is disabled
   if (!storage) {
     return false
-  }
-
-  // Check if the storage limit is full
-  if (storage.length >= maxEvents) {
-    // Remove the first item from the storage
-    storage.removeItem(storage.key(0))
   }
 
   // Get the stored payloads

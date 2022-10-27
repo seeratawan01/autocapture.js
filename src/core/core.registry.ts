@@ -16,34 +16,34 @@ export default class PluginRegistry {
   /**
    * The plugin registry.
    */
-  private static registry: Record<string, Plugin> = {}
+  private static registry: Plugin[] = []
 
 
   /**
    * Register a plugin.
    */
   static register(plugin: Plugin): void {
-    PluginRegistry.registry[plugin.key] = plugin
+    PluginRegistry.registry.push(plugin)
   }
 
   /**
    * Unregister a plugin.
    */
   static unregister(name: string): void {
-    delete PluginRegistry.registry[name]
+    PluginRegistry.registry = PluginRegistry.registry.filter(plugin => plugin.key !== name)
   }
 
   /**
    * Get a plugin.
    */
   static get(name: string): Plugin {
-    return PluginRegistry.registry[name]
+    return PluginRegistry.registry.find(plugin => plugin.key === name)
   }
 
   /**
    * Get all plugins.
    */
-  static getAll(): Record<string, Plugin> {
+  static getAll(): Plugin[] {
     return PluginRegistry.registry
   }
 }
