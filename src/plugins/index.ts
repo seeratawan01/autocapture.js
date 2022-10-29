@@ -1,7 +1,5 @@
-import Scroll from './plugin.scroll'
-import { ExamplePlugin } from './plugin.template'
+import ScrollPlugin from './plugin.scroll'
 
 export {
-  Scroll,
-  ExamplePlugin
+  ScrollPlugin,
 }

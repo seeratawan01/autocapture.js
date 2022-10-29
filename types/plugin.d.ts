@@ -23,17 +23,17 @@ export interface Plugin {
    * The callback method, called when the plugin is initialized.
    * @param options The options passed to the core.
    */
-  onInit: (options: BaseOptions) => void
+  onInit?: (options: BaseOptions) => void
 
   /**
    *  The callback method, called when the plugin is started.
    */
-  onStart: () => void
+  onStart?: () => void
 
   /**
    * The callback method, called when the plugin is stopped.
    */
-  onStop: () => void
+  onStop?: () => void
 
 
   /**
@@ -41,12 +41,12 @@ export interface Plugin {
    * @param event The event to be captured.
    * @returns true if the event should be captured, false otherwise.
    */
-  onBeforeCapture: (event: Event) => boolean
+  onBeforeCapture?: (event: Event) => boolean
 
   /**
    * The callback method, called when the event is captured.
    * @param eventData The data of the captured event.
    */
-  onEventCapture: (eventData: Record<string, any>) => void
+  onEventCapture?: (eventData: Record<string, any>) => void
 
 }

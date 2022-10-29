@@ -1,4 +1,4 @@
-import { Base, DOMEvent, JSON, PluginRegistry } from './core'
+import { Base, DOMEvent, JSON, PluginRegistry, PluginBuilder } from './core'
 import { Attributes, BaseOptions, Capture, Plugin } from '../types'
 import { DEFAULT_OPTIONS } from './constant'
 import { prepareEventPayload, shouldCaptureEvent, storePayload } from './helpers'
@@ -255,7 +255,7 @@ export class AutoCapture extends Base {
 export * from './plugins'
 
 // exporting useful modules
-export { DOMEvent, JSON }
+export { DOMEvent, JSON, PluginBuilder }
 
 // exporting the useful helper functions
 export {shouldCaptureEvent, prepareEventPayload, storePayload}
