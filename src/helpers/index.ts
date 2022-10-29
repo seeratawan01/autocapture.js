@@ -193,7 +193,7 @@ export function prepareEventPayload(event: Event, options: {
     data.payload = payload
   }
 
-  if (type !== 'page-view') {
+  if (type !== 'page-view' && target.tagName) {
     const selector = target.tagName.toLowerCase()
 
     data.target = {

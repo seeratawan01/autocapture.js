@@ -11,7 +11,7 @@ export default class DOMEvent {
   /**
    * The event name.
    */
-  private name: keyof WindowEventMap
+  private name: keyof WindowEventMap | string
 
   /**
    * The event handler.
@@ -38,8 +38,13 @@ export default class DOMEvent {
 
   /**
    * The event constructor.
+   * @param name The event name.
+   * @param handler The event handler.
+   * @param options The event options.
+   * @param target The target element to bind the event listener to.
+   * @public
    */
-  constructor(name: keyof WindowEventMap, handler: (event: Event) => void, options: boolean | AddEventListenerOptions = {}, target?: HTMLElement | Document | Window) {
+  constructor(name: keyof WindowEventMap | string, handler: (event: Event) => void, options: boolean | AddEventListenerOptions = {}, target?: HTMLElement | Document | Window) {
     this.name = name
     this.handler = handler
     this.options = options

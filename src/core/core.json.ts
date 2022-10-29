@@ -39,4 +39,15 @@ export default class Json {
     }
     return true
   }
+
+  /**
+   * merge two JSON objects
+   */
+  public static merge(...args: any[]): any {
+    let result = {}
+    for (let i = 0; i < args.length; i++) {
+      result = Object.assign(result, args[i])
+    }
+    return result
+  }
 }

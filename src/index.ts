@@ -59,6 +59,15 @@ export class AutoCapture extends Base {
 
     // start capturing the user interactions
     this.start()
+
+    // initialize the plugins
+    PluginRegistry.getAll().forEach(plugin => plugin.onInit({
+      elements,
+      attributes,
+      safelist,
+      capture,
+      ...options
+    }))
   }
 
   /**
@@ -68,11 +77,63 @@ export class AutoCapture extends Base {
   start(): void {
     // Bind the event listener
     this.bind()
+    // start all the plugins
+    PluginRegistry.getAll().forEach(plugin => {
+      const pluginData = plugin.bind(plugin.options)
 
-    // Start all the plugins
-    PluginRegistry.getAll().forEach(plugin => plugin.start({
-      onEventCapture: this.onEventCapture,
-    }))
+      // if the plugin has a bind function, it not implemented yet
+      if (!pluginData) {
+        return
+      }
+
+      // getting the plugin data
+      const {
+        target,
+        type,
+        handler,
+        options
+      } = pluginData
+
+      // wrapping the handler to capture the event
+      const wrappedHandler = (event: Event) => {
+        if (plugin.onBeforeCapture(event)) {
+          let payload = prepareEventPayload(event, {
+            attributes: this.attributes,
+            sessionId: this.sessionId,
+            payload: this.payload,
+            type,
+            maskTextContent: this.maskTextContent,
+          })
+
+          // adding the data from the handler
+          const data = handler(event, payload)
+
+          // if the handler returns false, don't capture the event
+          if (data === false) {
+            return
+          }
+
+          // if the handler returns an object, merge it with the payload
+          if (typeof data === 'object') {
+            payload = JSON.merge(payload, data)
+          }
+
+
+          if (storePayload(payload)) {
+            this.onEventCapture(payload)
+            plugin.onEventCapture(payload)
+          }
+
+        }
+
+      }
+
+      // check if the target is a HTMLElement | Document | Window, handler is a function, and type is string
+      if ((target instanceof HTMLElement || target instanceof Document || target instanceof Window) && typeof handler === 'function' && typeof type === 'string') {
+        new DOMEvent(type, wrappedHandler, options, target).bind()
+      }
+
+    })
   }
 
   /**
@@ -83,7 +144,7 @@ export class AutoCapture extends Base {
     this.unbind()
 
     // Stop all the plugins
-    PluginRegistry.getAll().forEach(plugin => plugin.stop())
+    PluginRegistry.getAll().forEach(plugin => plugin.onStop())
   }
 
   /**
@@ -181,7 +242,7 @@ export class AutoCapture extends Base {
 
   /**
    * Register the plugin to use it in the AutoCapture instance.
-   * @param plugin - The plugin to register.
+   * @param plugin - function returns an object of type Plugin.
    * @static
    * @public
    */
@@ -192,6 +253,9 @@ export class AutoCapture extends Base {
 
 // exporting the built-in plugins for the user to use them
 export * from './plugins'
+
+// exporting useful modules
+export { DOMEvent, JSON }
 
 // exporting the useful helper functions
 export {shouldCaptureEvent, prepareEventPayload, storePayload}

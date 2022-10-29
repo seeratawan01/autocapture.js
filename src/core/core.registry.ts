@@ -46,4 +46,11 @@ export default class PluginRegistry {
   static getAll(): Plugin[] {
     return PluginRegistry.registry
   }
+
+  /**
+   * Call the bind method of a plugin.
+   */
+  static bind(name: string, options: Record<string, any>): Record<'target'|'type'|'handler'|'options', any> {
+    return PluginRegistry.get(name).bind(options)
+  }
 }

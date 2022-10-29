@@ -1,6 +1,6 @@
 import { AutoCapture, Scroll } from '.'
 
 // Auto register the scroll plugin
-AutoCapture.use(Scroll)
+AutoCapture.use(new Scroll())
 
 export default AutoCapture
