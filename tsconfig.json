@@ -1,22 +1,50 @@
 {
   "compilerOptions": {
-    "moduleResolution": "node",
-    "target": "es5",
-    "module":"es2015",
-    "lib": ["es2015", "es2016", "es2017", "dom"],
-    "strict": true,
-    "sourceMap": true,
+    /* Type Checking */
+    "alwaysStrict": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    /* Modules */
+    "moduleResolution": "Node",
+    "types": [
+      "offscreencanvas"
+    ],
+    /* Emit */
     "declaration": true,
+    "outDir": "dist",
+    /* JavaScript Support */
+    "allowJs": true,
+    "checkJs": true,
+    /* Interop Constraints */
     "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "declarationDir": "dist/types",
-    "outDir": "dist/lib",
-    "typeRoots": [
-      "node_modules/@types"
+    /* Language and Environment */
+    "target": "ES6",
+    "lib": [
+      "es2018",
+      "DOM"
     ]
   },
+  "typedocOptions": {
+    "name": "autocapture.js",
+    "entryPoints": [
+      "types/index.d.ts"
+    ],
+    "readme": "none",
+    "excludeExternals": true,
+    "includeVersion": true,
+    "out": "./dist/docs/typedoc"
+  },
   "include": [
-    "src"
+    "./src/**/*",
+    "./types"
+  ],
+  "exclude": [
+    "./types/tests",
+    "./dist/**"
   ]
 }

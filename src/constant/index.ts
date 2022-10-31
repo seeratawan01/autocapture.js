@@ -1,28 +1,41 @@
-import { Capturable, EventAttributes } from '../types'
 
-export const STORAGE_KEY = 'AUTOCAPTURE_EVENT_DATA'
-export const VISITOR_ID_KEY = 'AUTOCAPTURE_VISITOR_ID'
+import {Attributes, PersistenceType, Capture} from '../types'
 
-export const DEFAULT_ATTRIBUTES: EventAttributes[] = [
-  'text',
-  'className',
-  'value',
-  'type',
-  'tagName',
-  'href',
-  'src',
-  'id',
-  'name',
-  'placeholder',
-  'title',
-  'alt',
-  'role'
-]
-
-export const DEFAULT_CAPTURE: Capturable[] = ['click', 'change', 'submit']
-
-export const DEFAULT_ELEMENTS = ['a', 'button', 'form', 'input', 'select', 'textarea', 'label']
-
-export const DEFAULT_PERSISTENCE = 'memory'
-
-export const DEFAULT_SAFELIST = []
+// Default values
+export const DEFAULT_OPTIONS: {
+  ATTRIBUTES: Attributes[],
+  CAPTURE: Capture[],
+  ELEMENTS: string[],
+  PERSISTENCE: PersistenceType,
+  SAFELIST: string[],
+  STORAGE_KEY: string,
+  VISITOR_ID_KEY: string,
+  MAX_EVENTS: number,
+  MASK_TEXT_CONTENT: boolean,
+  PLUGINS: string[],
+} = {
+  ELEMENTS: ['a', 'button', 'form', 'input', 'select', 'textarea', 'label'],
+  ATTRIBUTES: [
+    'text',
+    'className',
+    'value',
+    'type',
+    'tagName',
+    'href',
+    'src',
+    'id',
+    'name',
+    'placeholder',
+    'title',
+    'alt',
+    'role',
+  ],
+  SAFELIST: [],
+  CAPTURE: ['click', 'change', 'submit'],
+  PERSISTENCE: 'memory',
+  STORAGE_KEY: 'AUTOCAPTURE_EVENT_DATA',
+  VISITOR_ID_KEY: 'AUTOCAPTURE_VISITOR_ID',
+  MAX_EVENTS: 100,
+  MASK_TEXT_CONTENT: false,
+  PLUGINS: ['scroll', 'mouse-movement']
+}
