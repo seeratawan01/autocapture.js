@@ -57,7 +57,7 @@ export type BaseOptions = {
 
   /**
    * A list of events to capture. Defaults to `['click', 'change', 'submit']`.
-   * @example ['click', 'change', 'submit', 'page-view', 'touch'']
+   * @example ['click', 'change', 'submit', 'touch'']
    */
   capture?: Array<Capture>
 

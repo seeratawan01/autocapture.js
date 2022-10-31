@@ -25,6 +25,7 @@ export class AutoCapture extends Base {
   private attributes: Array<Attributes>
   private safelist: Array<string>
   private capturable: Capture[]
+  private lastEvent: number
 
   /**
    * Constructor for the AutoCapture class.
@@ -112,17 +113,29 @@ export class AutoCapture extends Base {
       // loop through the
       pluginData.forEach((data: any) => {
         // getting the plugin data
-        const { target, type, handler, options, name } = data
+        const { target, type, handler, options, name, throttling } = data
 
         if ((target instanceof HTMLElement || target instanceof Document || target instanceof Window) && typeof handler === 'function' && typeof type === 'string') {
-          new DOMEvent(type, (e) => wrappedHandler(e, name, handler), options, target).bind()
+          new DOMEvent(type, (e) => wrappedHandler(e, name, handler, throttling), options, target).bind()
         }
 
       })
 
       // wrapping the handler to capture the event
-      const wrappedHandler = (event: Event, type, handler) => {
+      const wrappedHandler = (event: Event, type, handler, throttling) => {
+
+        // to prevent massive data collection, we only capture every 100ms
+        if (throttling) {
+          const now = Date.now()
+          if (now - this.lastEvent < throttling) {
+            return
+          }
+          this.lastEvent = now
+        }
+
+
         if (plugin.onBeforeCapture(event)) {
+
           let payload = prepareEventPayload(event, {
             attributes: this.attributes,
             sessionId: this.sessionId,

@@ -1,5 +1,6 @@
 import { BaseOptions } from '../types'
 import { PluginBuilder } from '../core'
+import { BindResult } from '../../types/plugin'
 
 
 /**
@@ -17,7 +18,7 @@ class ScrollPlugin extends PluginBuilder {
   override key: string = 'scroll-internal'
   lastScrollTop: number = 0
 
-  override bind(_: BaseOptions): Record<'target' | 'type' | 'handler' | 'options' | 'name', any>[] {
+  override bind(_: BaseOptions): BindResult[] {
     return [
       {
         name: 'scroll',

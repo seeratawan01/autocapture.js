@@ -1,5 +1,14 @@
 import { BaseOptions } from './base'
 
+export type BindResult = {
+  name: string
+  target: EventTarget
+  type: string
+  handler: (event: any) => Record<string, any>
+  options?: boolean | AddEventListenerOptions
+  throttling?: number
+}
+
 export interface Plugin {
   /**
    * The name of the plugin.
@@ -12,7 +21,7 @@ export interface Plugin {
    * @return Array of object target, type, handler, options and name
    * @public
    */
-  bind: (options: BaseOptions) => Record<'target'|'type'|'handler'|'options'|'name', any>[]
+  bind: (options: BaseOptions) => BindResult[]
 
   /**
    * The callback method, called when the plugin is initialized.

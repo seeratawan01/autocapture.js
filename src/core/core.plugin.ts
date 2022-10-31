@@ -1,4 +1,5 @@
 import { BaseOptions, Plugin } from '../../types'
+import { BindResult } from '../../types/plugin'
 
 /**
  * Plugin builder
@@ -8,7 +9,7 @@ export default class PluginBuilder  implements Plugin {
   key: string = ''
   private options: Record<string, any> = {}
 
-  bind(_: BaseOptions): Record<"target" | "type" | "handler" | "options" | "name", any>[] {
+  bind(_: BaseOptions): BindResult[] {
     return [];
   }
 
