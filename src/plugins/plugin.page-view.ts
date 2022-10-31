@@ -4,33 +4,29 @@
 import { BaseOptions } from '../../types'
 import { PluginBuilder } from '../core'
 
-export class PageViewPlugin extends PluginBuilder {
-  override key: string = 'page-view'
+export default class PageViewPlugin extends PluginBuilder {
+  override key: string = 'page-view-internal'
 
-  override bind(_: BaseOptions): Record<'target' | 'type' | 'handler' | 'options', any>[] {
+  override bind(_: BaseOptions): Record<'target' | 'type' | 'handler' | 'options' | 'name', any>[] {
     return [
       {
+        name: 'page-view',
+        target: window,
+        type: 'popstate',
+        handler: () => {
+          return ({})
+        },
+        options: {}
+      },
+      {
+        name: 'page-view',
         target: window,
         type: 'load',
         handler: () => {
-          return this.captureEvent()
+          return ({})
         },
-        options: true
-      }
+        options: {}
+      },
     ]
-  }
-
-  /**
-   * A function to capture the page view events on your site.
-   */
-  private captureEvent(): Record<string, any> {
-    return {
-      event: 'page-view',
-      data: {
-        url: window.location.href,
-        referrer: document.referrer,
-        title: document.title
-      }
-    }
   }
 }

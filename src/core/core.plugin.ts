@@ -2,13 +2,13 @@ import { BaseOptions, Plugin } from '../../types'
 
 /**
  * Plugin builder
- *
+ * @extends Plugin
  */
 export default class PluginBuilder  implements Plugin {
   key: string = ''
   private options: Record<string, any> = {}
 
-  bind(_: BaseOptions): Record<"target" | "type" | "handler" | "options", any>[] {
+  bind(_: BaseOptions): Record<"target" | "type" | "handler" | "options" | "name", any>[] {
     return [];
   }
 

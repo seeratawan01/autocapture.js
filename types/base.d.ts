@@ -57,7 +57,7 @@ export type BaseOptions = {
 
   /**
    * A list of events to capture. Defaults to `['click', 'change', 'submit']`.
-   * @example ['click', 'change', 'submit', 'page-view', 'touch', 'scroll']
+   * @example ['click', 'change', 'submit', 'page-view', 'touch'']
    */
   capture?: Array<Capture>
 
@@ -84,4 +84,5 @@ export type BaseOptions = {
    * Specify if you want to mask the text content of the elements.
    */
   maskTextContent?: boolean
+
 }

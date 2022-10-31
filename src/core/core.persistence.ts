@@ -31,10 +31,6 @@ export default class Persistence implements Storage{
    */
   storage: Storage
 
-  /**
-   * The max number of events to store in the storage.
-   */
-  maxLimit: number
 
   /**
    * Returns the instance of this class.
@@ -44,9 +40,8 @@ export default class Persistence implements Storage{
   public static getInstance(persistence: PersistenceType = DEFAULT_OPTIONS.PERSISTENCE, maxLimit = DEFAULT_OPTIONS.MAX_EVENTS): Storage {
 
     if (!Persistence.instance) {
-      console.log('new persistence instance', persistence)
+      console.log('new persistence instance', persistence, maxLimit)
       Persistence.instance = new Persistence(persistence)
-      Persistence.instance.maxLimit = maxLimit
     }
 
     return Persistence.instance.storage
@@ -75,12 +70,6 @@ export default class Persistence implements Storage{
    * Set a key-value pair in the storage.
    */
   setItem(key: string, value: string): void {
-    // Check if the storage limit is full
-    if (this.storage.length >= this.maxLimit) {
-      // Remove the oldest item
-      this.storage.removeItem(this.storage.key(0))
-    }
-
     this.storage.setItem(key, value)
   }
 

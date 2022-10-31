@@ -14,6 +14,8 @@
  * store.size()
  * ...
  */
+import JSON from './core.json'
+
 export default class Store implements Storage {
   private static instance: Store
   private store: any = {}
@@ -50,6 +52,11 @@ export default class Store implements Storage {
    * @param value
    */
   public setItem(key: string, value: any): void {
+    // console.log('setItem', JSON.isJSON(value))
+    if (JSON.isJSON(value)) {
+      value = JSON.parse(value)
+    }
+
     this.store[key] = value
   }
 

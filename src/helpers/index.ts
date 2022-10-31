@@ -289,17 +289,27 @@ export function isBot(): boolean {
  * @param {Object} payload - payload to store
  * @returns {boolean} true if the payload is stored successfully
  */
-export function storePayload(payload: any): boolean {
+export function storePayload(payload: any, storage: Storage, maxLimit = DEFAULT_OPTIONS.MAX_EVENTS): boolean {
   // Get Storage instance
-  const storage = Persistence.getInstance()
+  // const storage = Persistence.getInstance()
 
+
+  // console.log('storage', storage)
   // if no storage is available means persistence is disabled
   if (!storage) {
     return false
   }
 
   // Get the stored payloads
-  const storedPayloads = storage.getItem(DEFAULT_OPTIONS.STORAGE_KEY)
+  let storedPayloads = storage.getItem(DEFAULT_OPTIONS.STORAGE_KEY)
+
+
+  if (typeof storedPayloads === 'string') {
+    storedPayloads = JSON.parse(storedPayloads) || []
+  }
+
+  console.log('storedPayloads', storedPayloads)
+
 
   // If there are no payloads stored, store the current payload
   if (!storedPayloads) {
@@ -307,7 +317,12 @@ export function storePayload(payload: any): boolean {
     return true
   }
 
+  // If the payloads are more than the max limit, remove the oldest one
+  if (storedPayloads.length >= maxLimit) {
+    (storedPayloads as unknown as any[]).shift()
+  }
+
   // If there are payloads stored, append the current payload to the stored payloads
-  storage.setItem(DEFAULT_OPTIONS.STORAGE_KEY, JSON.stringify([...JSON.parse(storedPayloads), payload]))
+  storage.setItem(DEFAULT_OPTIONS.STORAGE_KEY, JSON.stringify([...storedPayloads, payload]))
   return true
 }

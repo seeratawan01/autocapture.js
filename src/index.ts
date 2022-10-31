@@ -26,7 +26,6 @@ export class AutoCapture extends Base {
   private safelist: Array<string>
   private capturable: Capture[]
 
-
   /**
    * Constructor for the AutoCapture class.
    * @param options - The options to use for the AutoCapture instance.
@@ -34,7 +33,7 @@ export class AutoCapture extends Base {
    * @param options.attributes - A list of attributes to capture from the event target. Defaults to `['text', 'className', 'value', 'type', 'tagName', 'href', 'src', 'id', 'name', 'placeholder', 'title', 'alt', 'role']`.
    * @param options.safelist - A list of selectors to ignore to avoid capturing any sensitive data. Defaults to `[]`.
    * @param options.capture - A list of events to capture. Defaults to `['click', 'change', 'submit']`.
-   * @param options.X - A Callback function fires on captured event stored.
+   * @param options.plugins - A list of plugins to use. Defaults to `['scroll', 'mouse-movement']`.
    * @param options.persistence - A string to set the persistence method. Defaults to `memory`.
    * @public
    * @constructor
@@ -57,17 +56,21 @@ export class AutoCapture extends Base {
     // save the event handler, so it can be used in multiple places
     this.captureEvent = this.captureEvent.bind(this)
 
+    // initialize the plugins
+    PluginRegistry.getAll().forEach(plugin => {
+      console.log(`Initializing ${plugin.key} plugin`)
+      plugin.onInit({
+        elements,
+        attributes,
+        safelist,
+        capture,
+        ...options
+      })
+    })
+
+
     // start capturing the user interactions
     this.start()
-
-    // initialize the plugins
-    PluginRegistry.getAll().forEach(plugin => plugin.onInit({
-      elements,
-      attributes,
-      safelist,
-      capture,
-      ...options
-    }))
   }
 
   /**
@@ -109,16 +112,16 @@ export class AutoCapture extends Base {
       // loop through the
       pluginData.forEach((data: any) => {
         // getting the plugin data
-        const { target, type, handler, options } = data
+        const { target, type, handler, options, name } = data
 
         if ((target instanceof HTMLElement || target instanceof Document || target instanceof Window) && typeof handler === 'function' && typeof type === 'string') {
-          new DOMEvent(type, wrappedHandler, options, target).bind()
+          new DOMEvent(type, (e) => wrappedHandler(e, name, handler), options, target).bind()
         }
 
       })
 
       // wrapping the handler to capture the event
-      const wrappedHandler = (event: Event) => {
+      const wrappedHandler = (event: Event, type, handler) => {
         if (plugin.onBeforeCapture(event)) {
           let payload = prepareEventPayload(event, {
             attributes: this.attributes,
@@ -142,7 +145,7 @@ export class AutoCapture extends Base {
           }
 
 
-          if (storePayload(payload)) {
+          if (storePayload(payload, this.persistence)) {
             this.onEventCapture(payload)
             plugin.onEventCapture(payload)
           }
@@ -170,10 +173,6 @@ export class AutoCapture extends Base {
       this.capturable.includes('touch') && new DOMEvent('touchend', this.captureEvent).bind()
       this.capturable.includes('touch') && new DOMEvent('touchcancel', this.captureEvent).bind()
     }
-
-    // Capture page view event
-    this.capturable.includes('page-view') && new DOMEvent('popstate', this.captureEvent, {}, window).bind()
-    this.capturable.includes('page-view') && new DOMEvent('load', this.captureEvent, {}, window).bind()
   }
 
   /**
@@ -187,12 +186,6 @@ export class AutoCapture extends Base {
    * The function to capture the event.
    */
   protected captureEvent(event: Event): void {
-
-    // Check if the event is for page view
-    if (event.type === 'popstate' || event.type === 'load') {
-      this.capturePageView(event)
-      return
-    }
 
     // Skip the event if the target is not in the elements list
     if (!shouldCaptureEvent(this.elements, event)) {
@@ -214,28 +207,11 @@ export class AutoCapture extends Base {
       maskTextContent: this.maskTextContent
     })
 
-    if (storePayload(payload)) {
+    if (storePayload(payload, this.persistence)) {
       this.onEventCapture(payload)
     }
   }
 
-  /**
-   * The function to capture the page view event.
-   */
-  private capturePageView(event: Event): void {
-    // Extracting the data from the event attributes
-    const payload = prepareEventPayload(event, {
-      attributes: this.attributes,
-      sessionId: this.sessionId,
-      payload: this.payload,
-      type: 'page-view',
-      maskTextContent: this.maskTextContent
-    })
-
-    if (storePayload(payload)) {
-      this.onEventCapture(payload)
-    }
-  }
 
   /**
    * The function to get all the captured events from storage.
@@ -254,6 +230,12 @@ export class AutoCapture extends Base {
    * @public
    */
   public static use(plugin: Plugin): void {
+
+    // check if the plugin is already registered
+    if (PluginRegistry.get(plugin.key)) {
+      throw new Error(`Plugin with key ${plugin.key} is already registered.`)
+    }
+
     PluginRegistry.register(plugin)
   }
 }

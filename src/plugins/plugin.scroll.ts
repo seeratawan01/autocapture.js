@@ -14,12 +14,13 @@ import { PluginBuilder } from '../core'
  * @internal
  */
 class ScrollPlugin extends PluginBuilder {
-  override key: string = 'scroll'
+  override key: string = 'scroll-internal'
   lastScrollTop: number = 0
 
-  override bind(_: BaseOptions): Record<'target' | 'type' | 'handler' | 'options', any>[] {
+  override bind(_: BaseOptions): Record<'target' | 'type' | 'handler' | 'options' | 'name', any>[] {
     return [
       {
+        name: 'scroll',
         target: window,
         type: 'scroll',
         handler: () => {

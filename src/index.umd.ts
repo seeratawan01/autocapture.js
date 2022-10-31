@@ -1,6 +1,7 @@
-import { AutoCapture, ScrollPlugin } from '.'
+import { AutoCapture, ScrollPlugin, PageViewPlugin } from '.'
 
-// Auto register the scroll plugin
+// Auto register all internal plugin
 AutoCapture.use(new ScrollPlugin())
+AutoCapture.use(new PageViewPlugin())
 
 export default AutoCapture
