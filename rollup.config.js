@@ -11,7 +11,7 @@ const {version, homepage, author} = JSON.parse(readFileSync('./package.json'));
 const banner = `/*!
  * autocapture.js v${version}
  * ${homepage}
- * (c) ${(new Date(process.env.SOURCE_DATE_EPOCH ? (process.env.SOURCE_DATE_EPOCH * 1000) : new Date().getTime())).getFullYear()} autocapture.js ${author}
+ * ${author} (c) ${(new Date(process.env.SOURCE_DATE_EPOCH ? (process.env.SOURCE_DATE_EPOCH * 1000) : new Date().getTime())).getFullYear()} autocapture.js
  * Released under the MIT License
  */`;
 const extensions = ['.js', '.ts'];
@@ -46,7 +46,7 @@ const plugins = (minify) =>
 
 export default [
     // UMD build
-    // dist/chart.umd.js
+    // dist/autocapture.umd.js
     {
         input: 'src/index.umd.ts',
         plugins: plugins(true),
@@ -60,8 +60,7 @@ export default [
     },
 
     // ES6 builds
-    // dist/chart.js
-    // helpers/*.js
+    // dist/autocapture.js
     {
         input: {
             'dist/autocapture': 'src/index.ts'
@@ -80,7 +79,6 @@ export default [
 
     // Types
     // dist/types.d.ts
-    // dist/helpers.d.ts
     {
         input: {
             'dist/types': 'src/types.ts'
