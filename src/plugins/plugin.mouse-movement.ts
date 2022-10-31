@@ -12,9 +12,10 @@ export default class MouseMovementPlugin extends PluginBuilder {
   override key: string = 'mouse-movement-internal'
 
   override bind(_: BaseOptions): BindResult[] {
+
     return [
       {
-        name: 'mouse-movement',
+        name: 'mouse-movement-internal',
         target: window,
         type: 'mousemove',
         handler: (event: MouseEvent) => {
@@ -22,7 +23,7 @@ export default class MouseMovementPlugin extends PluginBuilder {
         },
         options: {},
         throttling: 100
-      },
+      }
     ]
   }
 
@@ -38,4 +39,6 @@ export default class MouseMovementPlugin extends PluginBuilder {
       }
     }
   }
+
+
 }

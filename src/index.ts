@@ -98,7 +98,7 @@ export class AutoCapture extends Base {
 
 
   /**
-   * Initialize the plugins.
+   * starting all plugins.
    */
   private startPlugins(): void {
     // start all the plugins
@@ -113,16 +113,21 @@ export class AutoCapture extends Base {
       // loop through the
       pluginData.forEach((data: any) => {
         // getting the plugin data
-        const { target, type, handler, options, name, throttling } = data
+        const { target, type, handler, options, name, throttling, condition } = data
 
         if ((target instanceof HTMLElement || target instanceof Document || target instanceof Window) && typeof handler === 'function' && typeof type === 'string') {
-          new DOMEvent(type, (e) => wrappedHandler(e, name, handler, throttling), options, target).bind()
+          new DOMEvent(type, (e) => wrappedHandler(e, name, handler, throttling, condition), options, target).bind()
         }
 
       })
 
       // wrapping the handler to capture the event
-      const wrappedHandler = (event: Event, type, handler, throttling) => {
+      const wrappedHandler = (event: Event, type, handler, throttling, condition) => {
+
+        // check if the condition is function and return false if it is not met
+        if (condition && typeof condition === 'function' && !condition(event)) {
+          return
+        }
 
         // to prevent massive data collection, we only capture every 100ms
         if (throttling) {
@@ -233,7 +238,14 @@ export class AutoCapture extends Base {
    */
   public getCapturedEvents(): any[] {
     let events = this.persistence?.getItem(DEFAULT_OPTIONS.STORAGE_KEY)
-    return events ? JSON.parse(events) : []
+    if (events) {
+      if (typeof events === 'string') {
+        return  JSON.parse(events)
+      } else {
+        return events
+      }
+    }
+    return []
   }
 
   /**
@@ -253,11 +265,11 @@ export class AutoCapture extends Base {
   }
 }
 
-// exporting the built-in plugins for the user to use them
+// exporting the built-in plugins for the developer to use them
 export * from './plugins'
 
 // exporting useful modules
 export { DOMEvent, JSON, PluginBuilder }
 
 // exporting the useful helper functions
-export {shouldCaptureEvent, prepareEventPayload, storePayload}
+export {shouldCaptureEvent, prepareEventPayload}

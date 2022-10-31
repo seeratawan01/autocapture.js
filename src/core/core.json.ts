@@ -21,7 +21,7 @@ export default class Json {
    * Parse JSON
    * @param value
    */
-  public static parse(value: string): any {
+  public static parse(value: string): any[]  {
     let parsed = JSON.parse(value);
     if (typeof parsed === 'string') parsed = Json.parse(parsed);
     return parsed;

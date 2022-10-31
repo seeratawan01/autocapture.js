@@ -6,7 +6,8 @@ export type BindResult = {
   type: string
   handler: (event: any) => Record<string, any>
   options?: boolean | AddEventListenerOptions
-  throttling?: number
+  throttling?: number,
+  condition?: (event: any) => boolean
 }
 
 export interface Plugin {

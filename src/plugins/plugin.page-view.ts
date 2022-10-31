@@ -19,8 +19,7 @@ export default class PageViewPlugin extends PluginBuilder {
         type: 'popstate',
         handler: () => {
           return ({})
-        },
-        options: {}
+        }
       },
       {
         name: 'page-view',

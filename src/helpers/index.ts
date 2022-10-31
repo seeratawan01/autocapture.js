@@ -308,9 +308,6 @@ export function storePayload(payload: any, storage: Storage, maxLimit = DEFAULT_
     storedPayloads = JSON.parse(storedPayloads) || []
   }
 
-  console.log('storedPayloads', storedPayloads)
-
-
   // If there are no payloads stored, store the current payload
   if (!storedPayloads) {
     storage.setItem(DEFAULT_OPTIONS.STORAGE_KEY, JSON.stringify([payload]))
