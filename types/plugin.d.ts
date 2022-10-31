@@ -7,11 +7,6 @@ export interface Plugin {
   key: string
 
   /**
-   * The options of the plugin.
-   */
-  options: Record<string, any>
-
-  /**
    * Method to bind the event listener to the elements using the DOMEvent class.
    * @param options The options passed to the core.
    * @return Object target, type, handler, options
@@ -48,5 +43,11 @@ export interface Plugin {
    * @param eventData The data of the captured event.
    */
   onEventCapture?: (eventData: Record<string, any>) => void
+
+
+  /**
+   * Get the options of the plugin.
+   */
+  getOptions?: () => Record<string, any>
 
 }

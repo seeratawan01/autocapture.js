@@ -77,11 +77,31 @@ export class AutoCapture extends Base {
   start(): void {
     // Bind the event listener
     this.bind()
+
+    this.startPlugins()
+  }
+
+  /**
+   * Stop capturing events.
+   */
+  stop(): void {
+    // Unbind the event listener
+    this.unbind()
+
+    // Stop all the plugins
+    PluginRegistry.getAll().forEach(plugin => plugin.onStop())
+  }
+
+
+  /**
+   * Initialize the plugins.
+   */
+  private startPlugins(): void {
     // start all the plugins
     PluginRegistry.getAll().forEach(plugin => {
-      const pluginData = plugin.bind(plugin.options)
+      const pluginData = plugin.bind(plugin.getOptions())
 
-      // if the plugin has a bind function, it not implemented yet
+      // if the plugin has a bind function, it is not implemented yet
       if (!pluginData) {
         return
       }
@@ -134,17 +154,6 @@ export class AutoCapture extends Base {
       }
 
     })
-  }
-
-  /**
-   * Stop capturing events.
-   */
-  stop(): void {
-    // Unbind the event listener
-    this.unbind()
-
-    // Stop all the plugins
-    PluginRegistry.getAll().forEach(plugin => plugin.onStop())
   }
 
   /**

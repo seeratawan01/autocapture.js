@@ -6,9 +6,8 @@ import { BaseOptions, Plugin } from '../../types'
  */
 export default class PluginBuilder  implements Plugin {
   key: string = ''
-  options: Record<string, any> = {}
-
-
+  private options: Record<string, any> = {}
+  
   bind(_: BaseOptions): Record<"target" | "type" | "handler" | "options", any> {
     return undefined;
   }
@@ -30,5 +29,9 @@ export default class PluginBuilder  implements Plugin {
 
   onStop(): void {
 
+  }
+
+  getOptions(): Record<string, any> {
+    return this.options
   }
 }
