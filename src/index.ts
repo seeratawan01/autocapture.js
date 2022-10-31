@@ -106,13 +106,16 @@ export class AutoCapture extends Base {
         return
       }
 
-      // getting the plugin data
-      const {
-        target,
-        type,
-        handler,
-        options
-      } = pluginData
+      // loop through the
+      pluginData.forEach((data: any) => {
+        // getting the plugin data
+        const { target, type, handler, options } = data
+
+        if ((target instanceof HTMLElement || target instanceof Document || target instanceof Window) && typeof handler === 'function' && typeof type === 'string') {
+          new DOMEvent(type, wrappedHandler, options, target).bind()
+        }
+
+      })
 
       // wrapping the handler to capture the event
       const wrappedHandler = (event: Event) => {
@@ -146,11 +149,6 @@ export class AutoCapture extends Base {
 
         }
 
-      }
-
-      // check if the target is a HTMLElement | Document | Window, handler is a function, and type is string
-      if ((target instanceof HTMLElement || target instanceof Document || target instanceof Window) && typeof handler === 'function' && typeof type === 'string') {
-        new DOMEvent(type, wrappedHandler, options, target).bind()
       }
 
     })

@@ -9,10 +9,10 @@ export interface Plugin {
   /**
    * Method to bind the event listener to the elements using the DOMEvent class.
    * @param options The options passed to the core.
-   * @return Object target, type, handler, options
+   * @return Array of object target, type, handler, options
    * @public
    */
-  bind: (options: BaseOptions) => Record<'target'|'type'|'handler'|'options', any>
+  bind: (options: BaseOptions) => Record<'target'|'type'|'handler'|'options', any>[]
 
   /**
    * The callback method, called when the plugin is initialized.

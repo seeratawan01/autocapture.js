@@ -7,9 +7,9 @@ import { BaseOptions, Plugin } from '../../types'
 export default class PluginBuilder  implements Plugin {
   key: string = ''
   private options: Record<string, any> = {}
-  
-  bind(_: BaseOptions): Record<"target" | "type" | "handler" | "options", any> {
-    return undefined;
+
+  bind(_: BaseOptions): Record<"target" | "type" | "handler" | "options", any>[] {
+    return [];
   }
 
   onBeforeCapture(_: Event): boolean {

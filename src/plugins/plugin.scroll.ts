@@ -17,15 +17,17 @@ class ScrollPlugin extends PluginBuilder {
   override key: string = 'scroll'
   lastScrollTop: number = 0
 
-  override bind(_: BaseOptions): Record<'target' | 'type' | 'handler' | 'options', any> {
-    return {
-      target: window,
-      type: 'scroll',
-      handler: () => {
-        return this.captureEvent()
-      },
-      options: true
-    }
+  override bind(_: BaseOptions): Record<'target' | 'type' | 'handler' | 'options', any>[] {
+    return [
+      {
+        target: window,
+        type: 'scroll',
+        handler: () => {
+          return this.captureEvent()
+        },
+        options: true
+      }
+    ]
   }
 
   /**

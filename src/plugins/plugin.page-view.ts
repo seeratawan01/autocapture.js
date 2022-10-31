@@ -7,15 +7,17 @@ import { PluginBuilder } from '../core'
 export class PageViewPlugin extends PluginBuilder {
   override key: string = 'page-view'
 
-  override bind(_: BaseOptions): Record<'target' | 'type' | 'handler' | 'options', any> {
-    return {
-      target: window,
-      type: 'load',
-      handler: () => {
-        return this.captureEvent()
-      },
-      options: true
-    }
+  override bind(_: BaseOptions): Record<'target' | 'type' | 'handler' | 'options', any>[] {
+    return [
+      {
+        target: window,
+        type: 'load',
+        handler: () => {
+          return this.captureEvent()
+        },
+        options: true
+      }
+    ]
   }
 
   /**
