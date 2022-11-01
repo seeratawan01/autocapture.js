@@ -1,8 +1,23 @@
 # AutoCapture.js
+A javascript library to capture every user interactions, it provides an easiest and most comprehensive way  to
+automatically capture the user interactions on the website, from the moment of installation forward. A single
+snippet grabs every click, touch, select, and fill — forever.
 
-A simple javascript library to provide an easiest and most comprehensive way to automatically
-capture the user interactions on the website, from the moment of installation forward. A single
-snippet grabs every click, touch, page-view, and fill — forever.
+## Features
+- Automatically captures every user interactions, such as
+  - Click
+  - Right Click
+  - Double Click
+  - Touch
+  - Input
+  - Change
+  - Form Submit
+- Build-in Plugins
+  - [x] **Scroll** - Capture the scroll event [(Source)](./src/plugins/plugin.scroll.ts)
+  - [x] **Mouse Movement** - Capture the mouse movement [(Source)](./src/plugins/plugin.mouse-movement.ts)
+  - [x] **Page View** - Capture the page view [(Source)](./src/plugins/plugin.page-view.ts)
+- Extendable with custom plugins
+- Lightweight and easy to use
 
 ## Use Cases
 
@@ -11,15 +26,7 @@ snippet grabs every click, touch, page-view, and fill — forever.
 - **Track User Journeys** - Track the user journeys from the moment they land on your site, to the
   moment they leave.
 - **Custom Analytics Tool** - Build your own analytics tools and libraries using AutoCapture.js to
-  track user behavior, and use the data to improve your site.
-  - **Build Your Own Heatmap** - Build your own heatmap to understand how users interact with your
-    site.
-  - **Build Your Own Form Analytics** - Build your own form analytics to understand how users use
-    your forms to achieve their goals.
-  - **Build Your Own Click Analytics** - Build your own click analytics to understand how users
-    interact with your site.
-  - **Build Your Own Scroll Analytics** - Build your own scroll analytics to understand how users
-    scroll on your site.
+  track user behavior, and use the data to improve your site. e.g. Heatmap, Session Replay, etc.
 
 ## Installation
 
@@ -43,17 +50,35 @@ You can import the library in your project using the following:
 ```javascript
 import AutoCapture from 'autoCapture';
 ```
+And to install internal plugins, you can import the plugins in your project using the following:
 
-However, you can use cdn to import the library's UMD build in a browser and start using it right
+```javascript
+import { ScrollPlugin, MouseMovementPlugin, PageViewPlugin } from 'autoCapture';
+
+AutoCapture.use(new ScrollPlugin());
+AutoCapture.use(new MouseMovementPlugin());
+AutoCapture.use(new PageViewPlugin());
+```
+
+
+
+However, you can use CDN to import the library's UMD build in a browser and start using it right
 away.
 
+Note that the UMD build includes all the plugins, and you don't need to install them separately.
+
+```html
+<script src='https://unpkg.com/autocapture.js'></script>
+```
+
 ### Usage
+Using AutoCapture.js is very simple, now you just need to initialize the library with your preferred options.
 
 ```javascript
  const instance = new AutoCapture({
   safelist: ['input[type="password"]'],
   persistence: 'memory',
-  capture: ['scroll', 'click', 'input', 'change', 'page-view'],
+  capture: ['click', 'input', 'change'],
   onEventCapture: (event) => {
     console.log('Event stored', event)
 
@@ -68,7 +93,7 @@ instance.start()
 **Simple as that** - AutoCapture.js will automatically capture all the user interactions on your
 site, from the moment of installation forward.
 
-### Notable Features
+### Notable Control Options
 
 - **Safelist** - Safelist is a list of CSS selectors that you want to ignore. For example, you can
   ignore all the password inputs by adding `input[type="password"]` to the safelist.
@@ -80,16 +105,17 @@ site, from the moment of installation forward.
   - `sessionStorage` - Events are stored in the browser's session storage and are lost when the
     browser is closed.
   - `none` - Events are not stored anywhere.
-- **Capture** - Capture is the list of events you want to capture. You can choose between `scroll`
-  , `click`, `input`, `change`, `page-view`, `touch`, `scroll`, `submit`, `mouse-movement` are the
+- **Capture** - Capture is the list of events you want to capture. You can choose between `click`, `input`, `change`,
+  `touch`, `submit` are the
   default values.
 - **onEventCapture** - onEventCapture is a callback function that will be called every time an event
   is captured. You can use this callback to send the captured events to your server.
   - You can use this callback to send the captured events to your server.
-  - You can use this callback to presist the captured events in your own way.
+  - You can use this callback to persist the captured events in your own way.
   - You can use this callback to send the captured events to your own analytics tool.
 
 ## Complete Options List
+See the [Options](./types/base.d.ts) interface for the complete list of options.
 
 | Option | Type | Default                                                         | Description                                                                                                                                                              |
 | --- | --- |-----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -184,19 +210,65 @@ site, from the moment of installation forward.
 }
 ```
 
-## Roadmap
+## Extending AutoCapture.js
+You can extend AutoCapture.js by creating a new plugin. A plugin is a class that extends the [PluginBuilder](
+/src/core/core.plugin.ts) class.
 
-- [x] Capture clicks
-- [x] Capture scrolls
-- [x] Capture form submits
-- [x] Capture input fills
-- [x] Capture page views
-- [x] Capture swipes (touch)
-- [x] Capture mouse movements
-- [x] Capture mouse double clicks
-- [x] Capture mouse right clicks
-- [ ] Capture mouse drags
-- [ ] Capture idle/active time
+```js
+import { PluginBuilder } from 'autocapture.js';
+
+class MyPlugin extends PluginBuilder {
+  // Key is the name of the plugin and should be unique.
+  // Also the key is the required parameter.
+  key = 'page-view-internal'
+
+  /**
+   *  Method to bind the event listener to the elements using the DOMEvent class.
+   *  This method is required and should be implemented.
+   */
+  bind() {
+    // This method is called when the plugin is initialized.
+    // You can bind any event listeners here.
+
+    // The importent thing is to return the array of objects with the following structure.
+    return [
+      {
+        // The element to bind the event listener to. (Required)
+        target: document,
+        // The event to listen to. (Required)
+        event: 'DOMContentLoaded',
+        // The callback function to call when the event is triggered. (Required)
+        callback: this._privateMethod,
+        // The options to pass to the addEventListener method. (Optional)
+        options: false,
+        // The throttling time in milliseconds. (Optional)
+        throttle: 1000,
+        // The condition function to check if the event should be captured. (Optional)
+        condition: () => true
+      },
+      // ... You can add more objects here.
+    ]
+
+  }
+
+  /**
+   * Your private methods.
+   */
+  _privateMethod() {
+    // ...
+    // your code here
+
+    // your callback function should return an object that object will be passed to the event payload.
+    return {
+      'user-data': {
+        id: 1,
+        name: 'John Doe'
+      }
+    }
+  }
+}
+```
+Check out the [Mouse Movement Plugin](/src/plugins/plugin.mouse-movement.ts) for a sample plugin.
 
 ## Credits
 
