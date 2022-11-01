@@ -41,7 +41,7 @@ export default class Json {
   }
 
   /**
-   * merge two JSON objects
+   * Merge many JSON objects
    */
   public static merge(...args: any[]): any {
     let result = {}

@@ -185,15 +185,15 @@ export class AutoCapture extends Base {
   bind(): void {
     //  Capture DOM events on every elements
     if (this.capturable.length) {
-      this.capturable.includes('click') && this.events.push(new DOMEvent('click', this.captureEvent, { capture: true }, document))
-      this.capturable.includes('double-click') && this.events.push(new DOMEvent('dblclick', this.captureEvent, { capture: true }, document))
-      this.capturable.includes('context-menu') && this.events.push(new DOMEvent('contextmenu', this.captureEvent, { capture: true }, document))
-      this.capturable.includes('input') && this.events.push(new DOMEvent('input', this.captureEvent, { capture: true }, document))
-      this.capturable.includes('change') && this.events.push(new DOMEvent('change', this.captureEvent, { capture: true }, document))
-      this.capturable.includes('submit') && this.events.push(new DOMEvent('submit', this.captureEvent, { capture: true }, document))
-      this.capturable.includes('touch') && this.events.push(new DOMEvent('touchstart', this.captureEvent, { capture: true }, document))
-      this.capturable.includes('touch') && this.events.push(new DOMEvent('touchend', this.captureEvent, { capture: true }, document))
-      this.capturable.includes('touch') && this.events.push(new DOMEvent('touchmove', this.captureEvent, { capture: true }, document))
+      this.capturable.includes('click') && this.events.push(new DOMEvent('click', this.captureEvent, { capture: true }, document).bind())
+      this.capturable.includes('double-click') && this.events.push(new DOMEvent('dblclick', this.captureEvent, { capture: true }, document).bind())
+      this.capturable.includes('context-menu') && this.events.push(new DOMEvent('contextmenu', this.captureEvent, { capture: true }, document).bind())
+      this.capturable.includes('input') && this.events.push(new DOMEvent('input', this.captureEvent, { capture: true }, document).bind())
+      this.capturable.includes('change') && this.events.push(new DOMEvent('change', this.captureEvent, { capture: true }, document).bind())
+      this.capturable.includes('submit') && this.events.push(new DOMEvent('submit', this.captureEvent, { capture: true }, document).bind())
+      this.capturable.includes('touch') && this.events.push(new DOMEvent('touchstart', this.captureEvent, { capture: true }, document).bind())
+      this.capturable.includes('touch') && this.events.push(new DOMEvent('touchend', this.captureEvent, { capture: true }, document).bind())
+      this.capturable.includes('touch') && this.events.push(new DOMEvent('touchmove', this.captureEvent, { capture: true }, document).bind())
     }
   }
 
