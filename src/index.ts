@@ -1,7 +1,8 @@
-import { Base, DOMEvent, JSON, PluginRegistry, PluginBuilder } from './core'
+import { Base, DOMEvent, JSON, PluginBuilder, PluginRegistry } from './core'
 import { Attributes, BaseOptions, Capture, Plugin } from '../types'
 import { DEFAULT_OPTIONS } from './constant'
 import { prepareEventPayload, shouldCaptureEvent, storePayload } from './helpers'
+import { BindResult } from '../types/plugin'
 
 /**
  *  A library to provide an easiest and most comprehensive way to automatically capture the user
@@ -26,6 +27,8 @@ export class AutoCapture extends Base {
   private safelist: Array<string>
   private capturable: Capture[]
   private lastEvent: number
+
+  private events: DOMEvent[] = []
 
   /**
    * Constructor for the AutoCapture class.
@@ -113,32 +116,33 @@ export class AutoCapture extends Base {
       // loop through the
       pluginData.forEach((data: any) => {
         // getting the plugin data
-        const { target, type, handler, options, name, throttling, condition } = data
+        const { target, event, callback, options, name, throttle, condition }:BindResult = data
 
-        if ((target instanceof HTMLElement || target instanceof Document || target instanceof Window) && typeof handler === 'function' && typeof type === 'string') {
-          new DOMEvent(type, (e) => wrappedHandler(e, name, handler, throttling, condition), options, target).bind()
+        if ((target instanceof HTMLElement || target instanceof Document || target instanceof Window) && typeof callback === 'function' && typeof event === 'string') {
+          // if the condition is not met, do not bind the event
+          if (condition && typeof condition === 'function' && !condition()) {
+            return
+          }
+
+
+          // to prevent massive data collection, we only capture every 100ms
+          if (throttle) {
+            const now = Date.now()
+            if (now - this.lastEvent < throttle) {
+              return
+            }
+            this.lastEvent = now
+          }
+
+          // bind the event
+          this.events.push(new DOMEvent(event, (e) => wrappedHandler(e, name, callback), options, target).bind()
+          )
         }
 
       })
 
       // wrapping the handler to capture the event
-      const wrappedHandler = (event: Event, type, handler, throttling, condition) => {
-
-        // check if the condition is function and return false if it is not met
-        if (condition && typeof condition === 'function' && !condition(event)) {
-          return
-        }
-
-        // to prevent massive data collection, we only capture every 100ms
-        if (throttling) {
-          const now = Date.now()
-          if (now - this.lastEvent < throttling) {
-            return
-          }
-          this.lastEvent = now
-        }
-
-
+      const wrappedHandler = (event: Event, type, handler) => {
         if (plugin.onBeforeCapture(event)) {
 
           let payload = prepareEventPayload(event, {
@@ -146,7 +150,7 @@ export class AutoCapture extends Base {
             sessionId: this.sessionId,
             payload: this.payload,
             type,
-            maskTextContent: this.maskTextContent,
+            maskTextContent: this.maskTextContent
           })
 
           // adding the data from the handler
@@ -181,15 +185,15 @@ export class AutoCapture extends Base {
   bind(): void {
     //  Capture DOM events on every elements
     if (this.capturable.length) {
-      this.capturable.includes('click') && new DOMEvent('click', this.captureEvent).bind()
-      this.capturable.includes('double-click') && new DOMEvent('dblclick', this.captureEvent).bind()
-      this.capturable.includes('context-menu') && new DOMEvent('contextmenu', this.captureEvent).bind()
-      this.capturable.includes('input') && new DOMEvent('input', this.captureEvent).bind()
-      this.capturable.includes('change') && new DOMEvent('change', this.captureEvent).bind()
-      this.capturable.includes('submit') && new DOMEvent('submit', this.captureEvent).bind()
-      this.capturable.includes('touch') && new DOMEvent('touchstart', this.captureEvent).bind()
-      this.capturable.includes('touch') && new DOMEvent('touchend', this.captureEvent).bind()
-      this.capturable.includes('touch') && new DOMEvent('touchcancel', this.captureEvent).bind()
+      this.capturable.includes('click') && this.events.push(new DOMEvent('click', this.captureEvent, { capture: true }, document))
+      this.capturable.includes('double-click') && this.events.push(new DOMEvent('dblclick', this.captureEvent, { capture: true }, document))
+      this.capturable.includes('context-menu') && this.events.push(new DOMEvent('contextmenu', this.captureEvent, { capture: true }, document))
+      this.capturable.includes('input') && this.events.push(new DOMEvent('input', this.captureEvent, { capture: true }, document))
+      this.capturable.includes('change') && this.events.push(new DOMEvent('change', this.captureEvent, { capture: true }, document))
+      this.capturable.includes('submit') && this.events.push(new DOMEvent('submit', this.captureEvent, { capture: true }, document))
+      this.capturable.includes('touch') && this.events.push(new DOMEvent('touchstart', this.captureEvent, { capture: true }, document))
+      this.capturable.includes('touch') && this.events.push(new DOMEvent('touchend', this.captureEvent, { capture: true }, document))
+      this.capturable.includes('touch') && this.events.push(new DOMEvent('touchmove', this.captureEvent, { capture: true }, document))
     }
   }
 
@@ -197,7 +201,7 @@ export class AutoCapture extends Base {
    * Unbind the event listeners.
    */
   unbind(): void {
-    DOMEvent.purge()
+    this.events.forEach(event => event.unbind())
   }
 
   /**
@@ -240,7 +244,7 @@ export class AutoCapture extends Base {
     let events = this.persistence?.getItem(DEFAULT_OPTIONS.STORAGE_KEY)
     if (events) {
       if (typeof events === 'string') {
-        return  JSON.parse(events)
+        return JSON.parse(events)
       } else {
         return events
       }
@@ -272,4 +276,4 @@ export * from './plugins'
 export { DOMEvent, JSON, PluginBuilder }
 
 // exporting the useful helper functions
-export {shouldCaptureEvent, prepareEventPayload}
+export { shouldCaptureEvent, prepareEventPayload }

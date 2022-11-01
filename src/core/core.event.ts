@@ -33,7 +33,7 @@ export default class DOMEvent {
   /**
    * List of all bound event listeners.
    */
-  static instances: DOMEvent[] = []
+  // static instances: DOMEvent[] = []
 
 
   /**
@@ -50,9 +50,9 @@ export default class DOMEvent {
     this.options = options
     if (target) this.target = target
 
-    if (!DOMEvent.instances.includes(this)) {
-      DOMEvent.instances.push(this)
-    }
+    // if (!DOMEvent.instances.includes(this)) {
+    //   DOMEvent.instances.push(this)
+    // }
   }
 
   /**
@@ -81,9 +81,9 @@ export default class DOMEvent {
    * @static
    * @return void
    */
-  public static purge() {
-    DOMEvent.instances.forEach((instance) => instance.unbind())
-    DOMEvent.instances = []
-  }
+  // public static purge() {
+  //   DOMEvent.instances.forEach((instance) => instance.unbind())
+  //   DOMEvent.instances = []
+  // }
 
 }

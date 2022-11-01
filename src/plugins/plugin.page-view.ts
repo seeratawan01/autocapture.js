@@ -16,19 +16,18 @@ export default class PageViewPlugin extends PluginBuilder {
       {
         name: 'page-view',
         target: window,
-        type: 'popstate',
-        handler: () => {
+        event: 'popstate',
+        callback: () => {
           return ({})
         }
       },
       {
         name: 'page-view',
         target: window,
-        type: 'load',
-        handler: () => {
+        event: 'load',
+        callback: () => {
           return ({})
         },
-        options: {}
       },
     ]
   }

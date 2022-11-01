@@ -233,6 +233,8 @@ class MyPlugin extends PluginBuilder {
     // The importent thing is to return the array of objects with the following structure.
     return [
       {
+        // The name of the event to added in payload.
+        name: 'content-loaded',
         // The element to bind the event listener to. (Required)
         target: document,
         // The event to listen to. (Required)

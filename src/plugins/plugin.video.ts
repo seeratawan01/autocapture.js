@@ -19,11 +19,10 @@ export default class VideoPlugin extends PluginBuilder {
       {
         name: 'video',
         target: window,
-        type: 'load',
-        handler: () => {
+        event: 'load',
+        callback: () => {
           return this.captureEvent()
         },
-        options: {}
       }
     ]
   }

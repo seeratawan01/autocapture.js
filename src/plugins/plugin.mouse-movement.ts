@@ -15,14 +15,13 @@ export default class MouseMovementPlugin extends PluginBuilder {
 
     return [
       {
-        name: 'mouse-movement-internal',
+        name: 'mouse-movement',
         target: window,
-        type: 'mousemove',
-        handler: (event: MouseEvent) => {
+        event: 'mousemove',
+        callback: (event: MouseEvent) => {
           return this.captureEvent(event)
         },
-        options: {},
-        throttling: 100
+        throttle: 100
       }
     ]
   }

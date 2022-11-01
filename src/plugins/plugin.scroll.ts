@@ -23,8 +23,8 @@ class ScrollPlugin extends PluginBuilder {
       {
         name: 'scroll',
         target: window,
-        type: 'scroll',
-        handler: () => {
+        event: 'scroll',
+        callback: () => {
           return this.captureEvent()
         },
         options: true

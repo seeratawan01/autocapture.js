@@ -1,13 +1,39 @@
 import { BaseOptions } from './base'
 
 export type BindResult = {
+  /**
+   * The name of the event to added in payload.
+   */
   name: string
+  /**
+   * The target element to bind the event listener to.
+   */
   target: EventTarget
-  type: string
-  handler: (event: any) => Record<string, any>
+  /**
+   * The javascript event type.
+   */
+  event: string
+
+  /**
+   * The event handler.
+   * @param event
+   */
+  callback: (event: any) => Record<string, any>
+
+  /**
+   * The event options.
+   */
   options?: boolean | AddEventListenerOptions
-  throttling?: number,
-  condition?: (event: any) => boolean
+
+  /**
+   * The throttling time in milliseconds.
+   */
+  throttle?: number,
+
+  /**
+   * The condition function to check if the event should be captured.
+   */
+  condition?: () => boolean
 }
 
 export interface Plugin {
