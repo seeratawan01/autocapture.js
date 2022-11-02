@@ -22,7 +22,7 @@ export default class TapPlugin extends PluginBuilder {
           return this.captureEvent(event, options)
         },
         options: {
-          capture: true,
+          capture: true
         },
         condition: () => {
           return !('ontouchstart' in window)
@@ -36,7 +36,7 @@ export default class TapPlugin extends PluginBuilder {
           return this.captureEvent(event, options)
         },
         options: {
-          capture: true,
+          capture: true
         },
         condition: () => {
           return !('ontouchstart' in window)
@@ -50,8 +50,8 @@ export default class TapPlugin extends PluginBuilder {
           return this.captureEvent(event, options)
         },
         options: {
-          capture: true,
-        },
+          capture: true
+        }
       },
       {
         name: 'tap',
@@ -61,7 +61,7 @@ export default class TapPlugin extends PluginBuilder {
           return this.captureEvent(event, options)
         },
         options: {
-          capture: true,
+          capture: true
         }
       }
     ]
@@ -71,25 +71,27 @@ export default class TapPlugin extends PluginBuilder {
    * A function to capture the tap/click event.
    */
   private captureEvent(event: Event, options: BaseOptions): Record<string, any> | false {
-    const {elements, safelist} = options
+    const { elements, safelist } = options
 
     // Skip the event if the target is not in the elements list
     if (!shouldCaptureEvent(elements, event)) {
-      return false;
+      return false
     }
 
     // Skip the event if the target is in the safe list selector
     if (safelist.some(selector => (event.target as HTMLElement).matches(selector))) {
-      return false;
+      return false
     }
 
     // Determine the type of the event.
     const eventType = event.type === 'touchstart' ? 'tap' : event.type
 
     return {
-     detail: {
-       type: eventType,
-     }
+      detail: {
+        type: eventType,
+        x: (event as any).clientX,
+        y: (event as any).clientY
+      }
     }
 
   }

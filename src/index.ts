@@ -1,5 +1,5 @@
 import { Base, DOMEvent, JSON, PluginBuilder, PluginRegistry } from './core'
-import { Attributes, BaseOptions, Capture, Plugin } from '../types'
+import { BaseOptions, Plugin } from '../types'
 import { DEFAULT_OPTIONS } from './constant'
 import { prepareEventPayload, shouldCaptureEvent, storePayload } from './helpers'
 import { BindResult } from '../types/plugin'
@@ -22,52 +22,39 @@ import { BindResult } from '../types/plugin'
  *
  */
 export class AutoCapture extends Base {
-  private elements: string[]
-  private attributes: Array<Attributes>
-  private safelist: Array<string>
-  private capturable: Capture[]
+
   private lastEvent: number
 
   private events: DOMEvent[] = []
 
   /**
    * Constructor for the AutoCapture class.
-   * @param options - The options to use for the AutoCapture instance.
-   * @param options.elements - A list of elements to capture events from. Defaults to ['a', 'button', 'form', 'input', 'select', 'textarea', 'label'].
-   * @param options.attributes - A list of attributes to capture from the event target. Defaults to `['text', 'className', 'value', 'type', 'tagName', 'href', 'src', 'id', 'name', 'placeholder', 'title', 'alt', 'role']`.
-   * @param options.safelist - A list of selectors to ignore to avoid capturing any sensitive data. Defaults to `[]`.
-   * @param options.capture - A list of events to capture. Defaults to `['click', 'change', 'submit']`.
-   * @param options.plugins - A list of plugins to use. Defaults to `['scroll', 'mouse-movement']`.
-   * @param options.persistence - A string to set the persistence method. Defaults to `memory`.
+   * @param options - The options to use for the AutoCapture instance. See the BaseOptions interface for more details.
    * @public
    * @constructor
    */
-  constructor({
-                elements = DEFAULT_OPTIONS.ELEMENTS,
-                attributes = DEFAULT_OPTIONS.ATTRIBUTES,
-                safelist = DEFAULT_OPTIONS.SAFELIST,
-                capture = DEFAULT_OPTIONS.CAPTURE,
-                ...options
-              }: BaseOptions) {
-    super(options)
+  constructor(options: BaseOptions) {
 
-    // Default Values
-    this.elements = elements
-    this.safelist = safelist
-    this.attributes = attributes
-    this.capturable = capture
+    // Set the default options
+    let settings = Object.assign({}, {
+        elements: DEFAULT_OPTIONS.ELEMENTS,
+        attributes: DEFAULT_OPTIONS.ATTRIBUTES,
+        safelist: DEFAULT_OPTIONS.SAFELIST,
+        capture: DEFAULT_OPTIONS.CAPTURE,
+        payload: DEFAULT_OPTIONS.PAYLOAD,
+        maskTextContent: DEFAULT_OPTIONS.MASK_TEXT_CONTENT,
+        sessionId: '',
+        persistence: DEFAULT_OPTIONS.PERSISTENCE,
+        maxEvents: DEFAULT_OPTIONS.MAX_EVENTS,
+      }, options)
 
-    // save the event handler, so it can be used in multiple places
-    this.captureEvent = this.captureEvent.bind(this)
+    // Call the super constructor
+    super(settings)
 
     // initialize the plugins
     PluginRegistry.getAll().forEach(plugin => {
       plugin.onInit({
-        elements,
-        attributes,
-        safelist,
-        capture,
-        ...options
+        ...settings
       })
     })
 
@@ -80,9 +67,6 @@ export class AutoCapture extends Base {
   start(): void {
     // Bind the event listener
     this.bind()
-
-    // Start all the registered plugins
-    this.startPlugins()
   }
 
   /**
@@ -147,11 +131,11 @@ export class AutoCapture extends Base {
         if (plugin.onBeforeCapture(event)) {
 
           let payload = prepareEventPayload(event, {
-            attributes: this.attributes,
-            sessionId: this.sessionId,
-            payload: this.payload,
+            attributes: this.settings.attributes,
+            sessionId: this.settings.sessionId,
+            payload: this.settings.payload,
             type,
-            maskTextContent: this.maskTextContent
+            maskTextContent: this.settings.maskTextContent
           })
 
           // adding the data from the handler
@@ -184,15 +168,8 @@ export class AutoCapture extends Base {
    * Bind the event listener to the elements using the DOMEvent class.
    */
   bind(): void {
-    //  Capture DOM events on every elements
-    if (this.capturable.length) {
-      // this.capturable.includes('click') && this.events.push(new DOMEvent('click', this.captureEvent, { capture: true }, document).bind())
-      // this.capturable.includes('double-click') && this.events.push(new DOMEvent('dblclick', this.captureEvent, { capture: true }, document).bind())
-      // this.capturable.includes('context-menu') && this.events.push(new DOMEvent('contextmenu', this.captureEvent, { capture: true }, document).bind())
-      // this.capturable.includes('touch') && this.events.push(new DOMEvent('touchstart', this.captureEvent, { capture: true }, document).bind())
-      // this.capturable.includes('touch') && this.events.push(new DOMEvent('touchend', this.captureEvent, { capture: true }, document).bind())
-      // this.capturable.includes('touch') && this.events.push(new DOMEvent('touchmove', this.captureEvent, { capture: true }, document).bind())
-    }
+    // Start all the registered plugins
+    this.startPlugins()
   }
 
   /**
@@ -200,36 +177,6 @@ export class AutoCapture extends Base {
    */
   unbind(): void {
     this.events.forEach(event => event.unbind())
-  }
-
-  /**
-   * The function to capture the event.
-   */
-  protected captureEvent(event: Event): void {
-
-    // Skip the event if the target is not in the elements list
-    if (!shouldCaptureEvent(this.elements, event)) {
-      return
-    }
-
-
-    // Skip the event if the target is in the safe list selector
-    if (this.safelist.some(selector => (event.target as HTMLElement).matches(selector))) {
-      return
-    }
-
-    // Extracting the data from the event attributes
-    const payload = prepareEventPayload(event, {
-      attributes: this.attributes,
-      sessionId: this.sessionId,
-      payload: this.payload,
-      type: event.type,
-      maskTextContent: this.maskTextContent
-    })
-
-    if (storePayload(payload, this.persistence)) {
-      this.onEventCapture(payload)
-    }
   }
 
 

@@ -176,7 +176,7 @@ See the [Options](./types/base.d.ts) interface for the complete list of options.
     "url": "https://app.autocapture.dev/",
     "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:105.0) Gecko/20100101 Firefox/105.0"
   },
-  "session": {
+  "sessionIdsession": {
     "id": "b5b9b9b0-5b9b-4b9b-9b9b-b9b9b9b9b9b9"
   },
   //This will be present only if the events are of type click or mouse movement

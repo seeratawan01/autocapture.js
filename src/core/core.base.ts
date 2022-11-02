@@ -4,6 +4,11 @@ import { DEFAULT_OPTIONS } from '../constant'
 
 export default abstract class Base {
 
+  /**
+   * The plugin settings.
+   * @protected
+   */
+  protected settings: BaseOptions = {}
 
   /**
    * The persistence object to use for persistence.
@@ -11,23 +16,6 @@ export default abstract class Base {
    */
   protected persistence: Storage = null
 
-  /**
-   * Custom payload to be added to the captured event.
-   * @protected
-   */
-  protected payload: Record<string, any>
-
-  /**
-   * Custom session id.
-   * @protected
-   */
-  protected sessionId: string
-
-  /**
-   * Specify if you want to mask the text content of the elements.
-   * @protected
-   */
-  maskTextContent: boolean
 
   /**
    * On event capture callback.
@@ -35,23 +23,15 @@ export default abstract class Base {
    */
   public onEventCapture: (eventData: Record<string, any>) => void
 
-  protected constructor({ persistence, payload, sessionId, onEventCapture, maxEvents, maskTextContent }: BaseOptions) {
+  protected constructor(settings: BaseOptions) {
+
+    this.settings = settings
 
     // Set the persistence object if persistence is not set to none.
-    this.persistence = Persistence.getInstance(persistence || DEFAULT_OPTIONS.PERSISTENCE, maxEvents || DEFAULT_OPTIONS.MAX_EVENTS)
-
-    // Set the custom payload.
-    this.payload = payload || {}
-
-    // Set the session id.
-    this.sessionId = sessionId || ''
-
-
-    // Set the mask text content.
-    this.maskTextContent = maskTextContent || DEFAULT_OPTIONS.MASK_TEXT_CONTENT
+    this.persistence = Persistence.getInstance(this.settings.persistence || DEFAULT_OPTIONS.PERSISTENCE, this.settings.maxEvents || DEFAULT_OPTIONS.MAX_EVENTS)
 
     // On event capture callback
-    this.onEventCapture = onEventCapture || ((_: Record<string, any>) => ({}))
+    this.onEventCapture = this.settings.onEventCapture || ((_: Record<string, any>) => ({}))
 
   }
 
@@ -66,13 +46,6 @@ export default abstract class Base {
    * @public
    */
   abstract stop(): void
-
-  /**
-   * Capture an event.
-   * @param event - The event to capture.
-   * @protected
-   */
-  protected abstract captureEvent(event: Event): boolean | void
 
   /**
    * Clear all the captured events or specific.
