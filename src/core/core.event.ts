@@ -9,6 +9,11 @@
  */
 export default class DOMEvent {
   /**
+   * the key of the event.
+   */
+  public key: string = 'dom-event'
+
+  /**
    * The event name.
    */
   private name: keyof WindowEventMap | string
@@ -42,12 +47,14 @@ export default class DOMEvent {
    * @param handler The event handler.
    * @param options The event options.
    * @param target The target element to bind the event listener to.
+   * @param key The key of the event.
    * @public
    */
-  constructor(name: keyof WindowEventMap | string, handler: (event: Event) => void, options: boolean | AddEventListenerOptions = {}, target?: HTMLElement | Document | Window) {
+  constructor(name: keyof WindowEventMap | string, handler: (event: Event) => void, options: boolean | AddEventListenerOptions = {}, target?: HTMLElement | Document | Window, key?: string) {
     this.name = name
     this.handler = handler
     this.options = options
+    this.key = key || this.key
     if (target) this.target = target
 
     // if (!DOMEvent.instances.includes(this)) {

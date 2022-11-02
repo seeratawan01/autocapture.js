@@ -1,5 +1,10 @@
 /**
  * Plugin to Detect video play, progress, and complete events as visitors view embedded videos on your site.
+ * Scope:
+ * - Video state
+ * - Video percentage
+ * - Video mute
+ * - etc...
  * @internal
  * @extends PluginBuilder
  */

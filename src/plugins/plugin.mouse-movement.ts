@@ -1,8 +1,8 @@
 /**
- * Internal mouse movement plugin to add mouse movement functionality to the core. Functionality includes:
+ * Internal mouse movement plugin to add mouse movement functionality to the core.
+ * Scope:
  * - Capture the mouse movement
  * @extends PluginBuilder
- * @internal
  */
 import { BaseOptions } from '../../types'
 import { PluginBuilder } from '../core'

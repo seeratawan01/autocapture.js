@@ -54,4 +54,11 @@ export default class PluginRegistry {
   static bind(name: string, options: Record<string, any>): BindResult[] {
     return PluginRegistry.get(name).bind(options)
   }
+
+  /**
+   * Check if a plugin is registered.
+   */
+  static has(name: string): boolean {
+    return !!PluginRegistry.get(name)
+  }
 }

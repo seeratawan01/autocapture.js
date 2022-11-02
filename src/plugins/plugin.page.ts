@@ -5,7 +5,6 @@
  * - When page unload
  * - Browser history change
  * @extends PluginBuilder
- * @internal
  */
 import { BaseOptions } from '../../types'
 import { PluginBuilder } from '../core'

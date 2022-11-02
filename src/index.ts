@@ -81,6 +81,7 @@ export class AutoCapture extends Base {
     // Bind the event listener
     this.bind()
 
+    // Start all the registered plugins
     this.startPlugins()
   }
 
@@ -116,7 +117,7 @@ export class AutoCapture extends Base {
       // loop through the
       pluginData.forEach((data: any) => {
         // getting the plugin data
-        const { target, event, callback, options, name, throttle, condition }:BindResult = data
+        const { target, event, callback, options, name, throttle, condition }: BindResult = data
 
         if ((target instanceof HTMLElement || target instanceof Document || target instanceof Window) && typeof callback === 'function' && typeof event === 'string') {
           // if the condition is not met, do not bind the event
@@ -135,7 +136,7 @@ export class AutoCapture extends Base {
           }
 
           // bind the event
-          this.events.push(new DOMEvent(event, (e) => wrappedHandler(e, name, callback), options, target).bind()
+          this.events.push(new DOMEvent(event, (e) => wrappedHandler(e, name, callback), options, target, plugin.key).bind()
           )
         }
 
@@ -250,6 +251,28 @@ export class AutoCapture extends Base {
       }
     }
     return []
+  }
+
+  /**
+   * Unregister the installed plugin.
+   * @public
+   * @param {string} key - The plugin key.
+   * @returns {void}
+   */
+  public unregisterPlugin(key: string): void {
+    // check if the plugin is installed
+    if (!PluginRegistry.has(key)) {
+      throw new Error(`The plugin ${key} is not installed.`)
+    }
+
+    // find the events that are bound to the plugin
+    const events = this.events.filter(event => event.key === key)
+
+    // unbind the events
+    events.forEach(event => event.unbind())
+
+    // remove the plugin from the registry
+    PluginRegistry.unregister(key)
   }
 
   /**

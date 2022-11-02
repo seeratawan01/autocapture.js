@@ -12,10 +12,10 @@ import { BindResult } from '../../types/plugin'
  * - Capture the scroll position.
  * - Capture the scroll height.
  * @extends PluginBuilder
- * @internal
  */
 class ScrollPlugin extends PluginBuilder {
-  override key: string = 'scroll-internal'
+  override key: string = 'scroll'
+
   lastScrollTop: number = 0
 
   override bind(_: BaseOptions): BindResult[] {
