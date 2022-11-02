@@ -4,9 +4,8 @@
  * - Capture the mouse movement
  * @extends PluginBuilder
  */
-import { BaseOptions } from '../../types'
+import { BaseOptions, BindResult } from '../../types'
 import { PluginBuilder } from '../core'
-import { BindResult } from '../../types/plugin'
 
 export default class MouseMovementPlugin extends PluginBuilder {
   override key: string = 'mouse-movement'
@@ -34,7 +33,7 @@ export default class MouseMovementPlugin extends PluginBuilder {
     return {
       details: {
         x: event.clientX,
-        y: event.clientY,
+        y: event.clientY
       }
     }
   }

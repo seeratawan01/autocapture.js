@@ -6,16 +6,15 @@
  * - Browser history change
  * @extends PluginBuilder
  */
-import { BaseOptions } from '../../types'
+import { BaseOptions, BindResult } from '../../types'
 import { PluginBuilder } from '../core'
-import { BindResult } from '../../types/plugin'
 
 export default class PageViewPlugin extends PluginBuilder {
   override key: string = 'page'
 
   override bind(_: BaseOptions): BindResult[] {
     return [
-     // Detect when the user first visits the page on first load
+      // Detect when the user first visits the page on first load
       {
         name: 'page',
         target: window,

@@ -1,9 +1,10 @@
 import { BaseOptions } from './base'
 import { Attributes, Capture, PersistenceType } from './options'
-import { Plugin } from './plugin'
+import { Plugin, BindResult } from './plugin'
 
 export {
   Plugin,
+  BindResult,
   BaseOptions,
   Capture,
   Attributes,

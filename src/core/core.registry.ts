@@ -10,8 +10,7 @@
  * PluginRegistry.unregister('scrollMap')
  *
  */
-import { Plugin } from '../../types'
-import { BindResult } from '../../types/plugin'
+import { BindResult, Plugin } from '../../types'
 
 export default class PluginRegistry {
   /**

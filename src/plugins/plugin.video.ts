@@ -8,8 +8,7 @@
  * @internal
  * @extends PluginBuilder
  */
-import { BaseOptions } from '../../types'
-import { BindResult } from '../../types/plugin'
+import { BaseOptions, BindResult } from '../../types'
 import { PluginBuilder } from '../core'
 
 export default class VideoPlugin extends PluginBuilder {

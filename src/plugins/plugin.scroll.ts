@@ -1,6 +1,6 @@
 import { BaseOptions } from '../types'
 import { PluginBuilder } from '../core'
-import { BindResult } from '../../types/plugin'
+import { BindResult } from '../../types'
 
 
 /**

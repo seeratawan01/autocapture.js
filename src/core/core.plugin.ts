@@ -1,20 +1,19 @@
-import { BaseOptions, Plugin } from '../../types'
-import { BindResult } from '../../types/plugin'
+import { BaseOptions, BindResult, Plugin } from '../../types'
 
 /**
  * Plugin builder
  * @extends Plugin
  */
-export default class PluginBuilder  implements Plugin {
+export default class PluginBuilder implements Plugin {
   key: string = ''
   private options: Record<string, any> = {}
 
   bind(_: BaseOptions): BindResult[] {
-    return [];
+    return []
   }
 
   onBeforeCapture(_: Event): boolean {
-    return true;
+    return true
   }
 
   onEventCapture(_: Record<string, any>): void {

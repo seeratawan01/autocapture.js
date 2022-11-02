@@ -7,9 +7,8 @@
  * - Capture the form reset events
  * @extends PluginBuilder
  */
-import { BaseOptions } from '../../types'
+import { BaseOptions, BindResult } from '../../types'
 import { PluginBuilder } from '../core'
-import { BindResult } from '../../types/plugin'
 import { shouldCaptureEvent } from '../helpers'
 
 export default class FormPlugin extends PluginBuilder {

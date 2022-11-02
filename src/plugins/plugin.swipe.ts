@@ -9,15 +9,15 @@
  * @experimental
  */
 import { PluginBuilder } from '../core'
-import { BindResult } from '../../types/plugin'
+import { BindResult } from '../../types'
 
 export default class SwipePlugin extends PluginBuilder {
   override key: string = 'swipe'
-  private touchstart:any = {
+  private touchstart: any = {
     x: 0,
     y: 0
   }
-  private touchend:any = {
+  private touchend: any = {
     x: 0,
     y: 0
   }
@@ -91,7 +91,6 @@ export default class SwipePlugin extends PluginBuilder {
    * A function to get the distance of the swipe.
    * minDistance is the minimum distance for the swipe to work.
    */
-
 
 
   /**
