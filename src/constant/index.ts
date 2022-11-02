@@ -32,7 +32,7 @@ export const DEFAULT_OPTIONS: {
     'role',
   ],
   SAFELIST: [],
-  CAPTURE: ['click', 'change', 'submit'],
+  CAPTURE: ['tap', 'form', 'page'],
   PAYLOAD: {},
   PERSISTENCE: 'memory',
   STORAGE_KEY: 'AUTOCAPTURE_EVENT_DATA',

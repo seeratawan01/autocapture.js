@@ -40,7 +40,8 @@ export default class Persistence implements Storage{
   public static getInstance(persistence: PersistenceType = DEFAULT_OPTIONS.PERSISTENCE, maxLimit = DEFAULT_OPTIONS.MAX_EVENTS): Storage {
 
     if (!Persistence.instance) {
-      console.log('new persistence instance', persistence, maxLimit)
+      console.log('Setting up Persistence: ', persistence)
+      console.log('Max Limit: ', maxLimit)
       Persistence.instance = new Persistence(persistence)
     }
 

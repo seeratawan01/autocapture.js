@@ -145,12 +145,12 @@
 		<button id='clear-btn'>Clear</button>
 
 		<form onsubmit='false'>
-			<label for="fname">First name:</label>
-			<input type="text" id="fname" name="fname"><br><br>
-			<label for="lname">Last name:</label>
-			<input type="text" id="lname" name="lname"><br><br>
-			<input type="submit" value="Submit">
-			<input type="reset" value="Reset">
+			<label for='fname'>First name:</label>
+			<input type='text' id='fname' name='fname'><br><br>
+			<label for='lname'>Last name:</label>
+			<input type='text' id='lname' name='lname'><br><br>
+			<input type='submit' value='Submit'>
+			<input type='reset' value='Reset'>
 		</form>
 		<h2>TITLE HEADING</h2>
 		<h5>Title description, Dec 7, 2017</h5>
@@ -178,21 +178,20 @@
 <script>
 	const autoCapture = new AutoCapture({
 		safelist: [],
+		maxEvents: 200,
 		persistence: 'memory',
-		capture: ['click', 'input', 'change', 'submit', 'page-view'],
-		payload: {
-			user_id: '123',
-		},
 		maskTextContent: false,
 		onEventCapture: (event) => {
-			console.log("onEventCapture", 			autoCapture.getCapturedEvents()
-			);
+			console.log('onEventCapture', autoCapture.getCapturedEvents())
 		}
 	})
 
-	autoCapture.unregisterPlugin('scroll')
-	autoCapture.unregisterPlugin('mouse-movement')
-	autoCapture.start();
+	// Unregistering some plugins
+	// autoCapture.unregisterPlugin('scroll')
+	// autoCapture.unregisterPlugin('mouse-movement')
+
+	// Starting the capture
+	autoCapture.start()
 
 
 	// instance.start()

@@ -85,12 +85,18 @@ export class AutoCapture extends Base {
    * starting all plugins.
    */
   private startPlugins(): void {
-    console.log(PluginRegistry.getAll())
-
 
     // start all the plugins
     PluginRegistry.getAll().forEach(plugin => {
+
+      // check if the plugin is in capture list
+      if (!this.settings.capture.includes(plugin.key)) {
+        console.log(`Skipping ${plugin.key} plugin`)
+        return
+      }
+
       console.log(`Starting ${plugin.key} plugin`)
+
       const pluginData = plugin.bind(plugin.getOptions())
 
       // if the plugin has a bind function, it is not implemented yet

@@ -11,7 +11,7 @@ import { PluginBuilder } from '../core'
 import { BindResult } from '../../types/plugin'
 
 export default class PageViewPlugin extends PluginBuilder {
-  override key: string = 'page-view-internal'
+  override key: string = 'page'
 
   override bind(_: BaseOptions): BindResult[] {
     return [

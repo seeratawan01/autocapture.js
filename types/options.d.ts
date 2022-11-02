@@ -16,4 +16,4 @@ export type Attributes =
   | 'role'
   | string
 
-export type Capture =  'click' | 'double-click' | 'context-menu' | 'change' | 'submit' | 'touch' | 'input'
+export type Capture =  'tap' | 'form' | 'swipe' | 'scroll' | 'video' | 'form' | 'page' | 'mouse-movement' | string

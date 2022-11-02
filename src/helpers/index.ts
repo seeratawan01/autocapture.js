@@ -194,7 +194,8 @@ export function prepareEventPayload(event: Event, options: {
     session: getSessionDetails(sessionId)
   }
 
-  if (payload) {
+  // Add custom payload if provided not empty object
+  if (payload && Object.keys(payload).length > 0) {
     data.payload = payload
   }
 
