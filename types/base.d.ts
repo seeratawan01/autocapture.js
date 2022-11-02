@@ -56,7 +56,7 @@ export type BaseOptions = {
   onEventCapture?: (eventData: Record<string, any>) => void
 
   /**
-   * A list of events to capture. Defaults to `['tap', 'form', 'page']`.
+   * A list of plugins to use. Defaults to `['tap', 'form', 'page']`.
    * @example ['tap', 'form', 'page', 'scroll', 'video', 'mouse-movement']
    */
   capture?: Array<Capture>

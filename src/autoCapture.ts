@@ -64,7 +64,7 @@ export class AutoCapture extends Base {
    * start capturing the user interactions (click, swipe, tap, page-view, and fill) on the site.
    * @public
    */
-  start(): void {
+  public start(): void {
     // Bind the event listener
     this.bind()
   }
@@ -72,7 +72,7 @@ export class AutoCapture extends Base {
   /**
    * Stop capturing events.
    */
-  stop(): void {
+  public stop(): void {
     // Unbind the event listener
     this.unbind()
 
@@ -173,7 +173,7 @@ export class AutoCapture extends Base {
   /**
    * Bind the event listener to the elements using the DOMEvent class.
    */
-  bind(): void {
+  private bind(): void {
     // Start all the registered plugins
     this.startPlugins()
   }
@@ -181,8 +181,15 @@ export class AutoCapture extends Base {
   /**
    * Unbind the event listeners.
    */
-  unbind(): void {
+  private unbind(): void {
     this.events.forEach(event => event.unbind())
+  }
+
+  /**
+   * The function to clear all the captured events from storage.
+   */
+  public clearCapturedEvents(): void {
+    this.persistence.clear()
   }
 
 
