@@ -68,25 +68,25 @@ export function shouldCaptureEvent(elements: string[], event: Event): boolean {
     return false
   }
 
-  const type = event.type
+  // const type = event.type
+  //
+  // // Form submit events
+  // if (type === 'submit' || type === 'input' || type === 'change' || type === 'reset') {
+  //   return true
+  // }
+  //
+  // // Mouse events
+  // if (type === 'click' || type === 'mousedown' || type === 'mouseup' || type === 'dblclick' || type === 'contextmenu') {
+  //   return true
+  // }
+  //
+  // // touch swipe events
+  // if (type === 'touchstart' || type === 'touchmove' || type === 'touchend') {
+  //   return true
+  // }
 
-  // Form submit events
-  if (type === 'submit' || type === 'input' || type === 'change') {
-    return true
-  }
 
-  // Mouse events
-  if (type === 'click' || type === 'mousedown' || type === 'mouseup' || type === 'dblclick' || type === 'contextmenu') {
-    return true
-  }
-
-  // touch swipe events
-  if (type === 'touchstart' || type === 'touchmove' || type === 'touchend') {
-    return true
-  }
-
-
-  return false
+  return true
 }
 
 /**
