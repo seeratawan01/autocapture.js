@@ -48,6 +48,7 @@
     "@rollup/plugin-inject": "^4.0.4",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-strip": "^3.0.1",
     "@size-limit/preset-big-lib": "^8.0.0",
     "@swc/core": "^1.2.224",
     "@types/estree": "^1.0.0",

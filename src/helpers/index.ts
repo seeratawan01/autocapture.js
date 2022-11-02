@@ -296,11 +296,7 @@ export function isBot(): boolean {
  * @returns {boolean} true if the payload is stored successfully
  */
 export function storePayload(payload: any, storage: Storage, maxLimit = DEFAULT_OPTIONS.MAX_EVENTS): boolean {
-  // Get Storage instance
-  // const storage = Persistence.getInstance()
 
-
-  // console.log('storage', storage)
   // if no storage is available means persistence is disabled
   if (!storage) {
     return false
