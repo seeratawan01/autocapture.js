@@ -28,14 +28,19 @@ export function getClassName(el: Element): string {
  */
 export function getText(el: Element, masked: boolean): string {
 
-  if (masked) {
-    return '********'
-  }
+  let text = ''
+
 
   if ((el.textContent as any) instanceof SVGAnimatedString) {
-    return (el.textContent as any)?.baseVal || ''
+    text = (el.textContent as any)?.baseVal || ''
   }
-  return el.textContent
+  text = el.textContent
+
+  if (masked) {
+    text = text.replace(/./g, '*')
+  }
+
+  return text
 }
 
 /**
@@ -193,7 +198,7 @@ export function prepareEventPayload(event: Event, options: {
     data.payload = payload
   }
 
-  if (type !== 'page-view' && target.tagName) {
+  if (target.tagName) {
     const selector = target.tagName.toLowerCase()
 
     data.target = {
@@ -227,7 +232,7 @@ export function getAttributeValue(target: HTMLElement | Element, attribute: stri
       return getClassName(target)
     case 'value':
       if (masked) {
-        return (target as HTMLInputElement).value.length > 0 ? '*****' : ''
+        return (target as HTMLInputElement).value && (target as HTMLInputElement).value.length > 0 ? '*****' : ''
       }
       return (target as HTMLInputElement).value
     case 'type':

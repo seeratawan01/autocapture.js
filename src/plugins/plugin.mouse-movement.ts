@@ -9,7 +9,7 @@ import { PluginBuilder } from '../core'
 import { BindResult } from '../../types/plugin'
 
 export default class MouseMovementPlugin extends PluginBuilder {
-  override key: string = 'mouse-movement-internal'
+  override key: string = 'mouse-movement'
 
   override bind(_: BaseOptions): BindResult[] {
 
@@ -32,7 +32,7 @@ export default class MouseMovementPlugin extends PluginBuilder {
   private captureEvent(event: MouseEvent): Record<string, any> {
 
     return {
-      coordinates: {
+      details: {
         x: event.clientX,
         y: event.clientY,
       }

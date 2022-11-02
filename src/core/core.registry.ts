@@ -11,6 +11,7 @@
  *
  */
 import { Plugin } from '../../types'
+import { BindResult } from '../../types/plugin'
 
 export default class PluginRegistry {
   /**
@@ -50,7 +51,7 @@ export default class PluginRegistry {
   /**
    * Call the bind method of a plugin.
    */
-  static bind(name: string, options: Record<string, any>): Record<'target'|'type'|'handler'|'options', any> {
+  static bind(name: string, options: Record<string, any>): BindResult[] {
     return PluginRegistry.get(name).bind(options)
   }
 }

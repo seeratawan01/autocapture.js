@@ -8,7 +8,7 @@ export type BindResult = {
   /**
    * The target element to bind the event listener to.
    */
-  target: EventTarget
+  target: EventTarget | EventTarget[] | Window | Document | HTMLElement | Element | Node | NodeList | HTMLCollection
   /**
    * The javascript event type.
    */
@@ -18,7 +18,7 @@ export type BindResult = {
    * The event handler.
    * @param event
    */
-  callback: (event: any) => Record<string, any>
+  callback: (event: any) => Record<string, any> | false
 
   /**
    * The event options.

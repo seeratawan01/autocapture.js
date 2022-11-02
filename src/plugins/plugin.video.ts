@@ -8,7 +8,7 @@ import { BindResult } from '../../types/plugin'
 import { PluginBuilder } from '../core'
 
 export default class VideoPlugin extends PluginBuilder {
-  override key: string = 'video-internal'
+  override key: string = 'video'
 
   constructor() {
     super()
@@ -18,11 +18,11 @@ export default class VideoPlugin extends PluginBuilder {
     return [
       {
         name: 'video',
-        target: window,
+        target: document.getElementsByTagName('video'),
         event: 'load',
-        callback: () => {
-          return this.captureEvent()
-        },
+        callback: (event) => {
+          return this.captureEvent(event)
+        }
       }
     ]
   }
@@ -30,16 +30,20 @@ export default class VideoPlugin extends PluginBuilder {
   /**
    * A function to capture the video events on your site.
    */
-  private captureEvent(): Record<string, any> {
-    const videos = document.getElementsByTagName('video')
-    if (videos.length === 0) {
-      return {}
-    }
-    const videoElements = Array.from(videos)
-    const videoEvents = videoElements.map((video) => {
-      return {
-        currentTime: video.currentTime,
+  private captureEvent(event: Event): Record<string, any> {
+    const video = event.target as HTMLVideoElement
+
+    return {
+      details: {
+        id: video.id,
+        state: video.paused ? 'pause' : 'play',
         duration: video.duration,
+        currentTime: video.currentTime,
+        percent: video.currentTime / video.duration,
+        volume: video.volume,
+        muted: video.muted,
+        playbackRate: video.playbackRate,
+        buffered: video.buffered,
         ended: video.ended,
         paused: video.paused,
         played: video.played,
@@ -47,16 +51,8 @@ export default class VideoPlugin extends PluginBuilder {
         seeking: video.seeking,
         src: video.src,
         videoHeight: video.videoHeight,
-        videoWidth: video.videoWidth,
-        volume: video.volume
+        videoWidth: video.videoWidth
       }
-    })
-    return {
-      videoElements,
-      videoEvents
     }
   }
-
-
-
 }

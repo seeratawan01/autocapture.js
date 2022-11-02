@@ -62,7 +62,6 @@ export class AutoCapture extends Base {
 
     // initialize the plugins
     PluginRegistry.getAll().forEach(plugin => {
-      console.log(`Initializing ${plugin.key} plugin`)
       plugin.onInit({
         elements,
         attributes,
@@ -72,9 +71,6 @@ export class AutoCapture extends Base {
       })
     })
 
-
-    // start capturing the user interactions
-    this.start()
   }
 
   /**
@@ -104,8 +100,12 @@ export class AutoCapture extends Base {
    * starting all plugins.
    */
   private startPlugins(): void {
+    console.log(PluginRegistry.getAll())
+
+
     // start all the plugins
     PluginRegistry.getAll().forEach(plugin => {
+      console.log(`Starting ${plugin.key} plugin`)
       const pluginData = plugin.bind(plugin.getOptions())
 
       // if the plugin has a bind function, it is not implemented yet

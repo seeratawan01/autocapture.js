@@ -85,7 +85,7 @@ class ScrollPlugin extends PluginBuilder {
     }
 
     return {
-      scroll: payload
+      details: payload
     }
 
   }
