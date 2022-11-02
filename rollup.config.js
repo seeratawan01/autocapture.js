@@ -16,6 +16,9 @@ const banner = `/*!
  * Released under the MIT License
  */`
 const extensions = ['.js', '.ts']
+
+const prod = process.env.NODE_ENV === 'production'
+
 const plugins = (minify) =>
   [
     json(),
@@ -34,7 +37,7 @@ const plugins = (minify) =>
       },
       sourceMaps: true
     }),
-    strip({
+    prod && strip({
       include: '**/*.ts',
     }),
     minify
