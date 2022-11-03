@@ -1,6 +1,6 @@
 {
   "name": "autocapture.js",
-  "version": "1.0.beta.1",
+  "version": "1.0.0-alpha.1",
   "description": "Build your own analytics - A single library to grabs every click, touch, page-view, and fill — forever.",
   "license": "MIT",
   "type": "module",
