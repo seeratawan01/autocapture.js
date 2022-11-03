@@ -33,7 +33,7 @@ export type BindResult = {
   /**
    * The condition function to check if the event should be captured.
    */
-  condition?: () => boolean
+  condition?: (event:any) => boolean
 }
 
 export interface Plugin {

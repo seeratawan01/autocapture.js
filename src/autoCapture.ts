@@ -121,7 +121,7 @@ export class AutoCapture extends Base {
       const wrappedHandler = (event: Event, type, handler, throttle = 0, condition) => {
 
         // if the condition is not met, do not bind the event
-        if (condition && typeof condition === 'function' && !condition()) {
+        if (condition && typeof condition === 'function' && !condition(event)) {
           return
         }
 

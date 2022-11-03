@@ -20,7 +20,11 @@ export default class MouseMovementPlugin extends PluginBuilder {
         callback: (event: MouseEvent) => {
           return this.captureEvent(event)
         },
-        throttle: 100
+        throttle: 100,
+        condition: () => {
+          // Skip the event if the touch is active
+          return !('ontouchstart' in window)
+        }
       }
     ]
   }

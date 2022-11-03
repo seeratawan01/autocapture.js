@@ -52,7 +52,7 @@ const plugins = (minify) =>
       })
   ]
 
-export default [
+const outputConfig = [
   // UMD build
   // dist/autocapture.umd.js
   {
@@ -66,19 +66,6 @@ export default [
       sourcemap: true
     }
   },
-
-  prod && {
-    input: 'src/index.umd.ts',
-    plugins: plugins(true),
-    output: {
-      name: 'AutoCapture',
-      file: 'example/dist/autocapture.umd.js',
-      format: 'umd',
-      indent: false,
-      sourcemap: true
-    }
-  },
-
   // ES6 builds
   // dist/autocapture.js
   {
@@ -112,3 +99,19 @@ export default [
     }
   }
 ]
+
+if (prod) {
+  outputConfig.push({
+    input: 'src/index.umd.ts',
+    plugins: plugins(true),
+    output: {
+      name: 'AutoCapture',
+      file: 'example/dist/autocapture.umd.js',
+      format: 'umd',
+      indent: false,
+      sourcemap: true
+    }
+  })
+}
+
+export default outputConfig

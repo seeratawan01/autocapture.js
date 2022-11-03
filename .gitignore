@@ -2,6 +2,7 @@
 /coverage
 /custom
 /dist
+/example/dist
 /gh-pages
 
 # Node.js
