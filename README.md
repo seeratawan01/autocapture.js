@@ -55,7 +55,7 @@ the plugin system.
   and use the data to improve your site. e.g. Heatmap, Session Replay, etc.
 
 ## Live Demo
-[autocapture-js.vercel.app](autocapture-js.vercel.app)
+[autocapture-js.vercel.app](https://autocapture-js.vercel.app)
 
 ## Installation
 AutoCapture.js is still in development, right now it is in the alpha stage, and it is not ready for production use.
