@@ -67,6 +67,18 @@ export default [
     }
   },
 
+  prod && {
+    input: 'src/index.umd.ts',
+    plugins: plugins(true),
+    output: {
+      name: 'AutoCapture',
+      file: 'example/dist/autocapture.umd.js',
+      format: 'umd',
+      indent: false,
+      sourcemap: true
+    }
+  },
+
   // ES6 builds
   // dist/autocapture.js
   {
