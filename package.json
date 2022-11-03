@@ -9,7 +9,7 @@
   "main": "./dist/autocapture.js",
   "scripts": {
     "dev": "rollup -c -w",
-    "build": "tsc --noEmit && rollup -c --output dist --environment NODE_ENV:production",
+    "build": "tsc --noEmit && rollup -c --environment NODE_ENV:production",
     "build:docs": "typedoc --out docs --entryPoints src/index.ts --theme default",
     "lint-js": "eslint \"src/**/*.{js,ts}\" \"test/**/*.js\" \"docs/**/*.js\"",
     "lint-md": "eslint \"**/*.md\"",
