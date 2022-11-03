@@ -20,9 +20,6 @@ export default class TapPlugin extends PluginBuilder {
         callback: (event: Event) => {
           return this.captureEvent(event, options)
         },
-        options: {
-          capture: true
-        },
         condition: () => {
           return !('ontouchstart' in window)
         }
@@ -34,9 +31,6 @@ export default class TapPlugin extends PluginBuilder {
         callback: (event: Event) => {
           return this.captureEvent(event, options)
         },
-        options: {
-          capture: true
-        },
         condition: () => {
           return !('ontouchstart' in window)
         }
@@ -47,9 +41,6 @@ export default class TapPlugin extends PluginBuilder {
         event: 'contextmenu',
         callback: (event: Event) => {
           return this.captureEvent(event, options)
-        },
-        options: {
-          capture: true
         }
       },
       {
@@ -58,9 +49,6 @@ export default class TapPlugin extends PluginBuilder {
         event: 'touchstart',
         callback: (event: Event) => {
           return this.captureEvent(event, options)
-        },
-        options: {
-          capture: true
         }
       }
     ]
@@ -86,11 +74,9 @@ export default class TapPlugin extends PluginBuilder {
     const eventType = event.type === 'touchstart' ? 'tap' : event.type
 
     return {
-      detail: {
-        type: eventType,
-        x: (event as any).clientX,
-        y: (event as any).clientY
-      }
+      type: eventType,
+      x: (event as any).clientX,
+      y: (event as any).clientY
     }
 
   }

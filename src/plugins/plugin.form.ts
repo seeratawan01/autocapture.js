@@ -22,9 +22,6 @@ export default class FormPlugin extends PluginBuilder {
         event: 'submit',
         callback: (event: Event) => {
           return this.captureEvent(event, options)
-        },
-        options: {
-          capture: true,
         }
       },
       {
@@ -33,9 +30,6 @@ export default class FormPlugin extends PluginBuilder {
         event: 'reset',
         callback: (event: Event) => {
           return this.captureEvent(event, options)
-        },
-        options: {
-          capture: true,
         }
       },
       {
@@ -44,9 +38,6 @@ export default class FormPlugin extends PluginBuilder {
         event: 'input',
         callback: (event: Event) => {
           return this.captureEvent(event, options)
-        },
-        options: {
-          capture: true,
         }
       },
       {
@@ -55,9 +46,6 @@ export default class FormPlugin extends PluginBuilder {
         event: 'change',
         callback: (event: Event) => {
           return this.captureEvent(event, options)
-        },
-        options: {
-          capture: true,
         }
       }
     ]
@@ -92,10 +80,8 @@ export default class FormPlugin extends PluginBuilder {
     }
 
     return {
-      details: {
-        type: event.type,
-        ...formData
-      }
+      type: event.type,
+      ...formData
     }
   }
 }

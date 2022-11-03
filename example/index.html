@@ -1,214 +1,381 @@
-<!DOCTYPE html>
-<html lang='en'>
+<!doctype html>
+<html lang='en' class='h-100'>
 <head>
-	<title>Page Title</title>
-	<meta charset='UTF-8'>
+	<meta charset='utf-8'>
 	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<meta name='description' content='Build your own analytics'>
+	<meta name='author' content='Seerat Awan'>
+	<meta name='generator' content='Hugo 0.104.2'>
+	<title>AutoCapture.js - Build your own analytics</title>
+
+	<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css' rel='stylesheet'
+		  integrity='sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC' crossorigin='anonymous'>
+
+	<script src='assets/js/json-viewer.js'></script>
+	<link rel='stylesheet' href='assets/styles/json-viewer.css'>
+
+	<!-- Favicons -->
+	<!--	<link rel='apple-touch-icon' href='/docs/5.2/assets/img/favicons/apple-touch-icon.png' sizes='180x180'>-->
+	<!--	<link rel='icon' href='/docs/5.2/assets/img/favicons/favicon-32x32.png' sizes='32x32' type='image/png'>-->
+	<!--	<link rel='icon' href='/docs/5.2/assets/img/favicons/favicon-16x16.png' sizes='16x16' type='image/png'>-->
+	<!--	<link rel='manifest' href='/docs/5.2/assets/img/favicons/manifest.json'>-->
+	<!--	<link rel='mask-icon' href='/docs/5.2/assets/img/favicons/safari-pinned-tab.svg' color='#712cf9'>-->
+	<!--	<link rel='icon' href='/docs/5.2/assets/img/favicons/favicon.ico'>-->
+	<meta name='theme-color' content='#712cf9'>
+
+
 	<style>
-		* {
-			box-sizing: border-box;
+		.bd-placeholder-img {
+			font-size: 1.125rem;
+			text-anchor: middle;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			user-select: none;
 		}
 
-		/* Style the body */
-		body {
-			font-family: Arial, Helvetica, sans-serif;
-			margin: 0;
+		@media (min-width: 768px) {
+			.bd-placeholder-img-lg {
+				font-size: 3.5rem;
+			}
 		}
 
-		/* Header/logo Title */
-		.header {
-			padding: 80px;
-			text-align: center;
-			background: #1abc9c;
-			color: white;
+		.b-example-divider {
+			height: 3rem;
+			background-color: rgba(0, 0, 0, .1);
+			border: solid rgba(0, 0, 0, .15);
+			border-width: 1px 0;
+			box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
 		}
 
-		/* Increase the font size of the heading */
-		.header h1 {
-			font-size: 40px;
+		.b-example-vr {
+			flex-shrink: 0;
+			width: 1.5rem;
+			height: 100vh;
 		}
 
-		/* Style the top navigation bar */
-		.navbar {
-			overflow: hidden;
-			background-color: #333;
+		.bi {
+			vertical-align: -.125em;
+			fill: currentColor;
 		}
 
-		/* Style the navigation bar links */
-		.navbar a {
-			float: left;
-			display: block;
-			color: white;
-			text-align: center;
-			padding: 14px 20px;
-			text-decoration: none;
+		.nav-scroller {
+			position: relative;
+			z-index: 2;
+			height: 2.75rem;
+			overflow-y: hidden;
 		}
 
-		/* Right-aligned link */
-		.navbar a.right {
-			float: right;
-		}
-
-		/* Change color on hover */
-		.navbar a:hover {
-			background-color: #ddd;
-			color: black;
-		}
-
-		/* Column container */
-		.row {
-			display: -ms-flexbox; /* IE10 */
+		.nav-scroller .nav {
 			display: flex;
-			-ms-flex-wrap: wrap; /* IE10 */
-			flex-wrap: wrap;
-		}
-
-		/* Create two unequal columns that sits next to each other */
-		/* Sidebar/left column */
-		.side {
-			-ms-flex: 30%; /* IE10 */
-			flex: 30%;
-			background-color: #f1f1f1;
-			padding: 20px;
-		}
-
-		/* Main column */
-		.main {
-			-ms-flex: 70%; /* IE10 */
-			flex: 70%;
-			background-color: white;
-			padding: 20px;
-		}
-
-		/* Fake image, just for this example */
-		.fakeimg {
-			background-color: #aaa;
-			width: 100%;
-			padding: 20px;
-		}
-
-		/* Footer */
-		.footer {
-			padding: 20px;
+			flex-wrap: nowrap;
+			padding-bottom: 1rem;
+			margin-top: -1px;
+			overflow-x: auto;
 			text-align: center;
-			background: #ddd;
-		}
-
-		/* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
-		@media screen and (max-width: 700px) {
-			.row {
-				flex-direction: column;
-			}
-		}
-
-		/* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
-		@media screen and (max-width: 400px) {
-			.navbar a {
-				float: none;
-				width: 100%;
-			}
+			white-space: nowrap;
+			-webkit-overflow-scrolling: touch;
 		}
 	</style>
+
+
+	<!-- Custom styles for this template -->
+	<link href='assets/styles/styles.css' rel='stylesheet'>
 </head>
 <body>
 
-<div class='header'>
-	<h1>My Website</h1>
-	<p>A website created by me.</p>
-</div>
+<div class='bg-dynamic text-center'>
+	<div class='cover-container mx-auto d-flex flex-column w-100 p-3'>
+		<header class='mb-3'>
+			<div>
+				<h3 class='float-md-start mb-2 mb-md-0'>AutoCapture.js</h3>
+				<nav class='nav nav-masthead justify-content-center float-md-end'>
+					<a class='nav-link fw-bold py-1 px-0 active' aria-current='page' href='#'>Home</a>
+					<a class='nav-link fw-bold py-1 px-0' href='https://github.com/seeratawan01/autocapture.js#readme'
+					   target='_blank'>Documentation</a>
+					<a class='nav-link fw-bold py-1 px-0' href='#demo'>Demo</a>
+				</nav>
+			</div>
+		</header>
 
-<div class='navbar'>
-	<a href='#'>Link</a>
-	<a href='#'>Link</a>
-	<a href='#'>Link</a>
-	<a href='#' class='right'>Link</a>
-</div>
+		<main class='px-3 my-5'>
+			<h1>AutoCapture.js </h1>
+			<p class='lead'>A javascript library to capture every user interactions. A single
+				snippet grabs every click, touch, select, fill and more — forever.</p>
+			<p class='lead'>
+				<a href='https://github.com/seeratawan01/autocapture.js#readme' target='_blank'
+				   class='btn btn-lg btn-secondary fw-bold border-white bg-white'>Learn more</a>
+			</p>
+		</main>
 
-<div class='row'>
-	<div class='side'>
-		<h2>About Me</h2>
-		<h5>Photo of me:</h5>
-		<div class='fakeimg' style='height:200px;'>Image</div>
-		<p>Some text about me in culpa qui officia deserunt mollit anim..</p>
-		<h3>More Text</h3>
-		<p>Lorem ipsum dolor sit ame.</p>
-		<div class='fakeimg' style='height:60px;'>Image</div>
-		<br>
-		<div class='fakeimg' style='height:60px;'>Image</div>
-		<br>
-		<div class='fakeimg' style='height:60px;'>Image</div>
+
 	</div>
-	<div class='main'>
 
-		<button id='start-btn'>Start</button>
-		<button id='stop-btn'>Stop</button>
-		<button id='clear-btn'>Clear</button>
+</div>
 
-		<form onsubmit='false'>
-			<label for='fname'>First name:</label>
-			<input type='text' id='fname' name='fname'><br><br>
-			<label for='lname'>Last name:</label>
-			<input type='text' id='lname' name='lname'><br><br>
-			<input type='submit' value='Submit'>
-			<input type='reset' value='Reset'>
-		</form>
-		<h2>TITLE HEADING</h2>
-		<h5>Title description, Dec 7, 2017</h5>
-		<div class='fakeimg' style='height:200px;'>Image</div>
-		<p>Some text..</p>
-		<p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit,
-			sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-			quis nostrud exercitation ullamco.</p>
-		<br>
-		<h2>TITLE HEADING</h2>
-		<h5>Title description, Sep 2, 2017</h5>
-		<div class='fakeimg' style='height:200px;'>Image</div>
-		<p>Some text..</p>
-		<p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit,
-			sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-			quis nostrud exercitation ullamco.</p>
+<div class='container' id='demo'>
+	<div class='my-5'>
+		<!-- Example row of columns -->
+		<div class='row'>
+			<div class='col-md-5 order-1 order-md-0'>
+				<h2 class='mb-2'>How it works?</h2>
+				<p class='text-black-50'>
+					AutoCapture.js provides an easiest and most comprehensive way to automatically capture the user
+					interactions on the website, from the moment of installation forward.
+				</p>
+				<div class='mt-4'>
+					<h4 class='mb-2'>Capture Tap/Clicks Interactions</h4>
+					<p class='text-black-50'>
+						AutoCapture.js captures every click, touch, right click and double click interactions on the
+						website, including the coordinates of the tap.
+					</p>
+
+					<button type='button' class='btn btn-primary btn-sm'>Click</button>
+					<button type='button' class='btn btn-secondary btn-sm'>Right Click</button>
+					<button type='button' class='btn btn-success btn-sm'>Double Click</button>
+				</div>
+
+				<div class='mt-4'>
+					<h4 class='mb-2'>Capture Form Interactions</h4>
+					<p class='text-black-50'>
+						AutoCapture.js captures every form interactions on the website, including the input, change,
+						select, submit and more.
+					</p>
+
+					<form onsubmit='return false'>
+						<div class='mb-3'>
+							<label for='exampleFormControlInput1' class='form-label'>Email address</label>
+							<input type='email' class='form-control' id='exampleFormControlInput1'
+								   placeholder='Enter your email'>
+
+							<label for='exampleFormControlTextarea1' class='form-label mt-2'>Example textarea</label>
+							<textarea class='form-control' id='exampleFormControlTextarea1' rows='3'
+									  placeholder='Enter your comment'></textarea>
+
+							<label for='exampleFormControlSelect1' class='form-label  mt-2'>Example select</label>
+							<select class='form-select' id='exampleFormControlSelect1'>
+								<option>Open this select menu</option>
+								<option>One</option>
+								<option>Two</option>
+								<option>Three</option>
+							</select>
+
+							<label for='exampleFormControlSelect2' class='form-label  mt-2'>Example multiple
+								select</label>
+							<select multiple class='form-select' id='exampleFormControlSelect2'>
+								<option>Open this select menu</option>
+								<option>One</option>
+								<option>Two</option>
+								<option>Three</option>
+							</select>
+
+							<div class='mt-3'>
+								<button type='submit' class='btn btn-primary mt-2 btn-sm'>Submit</button>
+								<button type='reset' class='btn btn-secondary mt-2 btn-sm'>Reset</button>
+							</div>
+						</div>
+					</form>
+				</div>
+
+				<div class='mt-4'>
+					<h4 class='mb-2'>Capture Page Events</h4>
+					<p class='text-black-50'>
+						AutoCapture.js captures page related events, including the page load, page unload and browser
+						history change.
+					</p>
+				</div>
+
+				<div class='mt-4'>
+					<h4 class='mb-2'>Capture Scroll Events</h4>
+					<p class='text-black-50'>
+						AutoCapture.js captures scroll events, including the scroll position, scroll direction and
+						scroll speed.
+
+					<div class='form-check form-switch'>
+						<input class='form-check-input' type='checkbox' id='enableScrollCapture' checked>
+						<label class='form-check-label' for='enableScrollCapture'>Enable Scroll Plugin</label>
+					</div>
+					</p>
+				</div>
+
+
+				<div class='mt-4'>
+					<h4 class='mb-2'>Capture Mouse Events</h4>
+					<p class='text-black-50'>
+						AutoCapture.js captures mouse events, including the mouse position, mouse movement and mouse
+						click.
+					<div class='form-check form-switch'>
+						<input class='form-check-input' type='checkbox' id='enableMouseMovement' checked>
+						<label class='form-check-label' for='enableMouseMovement'>Enable Mouse Movement Plugin</label>
+					</div>
+					</p>
+				</div>
+
+				<!-- Learn more -->
+				<div class='mt-4'>
+					<h4 class='mb-2'>Learn more</h4>
+					<p class='text-black-50'>
+						AutoCapture.js is an open source project, you can learn more about it on <a
+						href='https://github.com/seeratawan01/autocapture.js' class='text-dynamic'>GitHub</a>.
+					</p>
+				</div>
+
+			</div>
+			<div class='col-md-7 mb-4'>
+				<!-- Events viewer box -->
+				<div id='events-container' class='bg-white border rounded-2 events-container'>
+					<div class='border-bottom px-3 py-2 text-black-50'>
+						<div class='d-flex justify-content-between align-items-center'>
+							<div class='d-flex align-items-center'>
+								<div class='fs-5 fw-bold'>Events</div>
+								<div class='badge rounded-pill ms-2 bg-dynamic event-count'>0</div>
+							</div>
+						</div>
+					</div>
+
+					<div id='events-list' class='overflow-auto events-list'>
+						<!-- List of events will append in this box -->
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 
-<div class='footer'>
-	<h2>Footer</h2>
-</div>
+<footer class='mt-auto text-center'>
+	<p>Made with <span class='text-dynamic'>♥</span> by <a href='https://github.com/seeratawan01' class='text-dynamic'>Seerat
+		Awan</a></p>
+</footer>
+
+<script src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js'
+		integrity='sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF'
+		crossorigin='anonymous'></script>
 
 <script src='../dist/autocapture.umd.js'></script>
 <script>
+
+	let previousEvent = null;
+
+	// Initialize AutoCapture.js
 	const autoCapture = new AutoCapture({
-		safelist: [],
+		safelist: ['.json-viewer-btn', '.json-viewer .list-link'],
 		maxEvents: 200,
 		persistence: 'memory',
+		capture: ['page', 'tap', 'form', 'scroll', 'mouse-movement'],
 		maskTextContent: false,
 		onEventCapture: (event) => {
-			console.log('onEventCapture', autoCapture.getCapturedEvents())
+			// console.log(event);
+
+			let type = event.event
+			if (event?.details?.type) {
+				type = event.details.type
+			}
+			let isSameEvent = false
+
+			if(previousEvent && previousEvent.type === type) {
+				isSameEvent = true
+			}
+
+
+			appendCapturedEvent(event, isSameEvent)
 		}
 	})
 
-	// Unregistering some plugins
-	// autoCapture.unregisterPlugin('scroll')
-	// autoCapture.unregisterPlugin('mouse-movement')
+	// Start capturing events
+	autoCapture.start();
 
-	// Starting the capture
-	autoCapture.start()
+	const appendCapturedEvent = (payload, isSameEvent = false) => {
+		const eventsList = document.getElementById('events-list');
+		const eventsCount = document.querySelector('.event-count');
+
+		// JSON Viewer
+		const jsonViewer = new JSONViewer();
+
+		jsonViewer.showJSON(payload, -1, 2);
+
+		if (isSameEvent) {
+			eventsCount.textContent = parseInt(eventsCount.textContent) + 1;
+
+			// Get event occurrence count
+			const eventElement = previousEvent.element.querySelector('.event-type')
+
+			const isCountElement = eventElement.querySelector('.event-count')
+
+			if(isCountElement) {
+				const count = parseInt(isCountElement.textContent) + 1
+				isCountElement.textContent = count
+			} else {
+				const countElement = document.createElement('span')
+				countElement.classList.add('event-count')
+				countElement.classList.add('badge')
+				countElement.classList.add('rounded-pill')
+				countElement.classList.add('bg-dynamic')
+				countElement.textContent = 2
+				eventElement.appendChild(countElement)
+			}
+
+			// update the event payload
+			previousEvent.element.querySelector('.json-viewer-container').innerHTML = ''
+			previousEvent.element.querySelector('.json-viewer-container').appendChild(jsonViewer.getContainer());
+
+			return;
+		}
+
+		const event = document.createElement('div');
+		const id = `collapse-event-${randomId()}`
+		event.classList.add('border-bottom', 'px-3', 'py-2');
 
 
-	// instance.start()
-	//
-	//
-	// document.getElementById('start-btn').addEventListener('click', () => {
-	// 	instance.start()
-	// })
-	//
-	// document.getElementById('stop-btn').addEventListener('click', () => {
-	// 	instance.stop()
-	// })
-	//
-	// document.getElementById('clear-btn').addEventListener('click', () => {
-	// 	instance.clear()
-	// })
+		let type = payload.event
 
+		if (payload?.details?.type) {
+			type = payload.details.type
+		}
+
+		event.innerHTML = `
+			<div class='d-flex justify-content-between align-items-center'>
+				<div class='d-flex align-items-center'>
+					<div class='fs-6 fw-bold event-type'>
+						${type}
+					</div>
+					<a class='badge bg-dynamic text-white text-decoration-none ms-3 json-viewer-btn'
+					   data-bs-toggle='collapse' href='#${id}' role='button' aria-expanded='false'
+					   aria-controls='${id}'>
+						View Payload
+					</a>
+				</div>
+				<div class='text-black-50'>${new Date().toLocaleString()}</div>
+			</div>
+			<div class='collapse' id='${id}'>
+				<div class='card card-body mt-2'>
+					<!-- JSON Payload -->
+					<div class='json-viewer-container'>
+					</div>
+				</div>
+			</div>
+		`;
+
+
+		event.querySelector('.json-viewer-container').appendChild(jsonViewer.getContainer());
+
+		eventsList.append(event);
+		eventsCount.innerText = parseInt(eventsCount.innerText) + 1;
+
+		previousEvent = {
+			type: type,
+			element: event
+		};
+
+		// Scroll to bottom
+		eventsList.scrollTop = eventsList.scrollHeight;
+	}
+
+	// random id generator
+	const randomId = () => {
+		return Math.random().toString(36).substr(2, 9);
+	}
 </script>
+
+<script src='assets/js/index.js'></script>
+
 </body>
 </html>

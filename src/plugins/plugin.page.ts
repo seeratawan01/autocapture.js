@@ -20,7 +20,7 @@ export default class PageViewPlugin extends PluginBuilder {
         target: window,
         event: 'load',
         callback: () => {
-          return this.captureEvent('load')
+          return this.captureEvent('page-load')
         },
         options: {
           once: true,
@@ -33,7 +33,7 @@ export default class PageViewPlugin extends PluginBuilder {
         target: window,
         event: 'beforeunload',
         callback: () => {
-          return this.captureEvent('leave')
+          return this.captureEvent('page-leave')
         }
       },
       // Detect when the history state changes
@@ -42,7 +42,7 @@ export default class PageViewPlugin extends PluginBuilder {
         target: window,
         event: 'popstate',
         callback: () => {
-          return this.captureEvent('change')
+          return this.captureEvent('page-change')
         },
         options: {
           capture: true
@@ -56,9 +56,7 @@ export default class PageViewPlugin extends PluginBuilder {
    */
   private captureEvent(state: string): Record<string, any> {
     return {
-      details: {
-        state
-      }
+      type: state
     }
   }
 }

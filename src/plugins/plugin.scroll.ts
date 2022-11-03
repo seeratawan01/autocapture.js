@@ -27,7 +27,7 @@ class ScrollPlugin extends PluginBuilder {
         callback: () => {
           return this.captureEvent()
         },
-        options: true
+        options: false
       }
     ]
   }
@@ -84,9 +84,7 @@ class ScrollPlugin extends PluginBuilder {
       viewport: scrollViewport
     }
 
-    return {
-      details: payload
-    }
+    return payload
 
   }
 

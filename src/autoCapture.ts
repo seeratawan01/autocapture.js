@@ -110,30 +110,30 @@ export class AutoCapture extends Base {
         const { target, event, callback, options, name, throttle, condition }: BindResult = data
 
         if ((target instanceof HTMLElement || target instanceof Document || target instanceof Window) && typeof callback === 'function' && typeof event === 'string') {
-          // if the condition is not met, do not bind the event
-          if (condition && typeof condition === 'function' && !condition()) {
-            return
-          }
-
-
-          // to prevent massive data collection, we only capture every 100ms
-          if (throttle) {
-            const now = Date.now()
-            if (now - this.lastEvent < throttle) {
-              return
-            }
-            this.lastEvent = now
-          }
-
           // bind the event
-          this.events.push(new DOMEvent(event, (e) => wrappedHandler(e, name, callback), options, target, plugin.key).bind()
+          this.events.push(new DOMEvent(event, (e) => wrappedHandler(e, name, callback, throttle, condition), options, target, plugin.key).bind()
           )
         }
 
       })
 
       // wrapping the handler to capture the event
-      const wrappedHandler = (event: Event, type, handler) => {
+      const wrappedHandler = (event: Event, type, handler, throttle = 0, condition) => {
+
+        // if the condition is not met, do not bind the event
+        if (condition && typeof condition === 'function' && !condition()) {
+          return
+        }
+
+        // to prevent massive data collection, we only capture every 100ms
+        if (throttle) {
+          const now = Date.now()
+          if (now - this.lastEvent < throttle) {
+            return
+          }
+          this.lastEvent = now
+        }
+
         if (plugin.onBeforeCapture(event)) {
 
           let payload = prepareEventPayload(event, {
@@ -154,7 +154,9 @@ export class AutoCapture extends Base {
 
           // if the handler returns an object, merge it with the payload
           if (typeof data === 'object') {
-            payload = JSON.merge(payload, data)
+            payload = JSON.merge(payload, {
+              details: data
+            })
           }
 
 

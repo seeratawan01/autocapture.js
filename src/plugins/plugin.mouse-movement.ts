@@ -31,10 +31,8 @@ export default class MouseMovementPlugin extends PluginBuilder {
   private captureEvent(event: MouseEvent): Record<string, any> {
 
     return {
-      details: {
-        x: event.clientX,
-        y: event.clientY
-      }
+      x: event.clientX,
+      y: event.clientY
     }
   }
 
