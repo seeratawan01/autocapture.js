@@ -266,7 +266,7 @@
 			// console.log(event);
 
 			let type = event.event
-			if (event?.details?.type) {
+			if (event.details && event.details.type) {
 				type = event.details.type
 			}
 			let isSameEvent = false
@@ -327,7 +327,7 @@
 
 		let type = payload.event
 
-		if (payload?.details?.type) {
+		if (payload.details && payload.details.type) {
 			type = payload.details.type
 		}
 
