@@ -253,10 +253,10 @@
 <script src='../dist/autocapture.umd.js'></script>
 <script>
 
-	let previousEvent = null;
+	var previousEvent = null;
 
 	// Initialize AutoCapture.js
-	const autoCapture = new AutoCapture({
+	var autoCapture = new AutoCapture({
 		safelist: ['.json-viewer-btn', '.json-viewer .list-link'],
 		maxEvents: 200,
 		persistence: 'memory',
@@ -265,11 +265,11 @@
 		onEventCapture: (event) => {
 			// console.log(event);
 
-			let type = event.event
+			var type = event.event
 			if (event.details && event.details.type) {
 				type = event.details.type
 			}
-			let isSameEvent = false
+			var isSameEvent = false
 
 			if(previousEvent && previousEvent.type === type) {
 				isSameEvent = true
@@ -283,12 +283,12 @@
 	// Start capturing events
 	autoCapture.start();
 
-	const appendCapturedEvent = (payload, isSameEvent = false) => {
-		const eventsList = document.getElementById('events-list');
-		const eventsCount = document.querySelector('.event-count');
+	var appendCapturedEvent = (payload, isSameEvent = false) => {
+		var eventsList = document.getElementById('events-list');
+		var eventsCount = document.querySelector('.event-count');
 
 		// JSON Viewer
-		const jsonViewer = new JSONViewer();
+		var jsonViewer = new JSONViewer();
 
 		jsonViewer.showJSON(payload, -1, 2);
 
@@ -296,15 +296,15 @@
 			eventsCount.textContent = parseInt(eventsCount.textContent) + 1;
 
 			// Get event occurrence count
-			const eventElement = previousEvent.element.querySelector('.event-type')
+			var eventElement = previousEvent.element.querySelector('.event-type')
 
-			const isCountElement = eventElement.querySelector('.event-count')
+			var isCountElement = eventElement.querySelector('.event-count')
 
 			if(isCountElement) {
-				const count = parseInt(isCountElement.textContent) + 1
+				var count = parseInt(isCountElement.textContent) + 1
 				isCountElement.textContent = count
 			} else {
-				const countElement = document.createElement('span')
+				var countElement = document.createElement('span')
 				countElement.classList.add('event-count')
 				countElement.classList.add('badge')
 				countElement.classList.add('rounded-pill')
@@ -320,12 +320,12 @@
 			return;
 		}
 
-		const event = document.createElement('div');
-		const id = `collapse-event-${randomId()}`
+		var event = document.createElement('div');
+		var id = `collapse-event-${randomId()}`
 		event.classList.add('border-bottom', 'px-3', 'py-2');
 
 
-		let type = payload.event
+		var type = payload.event
 
 		if (payload.details && payload.details.type) {
 			type = payload.details.type
@@ -370,7 +370,7 @@
 	}
 
 	// random id generator
-	const randomId = () => {
+	var randomId = () => {
 		return Math.random().toString(36).substr(2, 9);
 	}
 </script>
