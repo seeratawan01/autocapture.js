@@ -28,7 +28,7 @@ export default class SwipePlugin extends PluginBuilder {
     return [
       {
         name: 'swipe',
-        target: window,
+        target: document,
         event: 'touchstart',
         callback: (event: TouchEvent) => {
           return this.captureEvent(event)
@@ -36,7 +36,7 @@ export default class SwipePlugin extends PluginBuilder {
       },
       {
         name: 'swipe',
-        target: window,
+        target: document,
         event: 'touchend',
         callback: (event: TouchEvent) => {
           return this.captureEvent(event)

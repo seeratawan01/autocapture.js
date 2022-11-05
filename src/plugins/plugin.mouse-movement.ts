@@ -15,7 +15,7 @@ export default class MouseMovementPlugin extends PluginBuilder {
     return [
       {
         name: 'mouse-movement',
-        target: window,
+        target: document,
         event: 'mousemove',
         callback: (event: MouseEvent) => {
           return this.captureEvent(event)
