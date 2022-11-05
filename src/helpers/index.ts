@@ -304,24 +304,25 @@ export function storePayload(payload: any, storage: Storage, maxLimit = DEFAULT_
 
   // Get the stored payloads
   let storedPayloads = storage.getItem(DEFAULT_OPTIONS.STORAGE_KEY)
+  let storedPayloadsArray = storedPayloads && typeof storedPayloads === 'string' ? JSON.parse(storedPayloads) : []
 
 
-  if (typeof storedPayloads === 'string') {
-    storedPayloads = JSON.parse(storedPayloads) || []
-  }
+  // if (typeof storedPayloads === 'string') {
+  //   storedPayloads = JSON.parse(storedPayloads) || []
+  // }
 
   // If there are no payloads stored, store the current payload
-  if (!storedPayloads) {
+  if (!storedPayloadsArray) {
     storage.setItem(DEFAULT_OPTIONS.STORAGE_KEY, JSON.stringify([payload]))
     return true
   }
 
   // If the payloads are more than the max limit, remove the oldest one
-  if (storedPayloads.length >= maxLimit) {
-    (storedPayloads as unknown as any[]).shift()
+  if (storedPayloadsArray.length >= maxLimit) {
+    (storedPayloadsArray as unknown as any[]).shift()
   }
 
   // If there are payloads stored, append the current payload to the stored payloads
-  storage.setItem(DEFAULT_OPTIONS.STORAGE_KEY, JSON.stringify([...storedPayloads, payload]))
+  storage.setItem(DEFAULT_OPTIONS.STORAGE_KEY, JSON.stringify([...storedPayloadsArray, payload]))
   return true
 }

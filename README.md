@@ -40,9 +40,9 @@ the plugin system.
   - [x] **Scroll** - Capture the scroll event [(Source)](./src/plugins/plugin.scroll.ts)
   - [x] **Mouse Movement** - Capture the mouse movement [(Source)](./src/plugins/plugin.mouse-movement.ts)
   - [x] **Page** - Capture the page related events [(Source)](./src/plugins/plugin.page.ts)
-  - [x] **Video** - Capture the video related events [(Source)](./src/plugins/plugin.video.ts)
   - [x] **Form** - Capture the form related events [(Source)](./src/plugins/plugin.form.ts)
-  - [x] **Swipe** - Capture the swipe related events [(Source)](./src/plugins/plugin.swipe.ts)
+  - [ ] **Swipe** - Capture the swipe related events [(Source)](./src/plugins/plugin.swipe.ts)
+  - [ ] **Video** - Capture the video related events [(Source)](./src/plugins/plugin.video.ts)
 - Extendable with custom plugins
 - Lightweight and easy to use
 
@@ -58,12 +58,12 @@ the plugin system.
 [autocapture-js.vercel.app](https://autocapture-js.vercel.app)
 
 ## Installation
-AutoCapture.js is still in development, right now it is in the alpha stage, and it is not ready for production use.
+AutoCapture.js is still in development, right now it is in the alpha stage, and it is not ready for production use. The API is not stable yet, and it is subject to change.
 
 ### NPM
 
 ```bash
-npm install autocapture
+npm install autocapture.js
 ```
 
 ### CDN
@@ -78,13 +78,13 @@ npm install autocapture
 You can import the library in your project using the following:
 
 ```javascript
-import { AutoCapture } from 'autoCapture';
+import { AutoCapture } from 'autocapture.js';
 ```
 
 And to install internal plugins, you can import the plugins in your project using the following:
 
 ```javascript
-import { ScrollPlugin, MouseMovementPlugin, PageViewPlugin } from 'autoCapture';
+import { ScrollPlugin, MouseMovementPlugin, PageViewPlugin } from 'autocapture.js';
 
 AutoCapture.use(new ScrollPlugin());
 AutoCapture.use(new MouseMovementPlugin());

@@ -30,7 +30,7 @@ const plugins = (minify) =>
         parser: {
           syntax: 'typescript'
         },
-        target: 'es2022'
+        target: 'es5'
       },
       module: {
         type: 'es6'

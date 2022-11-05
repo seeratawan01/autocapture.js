@@ -11,9 +11,6 @@
     "noUnusedParameters": true,
     /* Modules */
     "moduleResolution": "Node",
-    "types": [
-      "offscreencanvas"
-    ],
     /* Emit */
     "declaration": true,
     "outDir": "dist",
@@ -23,11 +20,9 @@
     /* Interop Constraints */
     "allowSyntheticDefaultImports": true,
     /* Language and Environment */
-    "target": "ES6",
-    "lib": [
-      "es2018",
-      "DOM"
-    ]
+    "target": "es5",
+    "module": "es6",
+    "lib": ["es5", "es6", "dom"]
   },
   "typedocOptions": {
     "name": "autocapture.js",
